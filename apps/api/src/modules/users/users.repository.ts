@@ -42,5 +42,4 @@ export class UsersRepository {
       .returning();
     return result[0];
   }
-
 }

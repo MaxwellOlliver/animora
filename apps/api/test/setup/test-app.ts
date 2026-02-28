@@ -4,6 +4,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import fastifyMultipart from '@fastify/multipart';
 import { AppModule } from '@/app.module';
 
 export async function createTestApp(
@@ -19,6 +20,11 @@ export async function createTestApp(
   process.env.GOOGLE_CLIENT_SECRET = 'fake-google-client-secret';
   process.env.GOOGLE_CALLBACK_URL =
     'http://localhost:3000/auth/google/callback';
+  process.env.S3_ENDPOINT = 'http://localhost:9000';
+  process.env.S3_REGION = 'us-east-1';
+  process.env.S3_BUCKET = 'animora-test';
+  process.env.S3_ACCESS_KEY = 'minioadmin';
+  process.env.S3_SECRET_KEY = 'minioadmin';
 
   const moduleFixture = await Test.createTestingModule({
     imports: [AppModule],
@@ -36,6 +42,11 @@ export async function createTestApp(
       transform: true,
     }),
   );
+
+  await app
+    .getHttpAdapter()
+    .getInstance()
+    .register(fastifyMultipart, { limits: { fileSize: 10_485_760 } });
 
   await app.init();
   await app.getHttpAdapter().getInstance().ready();
