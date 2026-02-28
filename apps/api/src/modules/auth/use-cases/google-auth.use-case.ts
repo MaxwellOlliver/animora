@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../../users/repositories/users.repository.js';
+import { UsersRepository } from '../../users/users.repository.js';
 import { LoginUseCase } from './login.use-case.js';
 import type { GoogleProfile } from '../strategies/google.strategy.js';
 

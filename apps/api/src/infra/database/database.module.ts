@@ -2,9 +2,9 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as userSchema from '@/modules/users/entities/user.entity.js';
-import * as authSchema from '@/modules/auth/entities/refresh-token.entity.js';
-import * as avatarSchema from '@/modules/admin/avatars/entities/avatar.entity.js';
+import * as userSchema from '@/modules/users/user.entity.js';
+import * as authSchema from '@/modules/auth/refresh-token.entity.js';
+import * as avatarSchema from '@/modules/admin/avatars/avatar.entity.js';
 
 const schema = { ...userSchema, ...authSchema, ...avatarSchema };
 

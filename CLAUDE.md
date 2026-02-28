@@ -38,15 +38,16 @@ See `docs/api-folder-structure.md` for the full spec.
 ```
 src/
   modules/<domain>/
-    controllers/        # HTTP layer — calls use cases, returns responses
-    use-cases/          # Business logic — one class per operation, single execute() method
-    services/           # External I/O wrappers only (MinIO, RabbitMQ) — no business logic
-    repositories/       # Raw DB queries via Drizzle — no logic
-    dto/                # class-validator DTOs
-    entities/           # Drizzle schema definitions
     <domain>.module.ts
-  infra/                # SDK wrappers (database, minio, rabbitmq)
-  common/               # Guards, decorators, filters, pipes shared across modules
+    <domain>.controller.ts       # HTTP layer — calls use cases, returns responses
+    <domain>-admin.controller.ts # Admin routes, guarded by @Roles('ADMIN')
+    <domain>.entity.ts           # Drizzle schema definition
+    <domain>.repository.ts       # Raw DB queries via Drizzle — no logic
+    <domain>.service.ts          # External I/O wrapper (if needed) — no business logic
+    use-cases/                   # Business logic — one class per operation, single execute()
+    dto/                         # class-validator DTOs
+  infra/                         # SDK wrappers (database, minio, rabbitmq)
+  common/                        # Guards, decorators, filters, pipes shared across modules
 ```
 
 ### Key Rules
@@ -54,7 +55,7 @@ src/
 1. **Use cases over fat services** — each operation gets its own use-case class with `execute()`. No multi-method service files for business logic.
 2. **Services = dumb wrappers** — services wrap external systems (MinIO, RabbitMQ). No `if` based on domain state. Use cases call services, never the reverse.
 3. **Repositories = raw DB only** — no business logic in repositories.
-4. **Two controllers per module** — `<domain>.controller.ts` (user-facing) + `<domain>-admin.controller.ts` (admin, `@Roles('ADMIN')`).
+4. **Flat module files** — entity, repository, controller, service live at module root. Only `use-cases/` and `dto/` get folders (they grow).
 5. **No cross-module internal imports** — modules communicate through exported services/use-cases only. Never import another module's repositories/entities/use-cases directly.
 
 ### Auth

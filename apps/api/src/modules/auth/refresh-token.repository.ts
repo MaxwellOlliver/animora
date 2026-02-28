@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { DRIZZLE } from '@/infra/database/database.module.js';
 import type { DrizzleDB } from '@/infra/database/database.module.js';
 import {
   refreshTokens,
   NewRefreshToken,
   RefreshToken,
-} from '../entities/refresh-token.entity.js';
+} from './refresh-token.entity.js';
 
 @Injectable()
 export class RefreshTokenRepository {

@@ -9,9 +9,10 @@ This document describes the architectural decisions and folder structure for the
 - **Framework**: NestJS
 - **Queue**: RabbitMQ via `@nestjs/microservices`
 - **Storage**: MinIO (S3-compatible)
-- **ORM**: TypeORM
+- **ORM**: Drizzle ORM + PostgreSQL
 - **Auth**: Passport.js (JWT, Google OAuth, Local)
-- **Monorepo**: Turborepo + pnpm workspaces
+- **HTTP**: Fastify via `@nestjs/platform-fastify`
+- **Monorepo**: Turborepo + bun workspaces
 
 ---
 
@@ -59,14 +60,9 @@ export class CompleteUploadUseCase {
 
 Repositories handle raw database queries. They contain no business logic — just reads and writes. All logic lives in use cases.
 
-### 4. Two Controllers per Module
+### 4. Flat Module Files, Folders Only Where They Grow
 
-Each domain module exposes two controllers: one for user-facing routes and one for admin-facing routes. This keeps each controller lean and makes access boundaries explicit.
-
-```typescript
-// anime.controller.ts    ← public, read-only
-// anime-admin.controller.ts ← protected by @Roles('ADMIN')
-```
+Entity, repository, and controller files live at the module root — no wrapper folders for single files. Only `use-cases/` and `dto/` get their own folders since they accumulate multiple files. Admin routes use a separate controller file at the module root (e.g. `anime-admin.controller.ts`) guarded by `@Roles('ADMIN')`.
 
 ### 5. Modules Never Cross-Import Internals
 
@@ -76,14 +72,15 @@ Modules communicate only through their exported services or use cases. A module 
 
 ## Layer Responsibilities
 
-| Layer      | Lives In                  | Responsibility                                                         |
-| ---------- | ------------------------- | ---------------------------------------------------------------------- |
-| Controller | `modules/*/controllers/`  | Receives HTTP request, calls use case, returns response                |
-| Use Case   | `modules/*/use-cases/`    | Orchestrates business logic for one operation                          |
-| Service    | `modules/*/services/`     | Wraps external I/O (storage, messaging) with domain-meaningful methods |
-| Repository | `modules/*/repositories/` | Raw database queries, no logic                                         |
-| Infra      | `infra/`                  | Raw SDK wrappers (MinIO, RabbitMQ, HTTP)                               |
-| Common     | `common/`                 | NestJS cross-cutting concerns (guards, filters, pipes, decorators)     |
+| Layer      | Lives In                   | Responsibility                                                         |
+| ---------- | -------------------------- | ---------------------------------------------------------------------- |
+| Controller | `modules/*/*.controller.ts`| Receives HTTP request, calls use case, returns response                |
+| Use Case   | `modules/*/use-cases/`     | Orchestrates business logic for one operation                          |
+| Service    | `modules/*/*.service.ts`   | Wraps external I/O (storage, messaging) with domain-meaningful methods |
+| Repository | `modules/*/*.repository.ts`| Raw database queries, no logic                                         |
+| Entity     | `modules/*/*.entity.ts`    | Drizzle schema definitions                                             |
+| Infra      | `infra/`                   | Raw SDK wrappers (MinIO, RabbitMQ, HTTP)                               |
+| Common     | `common/`                  | NestJS cross-cutting concerns (guards, filters, pipes, decorators)     |
 
 ---
 
@@ -93,9 +90,11 @@ Modules communicate only through their exported services or use cases. A module 
 src/
   modules/
     anime/
-      controllers/
-        anime.controller.ts           ← user-facing routes (read-only)
-        anime-admin.controller.ts     ← admin routes (CRUD, publish)
+      anime.module.ts
+      anime.controller.ts             ← user-facing routes (read-only)
+      anime-admin.controller.ts       ← admin routes (CRUD, publish)
+      anime.entity.ts
+      anime.repository.ts
       use-cases/
         create-anime.use-case.ts
         update-anime.use-case.ts
@@ -103,98 +102,86 @@ src/
         publish-anime.use-case.ts
         search-anime.use-case.ts
         get-anime.use-case.ts
-      repositories/
-        anime.repository.ts
       dto/
         create-anime.dto.ts
         update-anime.dto.ts
         query-anime.dto.ts
-      entities/
-        anime.entity.ts
-      anime.module.ts
 
     episode/
-      controllers/
-        episode.controller.ts
-        episode-admin.controller.ts
+      episode.module.ts
+      episode.controller.ts
+      episode-admin.controller.ts
+      episode.entity.ts
+      episode.repository.ts
       use-cases/
         create-episode.use-case.ts
         update-episode.use-case.ts
         delete-episode.use-case.ts
         publish-episode.use-case.ts
         get-episode.use-case.ts
-      repositories/
-        episode.repository.ts
       dto/
-      entities/
-      episode.module.ts
 
     upload/
-      controllers/
-        upload.controller.ts
+      upload.module.ts
+      upload.controller.ts
+      upload.entity.ts
+      upload.repository.ts
+      storage.service.ts              ← wraps MinioService with upload-specific methods
+      messaging.service.ts            ← wraps RabbitmqService, publishes video.uploaded
       use-cases/
         init-upload.use-case.ts
         upload-chunk.use-case.ts
         complete-upload.use-case.ts
-      services/
-        storage.service.ts            ← wraps MinioService with upload-specific methods
-        messaging.service.ts          ← wraps RabbitmqService, publishes video.uploaded
-      repositories/
-        upload.repository.ts
       dto/
-      entities/
-      upload.module.ts
 
     streaming/
-      controllers/
-        streaming.controller.ts
+      streaming.module.ts
+      streaming.controller.ts
+      storage.service.ts              ← generates presigned MinIO URLs
       use-cases/
         get-stream-url.use-case.ts
         get-subtitles.use-case.ts
-      services/
-        storage.service.ts            ← generates presigned MinIO URLs
       dto/
-      streaming.module.ts
 
     auth/
-      controllers/
-        auth.controller.ts
-      use-cases/
-        login-user.use-case.ts
-        login-admin.use-case.ts
-        google-auth.use-case.ts
-        refresh-token.use-case.ts
+      auth.module.ts
+      auth.controller.ts
+      refresh-token.entity.ts
+      refresh-token.repository.ts
       strategies/
         google.strategy.ts
-        local-user.strategy.ts
-        local-admin.strategy.ts
+        local.strategy.ts
+        jwt.strategy.ts
+        jwt-refresh.strategy.ts
       guards/
-        jwt.guard.ts
-        roles.guard.ts
-      decorators/
-        roles.decorator.ts
-        current-user.decorator.ts
+        local-auth.guard.ts
+        google-auth.guard.ts
+        jwt-refresh.guard.ts
+      use-cases/
+        login.use-case.ts
+        google-auth.use-case.ts
+        refresh-token.use-case.ts
+        logout.use-case.ts
       dto/
-      auth.module.ts
 
     users/
-      controllers/
-        users.controller.ts
-        users-admin.controller.ts
+      users.module.ts
+      users.controller.ts
+      user.entity.ts
+      users.repository.ts
       use-cases/
         create-user.use-case.ts
         update-user.use-case.ts
         get-user.use-case.ts
-      repositories/
-        users.repository.ts
       dto/
-      entities/
-      users.module.ts
+
+    admin/
+      avatars/
+        avatar.entity.ts
 
   infra/
     database/
-      database.module.ts              ← TypeORM connection and config
-      database.service.ts             ← transaction helpers, health check
+      database.module.ts              ← Drizzle ORM connection and config
 
     minio/
       minio.module.ts
