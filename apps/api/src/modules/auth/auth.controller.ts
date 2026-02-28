@@ -19,6 +19,7 @@ import { GoogleAuthUseCase } from './use-cases/google-auth.use-case.js';
 import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case.js';
 import { LogoutUseCase } from './use-cases/logout.use-case.js';
 import { CreateUserUseCase } from '../users/use-cases/create-user.use-case.js';
+import { CreateProfileUseCase } from '../profiles/use-cases/create-profile.use-case.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import type { JwtPayload } from './strategies/jwt.strategy.js';
@@ -35,6 +36,7 @@ export class AuthController {
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
     private readonly logoutUseCase: LogoutUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
+    private readonly createProfileUseCase: CreateProfileUseCase,
   ) {}
 
   @Public()
@@ -42,6 +44,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   async register(@Body() dto: RegisterDto) {
     const user = await this.createUserUseCase.execute(dto);
+    await this.createProfileUseCase.execute({
+      userId: user.id,
+      name: dto.name,
+    });
     return this.loginUseCase.execute(user);
   }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '../../users/users.repository.js';
+import { CreateProfileUseCase } from '../../profiles/use-cases/create-profile.use-case.js';
 import { LoginUseCase } from './login.use-case.js';
 import type { GoogleProfile } from '../strategies/google.strategy.js';
 
@@ -7,6 +8,7 @@ import type { GoogleProfile } from '../strategies/google.strategy.js';
 export class GoogleAuthUseCase {
   constructor(
     private readonly usersRepository: UsersRepository,
+    private readonly createProfileUseCase: CreateProfileUseCase,
     private readonly loginUseCase: LoginUseCase,
   ) {}
 
@@ -22,9 +24,12 @@ export class GoogleAuthUseCase {
       } else {
         user = await this.usersRepository.create({
           email: profile.email,
-          name: profile.name,
           googleId: profile.googleId,
           provider: 'GOOGLE',
+        });
+        await this.createProfileUseCase.execute({
+          userId: user.id,
+          name: profile.name,
         });
       }
     }
