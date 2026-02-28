@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GetUserUseCase } from './use-cases/get-user.use-case.js';
-import { CurrentUser } from '@/common/decorators/current-user.decorator.js';
-import type { JwtPayload } from '../auth/strategies/jwt.strategy.js';
+import { GetUserUseCase } from './use-cases/get-user.use-case';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import type { JwtPayload } from '../auth/strategies/jwt.strategy';
 
 @ApiTags('Users')
 @ApiBearerAuth()

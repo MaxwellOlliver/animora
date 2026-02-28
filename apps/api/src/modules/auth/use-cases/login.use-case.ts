@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
-import { RefreshTokenRepository } from '../refresh-token.repository.js';
-import { User } from '../../users/user.entity.js';
-import { JwtPayload } from '../strategies/jwt.strategy.js';
+import { RefreshTokenRepository } from '../refresh-token.repository';
+import { User } from '../../users/user.entity';
+import { JwtPayload } from '../strategies/jwt.strategy';
 
 @Injectable()
 export class LoginUseCase {

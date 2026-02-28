@@ -1,6 +1,6 @@
 import { pgTable, uuid, varchar, timestamp } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
-import { users } from '../users/user.entity.js';
+import { users } from '../users/user.entity';
 
 export const refreshTokens = pgTable('refresh_tokens', {
   id: uuid('id')

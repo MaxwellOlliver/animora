@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { DRIZZLE } from '@/infra/database/database.module.js';
-import type { DrizzleDB } from '@/infra/database/database.module.js';
-import { profiles, Profile, NewProfile } from './profile.entity.js';
+import { DRIZZLE } from '@/infra/database/database.module';
+import type { DrizzleDB } from '@/infra/database/database.module';
+import { profiles, Profile, NewProfile } from './profile.entity';
 import { count } from 'drizzle-orm';
 
 @Injectable()

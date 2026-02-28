@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { UsersRepository } from '../users.repository.js';
-import { CreateUserDto } from '../dto/create-user.dto.js';
-import { User } from '../user.entity.js';
+import { UsersRepository } from '../users.repository';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { User } from '../user.entity';
 
 @Injectable()
 export class CreateUserUseCase {

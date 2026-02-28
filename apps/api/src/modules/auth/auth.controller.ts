@@ -9,23 +9,23 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { Public } from '@/common/decorators/public.decorator.js';
-import { CurrentUser } from '@/common/decorators/current-user.decorator.js';
-import { LocalAuthGuard } from './guards/local-auth.guard.js';
-import { GoogleAuthGuard } from './guards/google-auth.guard.js';
-import { JwtRefreshGuard } from './guards/jwt-refresh.guard.js';
-import { LoginUseCase } from './use-cases/login.use-case.js';
-import { GoogleAuthUseCase } from './use-cases/google-auth.use-case.js';
-import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case.js';
-import { LogoutUseCase } from './use-cases/logout.use-case.js';
-import { CreateUserUseCase } from '../users/use-cases/create-user.use-case.js';
-import { CreateProfileUseCase } from '../profiles/use-cases/create-profile.use-case.js';
-import { RegisterDto } from './dto/register.dto.js';
-import { LoginDto } from './dto/login.dto.js';
-import type { JwtPayload } from './strategies/jwt.strategy.js';
-import type { JwtRefreshPayload } from './strategies/jwt-refresh.strategy.js';
-import type { GoogleProfile } from './strategies/google.strategy.js';
-import type { User } from '../users/user.entity.js';
+import { Public } from '@/common/decorators/public.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { LoginUseCase } from './use-cases/login.use-case';
+import { GoogleAuthUseCase } from './use-cases/google-auth.use-case';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
+import { LogoutUseCase } from './use-cases/logout.use-case';
+import { CreateUserUseCase } from '../users/use-cases/create-user.use-case';
+import { CreateProfileUseCase } from '../profiles/use-cases/create-profile.use-case';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import type { JwtPayload } from './strategies/jwt.strategy';
+import type { JwtRefreshPayload } from './strategies/jwt-refresh.strategy';
+import type { GoogleProfile } from './strategies/google.strategy';
+import type { User } from '../users/user.entity';
 
 @ApiTags('Auth')
 @Controller('auth')

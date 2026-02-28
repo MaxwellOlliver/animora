@@ -3,9 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ProfilesRepository } from '../profiles.repository.js';
-import { AvatarsRepository } from '../../admin/avatars/avatars.repository.js';
-import type { Profile } from '../profile.entity.js';
+import { ProfilesRepository } from '../profiles.repository';
+import { AvatarsRepository } from '../../admin/avatars/avatars.repository';
+import type { Profile } from '../profile.entity';
 
 @Injectable()
 export class CreateProfileUseCase {

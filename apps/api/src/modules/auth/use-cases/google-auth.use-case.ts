@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../../users/users.repository.js';
-import { CreateProfileUseCase } from '../../profiles/use-cases/create-profile.use-case.js';
-import { LoginUseCase } from './login.use-case.js';
-import type { GoogleProfile } from '../strategies/google.strategy.js';
+import { UsersRepository } from '../../users/users.repository';
+import { CreateProfileUseCase } from '../../profiles/use-cases/create-profile.use-case';
+import { LoginUseCase } from './login.use-case';
+import type { GoogleProfile } from '../strategies/google.strategy';
 
 @Injectable()
 export class GoogleAuthUseCase {

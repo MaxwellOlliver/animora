@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ProfilesRepository } from '../profiles.repository.js';
+import { ProfilesRepository } from '../profiles.repository';
 
 @Injectable()
 export class DeleteProfileUseCase {

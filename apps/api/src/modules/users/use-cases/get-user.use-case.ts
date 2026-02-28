@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UsersRepository } from '../users.repository.js';
-import { User } from '../user.entity.js';
+import { UsersRepository } from '../users.repository';
+import { User } from '../user.entity';
 
 @Injectable()
 export class GetUserUseCase {

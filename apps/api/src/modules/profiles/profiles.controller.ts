@@ -11,15 +11,15 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '@/common/decorators/current-user.decorator.js';
-import type { JwtPayload } from '../auth/strategies/jwt.strategy.js';
-import { CreateProfileDto } from './dto/create-profile.dto.js';
-import { UpdateProfileDto } from './dto/update-profile.dto.js';
-import { CreateProfileUseCase } from './use-cases/create-profile.use-case.js';
-import { GetProfilesUseCase } from './use-cases/get-profiles.use-case.js';
-import { GetProfileUseCase } from './use-cases/get-profile.use-case.js';
-import { UpdateProfileUseCase } from './use-cases/update-profile.use-case.js';
-import { DeleteProfileUseCase } from './use-cases/delete-profile.use-case.js';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import type { JwtPayload } from '../auth/strategies/jwt.strategy';
+import { CreateProfileDto } from './dto/create-profile.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { CreateProfileUseCase } from './use-cases/create-profile.use-case';
+import { GetProfilesUseCase } from './use-cases/get-profiles.use-case';
+import { GetProfileUseCase } from './use-cases/get-profile.use-case';
+import { UpdateProfileUseCase } from './use-cases/update-profile.use-case';
+import { DeleteProfileUseCase } from './use-cases/delete-profile.use-case';
 
 @ApiTags('Profiles')
 @ApiBearerAuth()

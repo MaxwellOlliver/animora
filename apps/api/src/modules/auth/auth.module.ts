@@ -2,18 +2,18 @@ import { Module } from '@nestjs/common';
 import { JwtModule, JwtSignOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from '../users/users.module.js';
-import { ProfilesModule } from '../profiles/profiles.module.js';
-import { AuthController } from './auth.controller.js';
-import { JwtStrategy } from './strategies/jwt.strategy.js';
-import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy.js';
-import { LocalStrategy } from './strategies/local.strategy.js';
-import { GoogleStrategy } from './strategies/google.strategy.js';
-import { LoginUseCase } from './use-cases/login.use-case.js';
-import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case.js';
-import { GoogleAuthUseCase } from './use-cases/google-auth.use-case.js';
-import { LogoutUseCase } from './use-cases/logout.use-case.js';
-import { RefreshTokenRepository } from './refresh-token.repository.js';
+import { UsersModule } from '../users/users.module';
+import { ProfilesModule } from '../profiles/profiles.module';
+import { AuthController } from './auth.controller';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { LoginUseCase } from './use-cases/login.use-case';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
+import { GoogleAuthUseCase } from './use-cases/google-auth.use-case';
+import { LogoutUseCase } from './use-cases/logout.use-case';
+import { RefreshTokenRepository } from './refresh-token.repository';
 
 @Module({
   imports: [

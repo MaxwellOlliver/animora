@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { UsersController } from './users.controller.js';
-import { UsersRepository } from './users.repository.js';
-import { CreateUserUseCase } from './use-cases/create-user.use-case.js';
-import { GetUserUseCase } from './use-cases/get-user.use-case.js';
+import { UsersController } from './users.controller';
+import { UsersRepository } from './users.repository';
+import { CreateUserUseCase } from './use-cases/create-user.use-case';
+import { GetUserUseCase } from './use-cases/get-user.use-case';
 
 @Module({
   controllers: [UsersController],
