@@ -19,7 +19,6 @@ export class CreateUserUseCase {
     return this.usersRepository.create({
       email: dto.email,
       password: hashedPassword,
-      name: dto.name,
     });
   }
 }
