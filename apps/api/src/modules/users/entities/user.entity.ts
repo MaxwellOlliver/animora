@@ -1,4 +1,5 @@
 import { pgTable, uuid, varchar, timestamp, pgEnum } from 'drizzle-orm/pg-core';
+import { avatars } from '../../admin/avatars/entities/avatar.entity';
 
 export const roleEnum = pgEnum('role', ['USER', 'ADMIN']);
 export const authProviderEnum = pgEnum('auth_provider', ['LOCAL', 'GOOGLE']);
@@ -8,7 +9,7 @@ export const users = pgTable('users', {
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }),
   name: varchar('name', { length: 255 }).notNull(),
-  avatarUrl: varchar('avatar_url', { length: 500 }),
+  avatarId: uuid('avatar_id').references(() => avatars.id),
   role: roleEnum('role').notNull().default('USER'),
   provider: authProviderEnum('provider').notNull().default('LOCAL'),
   googleId: varchar('google_id', { length: 255 }).unique(),

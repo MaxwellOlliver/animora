@@ -18,13 +18,11 @@ export class GoogleAuthUseCase {
       if (user) {
         user = await this.usersRepository.update(user.id, {
           googleId: profile.googleId,
-          avatarUrl: profile.avatarUrl ?? user.avatarUrl,
         });
       } else {
         user = await this.usersRepository.create({
           email: profile.email,
           name: profile.name,
-          avatarUrl: profile.avatarUrl,
           googleId: profile.googleId,
           provider: 'GOOGLE',
         });

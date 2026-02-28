@@ -4,8 +4,9 @@ import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as userSchema from '@/modules/users/entities/user.entity.js';
 import * as authSchema from '@/modules/auth/entities/refresh-token.entity.js';
+import * as avatarSchema from '@/modules/admin/avatars/entities/avatar.entity.js';
 
-const schema = { ...userSchema, ...authSchema };
+const schema = { ...userSchema, ...authSchema, ...avatarSchema };
 
 export const DRIZZLE = Symbol('DRIZZLE');
 
