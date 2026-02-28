@@ -6,6 +6,7 @@ import {
 } from '@nestjs/platform-fastify';
 import fastifyMultipart from '@fastify/multipart';
 import { AppModule } from '@/app.module';
+import { S3Service } from '@/infra/s3/s3.service';
 
 export async function createTestApp(
   databaseUrl: string,
@@ -28,7 +29,23 @@ export async function createTestApp(
 
   const moduleFixture = await Test.createTestingModule({
     imports: [AppModule],
-  }).compile();
+  })
+    .overrideProvider(S3Service)
+    .useValue({
+      upload: (
+        folder: string,
+        _buffer: Buffer,
+        _mimeType: string,
+        ext: string,
+      ) => Promise.resolve(`${folder}/test-upload.${ext}`),
+      delete: (key: string) => {
+        void key;
+        return Promise.resolve();
+      },
+      getPublicUrl: (key: string) =>
+        `http://localhost:9000/animora-test/${key}`,
+    })
+    .compile();
 
   const app = moduleFixture.createNestApplication<NestFastifyApplication>(
     new FastifyAdapter(),
