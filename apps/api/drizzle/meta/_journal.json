@@ -5,8 +5,57 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1772306709843,
-      "tag": "0000_initial",
+      "when": 1772311529094,
+      "tag": "0000_users",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772311533789,
+      "tag": "0001_avatars",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772311538622,
+      "tag": "0002_profiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1772311543268,
+      "tag": "0003_refresh_tokens",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1772311548010,
+      "tag": "0004_genres",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1772311552953,
+      "tag": "0005_content_classifications",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1772311558363,
+      "tag": "0006_animes",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1772311563082,
+      "tag": "0007_anime_genres",
       "breakpoints": true
     }
   ]
