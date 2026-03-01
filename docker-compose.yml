@@ -23,6 +23,18 @@ services:
       - minio_data:/data
     command: server /data --console-address ":9001"
 
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 volumes:
   pgdata:
   minio_data:
+  rabbitmq_data:
