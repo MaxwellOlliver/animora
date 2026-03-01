@@ -25,14 +25,13 @@ export class SeriesRepository {
         ),
       );
 
-    const genresBySeriesId = genreRows.reduce<Record<string, typeof genres.$inferSelect[]>>(
-      (acc, row) => {
-        if (!acc[row.seriesId]) acc[row.seriesId] = [];
-        acc[row.seriesId].push(row.genre);
-        return acc;
-      },
-      {},
-    );
+    const genresBySeriesId = genreRows.reduce<
+      Record<string, (typeof genres.$inferSelect)[]>
+    >((acc, row) => {
+      if (!acc[row.seriesId]) acc[row.seriesId] = [];
+      acc[row.seriesId].push(row.genre);
+      return acc;
+    }, {});
 
     return all.map((s) => ({
       ...s,
@@ -59,7 +58,9 @@ export class SeriesRepository {
   }
 
   async setGenres(seriesId: string, genreIds: string[]): Promise<void> {
-    await this.db.delete(seriesGenres).where(eq(seriesGenres.seriesId, seriesId));
+    await this.db
+      .delete(seriesGenres)
+      .where(eq(seriesGenres.seriesId, seriesId));
     if (genreIds.length > 0) {
       await this.db
         .insert(seriesGenres)

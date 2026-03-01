@@ -22,5 +22,6 @@ import { UploadSeriesBannerUseCase } from './use-cases/upload-series-banner.use-
     DeleteSeriesUseCase,
     UploadSeriesBannerUseCase,
   ],
+  exports: [SeriesRepository],
 })
 export class SeriesModule {}

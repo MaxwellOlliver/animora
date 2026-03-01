@@ -11,6 +11,7 @@ import * as genreSchema from '@/modules/admin/genres/genre.entity';
 import * as classificationSchema from '@/modules/admin/content-classifications/content-classification.entity';
 import * as seriesSchema from '@/modules/admin/series/series.entity';
 import * as seriesGenreSchema from '@/modules/admin/series/series-genre.entity';
+import * as playlistSchema from '@/modules/admin/playlists/playlist.entity';
 
 const schema = {
   ...userSchema,
@@ -21,6 +22,7 @@ const schema = {
   ...classificationSchema,
   ...seriesSchema,
   ...seriesGenreSchema,
+  ...playlistSchema,
 };
 
 export const DRIZZLE = Symbol('DRIZZLE');

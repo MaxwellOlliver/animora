@@ -64,6 +64,13 @@
       "when": 1772311570000,
       "tag": "0008_rename_animes_to_series",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1772311580000,
+      "tag": "0009_playlists",
+      "breakpoints": true
     }
   ]
 }
