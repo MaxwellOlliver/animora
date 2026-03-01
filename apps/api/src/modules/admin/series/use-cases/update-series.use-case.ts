@@ -1,21 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { AnimesRepository } from '../animes.repository';
+import { SeriesRepository } from '../series.repository';
 import { GenresRepository } from '../../genres/genres.repository';
 import { ContentClassificationsRepository } from '../../content-classifications/content-classifications.repository';
-import type { UpdateAnimeDto } from '../dto/update-anime.dto';
-import type { AnimeWithDetails } from '../anime.entity';
+import type { UpdateSeriesDto } from '../dto/update-series.dto';
+import type { SeriesWithDetails } from '../series.entity';
 
 @Injectable()
-export class UpdateAnimeUseCase {
+export class UpdateSeriesUseCase {
   constructor(
-    private readonly animesRepository: AnimesRepository,
+    private readonly seriesRepository: SeriesRepository,
     private readonly genresRepository: GenresRepository,
     private readonly classificationsRepository: ContentClassificationsRepository,
   ) {}
 
-  async execute(id: string, dto: UpdateAnimeDto): Promise<AnimeWithDetails> {
-    const anime = await this.animesRepository.findById(id);
-    if (!anime) throw new NotFoundException('Anime not found');
+  async execute(id: string, dto: UpdateSeriesDto): Promise<SeriesWithDetails> {
+    const s = await this.seriesRepository.findById(id);
+    if (!s) throw new NotFoundException('Series not found');
 
     if (dto.contentClassificationId) {
       const classification = await this.classificationsRepository.findById(
@@ -29,14 +29,14 @@ export class UpdateAnimeUseCase {
         const genre = await this.genresRepository.findById(genreId);
         if (!genre) throw new NotFoundException(`Genre ${genreId} not found`);
       }
-      await this.animesRepository.setGenres(id, dto.genreIds);
+      await this.seriesRepository.setGenres(id, dto.genreIds);
     }
 
     const { genreIds: _, ...fields } = dto;
     if (Object.keys(fields).length > 0) {
-      await this.animesRepository.update(id, fields);
+      await this.seriesRepository.update(id, fields);
     }
 
-    return this.animesRepository.findById(id) as Promise<AnimeWithDetails>;
+    return this.seriesRepository.findById(id) as Promise<SeriesWithDetails>;
   }
 }

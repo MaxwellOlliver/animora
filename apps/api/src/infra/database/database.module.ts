@@ -9,8 +9,8 @@ import * as avatarSchema from '@/modules/admin/avatars/avatar.entity';
 import * as profileSchema from '@/modules/profiles/profile.entity';
 import * as genreSchema from '@/modules/admin/genres/genre.entity';
 import * as classificationSchema from '@/modules/admin/content-classifications/content-classification.entity';
-import * as animeSchema from '@/modules/admin/animes/anime.entity';
-import * as animeGenreSchema from '@/modules/admin/animes/anime-genre.entity';
+import * as seriesSchema from '@/modules/admin/series/series.entity';
+import * as seriesGenreSchema from '@/modules/admin/series/series-genre.entity';
 
 const schema = {
   ...userSchema,
@@ -19,8 +19,8 @@ const schema = {
   ...profileSchema,
   ...genreSchema,
   ...classificationSchema,
-  ...animeSchema,
-  ...animeGenreSchema,
+  ...seriesSchema,
+  ...seriesGenreSchema,
 };
 
 export const DRIZZLE = Symbol('DRIZZLE');

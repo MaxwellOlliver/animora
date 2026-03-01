@@ -1,19 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { AnimesRepository } from '../animes.repository';
+import { SeriesRepository } from '../series.repository';
 import { GenresRepository } from '../../genres/genres.repository';
 import { ContentClassificationsRepository } from '../../content-classifications/content-classifications.repository';
-import type { CreateAnimeDto } from '../dto/create-anime.dto';
-import type { AnimeWithDetails } from '../anime.entity';
+import type { CreateSeriesDto } from '../dto/create-series.dto';
+import type { SeriesWithDetails } from '../series.entity';
 
 @Injectable()
-export class CreateAnimeUseCase {
+export class CreateSeriesUseCase {
   constructor(
-    private readonly animesRepository: AnimesRepository,
+    private readonly seriesRepository: SeriesRepository,
     private readonly genresRepository: GenresRepository,
     private readonly classificationsRepository: ContentClassificationsRepository,
   ) {}
 
-  async execute(dto: CreateAnimeDto): Promise<AnimeWithDetails> {
+  async execute(dto: CreateSeriesDto): Promise<SeriesWithDetails> {
     const classification = await this.classificationsRepository.findById(
       dto.contentClassificationId,
     );
@@ -26,15 +26,15 @@ export class CreateAnimeUseCase {
       if (!genre) throw new NotFoundException(`Genre ${genreId} not found`);
     }
 
-    const anime = await this.animesRepository.create({
+    const s = await this.seriesRepository.create({
       name: dto.name,
       synopsis: dto.synopsis,
       contentClassificationId: dto.contentClassificationId,
       active: dto.active ?? true,
     });
 
-    await this.animesRepository.setGenres(anime.id, dto.genreIds);
+    await this.seriesRepository.setGenres(s.id, dto.genreIds);
 
-    return this.animesRepository.findById(anime.id) as Promise<AnimeWithDetails>;
+    return this.seriesRepository.findById(s.id) as Promise<SeriesWithDetails>;
   }
 }

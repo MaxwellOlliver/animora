@@ -10,7 +10,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class UpdateAnimeDto {
+export class UpdateSeriesDto {
   @ApiPropertyOptional({ example: 'Attack on Titan' })
   @IsOptional()
   @IsString()

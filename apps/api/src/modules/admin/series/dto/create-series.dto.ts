@@ -10,7 +10,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class CreateAnimeDto {
+export class CreateSeriesDto {
   @ApiProperty({ example: 'Attack on Titan' })
   @IsString()
   @IsNotEmpty()

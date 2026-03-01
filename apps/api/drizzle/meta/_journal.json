@@ -57,6 +57,13 @@
       "when": 1772311563082,
       "tag": "0007_anime_genres",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1772311570000,
+      "tag": "0008_rename_animes_to_series",
+      "breakpoints": true
     }
   ]
 }

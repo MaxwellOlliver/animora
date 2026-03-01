@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { MultipartFile } from '@fastify/multipart';
-import { AnimesRepository } from '../animes.repository';
+import { SeriesRepository } from '../series.repository';
 import { S3Service } from '@/infra/s3/s3.service';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -15,15 +15,15 @@ const MIME_TO_EXT: Record<string, string> = {
 };
 
 @Injectable()
-export class UploadAnimeBannerUseCase {
+export class UploadSeriesBannerUseCase {
   constructor(
-    private readonly animesRepository: AnimesRepository,
+    private readonly seriesRepository: SeriesRepository,
     private readonly s3Service: S3Service,
   ) {}
 
-  async execute(animeId: string, file: MultipartFile): Promise<void> {
-    const anime = await this.animesRepository.findById(animeId);
-    if (!anime) throw new NotFoundException('Anime not found');
+  async execute(seriesId: string, file: MultipartFile): Promise<void> {
+    const s = await this.seriesRepository.findById(seriesId);
+    if (!s) throw new NotFoundException('Series not found');
 
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       throw new BadRequestException(
@@ -40,10 +40,10 @@ export class UploadAnimeBannerUseCase {
       ext,
     );
 
-    if (anime.bannerKey) {
-      await this.s3Service.delete(anime.bannerKey);
+    if (s.bannerKey) {
+      await this.s3Service.delete(s.bannerKey);
     }
 
-    await this.animesRepository.update(animeId, { bannerKey: newKey });
+    await this.seriesRepository.update(seriesId, { bannerKey: newKey });
   }
 }

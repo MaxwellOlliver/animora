@@ -9,7 +9,7 @@ import {
   seedDefaultAvatar,
   truncateTables,
 } from './setup/helpers';
-import type { AnimeWithDetails } from '@/modules/admin/animes/anime.entity';
+import type { SeriesWithDetails } from '@/modules/admin/series/series.entity';
 import type { ContentClassification } from '@/modules/admin/content-classifications/content-classification.entity';
 import type { Genre } from '@/modules/admin/genres/genre.entity';
 
@@ -39,7 +39,7 @@ async function seedContentClassification(
   return res.body as ContentClassification;
 }
 
-describe('Admin Animes (e2e)', () => {
+describe('Admin Series (e2e)', () => {
   let app: NestFastifyApplication;
   let container: StartedPostgreSqlContainer;
 
@@ -61,10 +61,10 @@ describe('Admin Animes (e2e)', () => {
     await stopTestDatabase(container);
   });
 
-  describe('GET /api/admin/animes', () => {
-    it('should list animes as admin', async () => {
+  describe('GET /api/admin/series', () => {
+    it('should list series as admin', async () => {
       const admin = await registerAdmin(app, {
-        email: 'admin-list-anime@example.com',
+        email: 'admin-list-series@example.com',
       });
       const genre = await seedGenre(app, admin.accessToken, 'Action');
       const classification = await seedContentClassification(
@@ -74,7 +74,7 @@ describe('Admin Animes (e2e)', () => {
       );
 
       await request(app.getHttpServer())
-        .post('/api/admin/animes')
+        .post('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .send({
           name: 'Attack on Titan',
@@ -85,10 +85,10 @@ describe('Admin Animes (e2e)', () => {
         .expect(201);
 
       const res = await request(app.getHttpServer())
-        .get('/api/admin/animes')
+        .get('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .expect(200);
-      const body = res.body as AnimeWithDetails[];
+      const body = res.body as SeriesWithDetails[];
 
       expect(body).toHaveLength(1);
       expect(body[0]).toHaveProperty('name', 'Attack on Titan');
@@ -96,19 +96,19 @@ describe('Admin Animes (e2e)', () => {
     });
 
     it('should reject non-admin user (403)', async () => {
-      const user = await registerUser(app, { email: 'user-anime@example.com' });
+      const user = await registerUser(app, { email: 'user-series@example.com' });
 
       await request(app.getHttpServer())
-        .get('/api/admin/animes')
+        .get('/api/admin/series')
         .set('Authorization', `Bearer ${user.accessToken}`)
         .expect(403);
     });
   });
 
-  describe('POST /api/admin/animes', () => {
-    it('should create anime', async () => {
+  describe('POST /api/admin/series', () => {
+    it('should create series', async () => {
       const admin = await registerAdmin(app, {
-        email: 'admin-create-anime@example.com',
+        email: 'admin-create-series@example.com',
       });
       const genre = await seedGenre(app, admin.accessToken, 'Drama');
       const classification = await seedContentClassification(
@@ -118,7 +118,7 @@ describe('Admin Animes (e2e)', () => {
       );
 
       const res = await request(app.getHttpServer())
-        .post('/api/admin/animes')
+        .post('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .send({
           name: 'Vinland Saga',
@@ -127,7 +127,7 @@ describe('Admin Animes (e2e)', () => {
           genreIds: [genre.id],
         })
         .expect(201);
-      const body = res.body as AnimeWithDetails;
+      const body = res.body as SeriesWithDetails;
 
       expect(body).toHaveProperty('id');
       expect(body).toHaveProperty('name', 'Vinland Saga');
@@ -142,10 +142,10 @@ describe('Admin Animes (e2e)', () => {
       const genre = await seedGenre(app, admin.accessToken, 'Fantasy');
 
       await request(app.getHttpServer())
-        .post('/api/admin/animes')
+        .post('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .send({
-          name: 'Invalid Anime',
+          name: 'Invalid Series',
           synopsis: 'This should fail.',
           contentClassificationId: '00000000-0000-0000-0000-000000000000',
           genreIds: [genre.id],
@@ -154,10 +154,10 @@ describe('Admin Animes (e2e)', () => {
     });
   });
 
-  describe('GET /api/admin/animes/:id', () => {
-    it('should get anime by id', async () => {
+  describe('GET /api/admin/series/:id', () => {
+    it('should get series by id', async () => {
       const admin = await registerAdmin(app, {
-        email: 'admin-get-anime@example.com',
+        email: 'admin-get-series@example.com',
       });
       const genre = await seedGenre(app, admin.accessToken, 'Sci-Fi');
       const classification = await seedContentClassification(
@@ -167,7 +167,7 @@ describe('Admin Animes (e2e)', () => {
       );
 
       const createRes = await request(app.getHttpServer())
-        .post('/api/admin/animes')
+        .post('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .send({
           name: 'Steins;Gate',
@@ -176,13 +176,13 @@ describe('Admin Animes (e2e)', () => {
           genreIds: [genre.id],
         })
         .expect(201);
-      const created = createRes.body as AnimeWithDetails;
+      const created = createRes.body as SeriesWithDetails;
 
       const res = await request(app.getHttpServer())
-        .get(`/api/admin/animes/${created.id}`)
+        .get(`/api/admin/series/${created.id}`)
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .expect(200);
-      const body = res.body as AnimeWithDetails;
+      const body = res.body as SeriesWithDetails;
 
       expect(body).toHaveProperty('id', created.id);
       expect(body).toHaveProperty('name', 'Steins;Gate');
@@ -190,10 +190,10 @@ describe('Admin Animes (e2e)', () => {
     });
   });
 
-  describe('PATCH /api/admin/animes/:id', () => {
-    it('should update anime details and genres', async () => {
+  describe('PATCH /api/admin/series/:id', () => {
+    it('should update series details and genres', async () => {
       const admin = await registerAdmin(app, {
-        email: 'admin-update-anime@example.com',
+        email: 'admin-update-series@example.com',
       });
       const oldGenre = await seedGenre(app, admin.accessToken, 'Action');
       const newGenre = await seedGenre(app, admin.accessToken, 'Adventure');
@@ -204,7 +204,7 @@ describe('Admin Animes (e2e)', () => {
       );
 
       const createRes = await request(app.getHttpServer())
-        .post('/api/admin/animes')
+        .post('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .send({
           name: 'One Piece',
@@ -213,10 +213,10 @@ describe('Admin Animes (e2e)', () => {
           genreIds: [oldGenre.id],
         })
         .expect(201);
-      const created = createRes.body as AnimeWithDetails;
+      const created = createRes.body as SeriesWithDetails;
 
       const res = await request(app.getHttpServer())
-        .patch(`/api/admin/animes/${created.id}`)
+        .patch(`/api/admin/series/${created.id}`)
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .send({
           name: 'One Piece Remastered',
@@ -225,7 +225,7 @@ describe('Admin Animes (e2e)', () => {
           genreIds: [newGenre.id],
         })
         .expect(200);
-      const body = res.body as AnimeWithDetails;
+      const body = res.body as SeriesWithDetails;
 
       expect(body).toHaveProperty('name', 'One Piece Remastered');
       expect(body).toHaveProperty('active', false);
@@ -234,10 +234,10 @@ describe('Admin Animes (e2e)', () => {
     });
   });
 
-  describe('POST /api/admin/animes/:id/banner', () => {
+  describe('POST /api/admin/series/:id/banner', () => {
     it('should upload banner and update bannerKey', async () => {
       const admin = await registerAdmin(app, {
-        email: 'admin-upload-anime@example.com',
+        email: 'admin-upload-series@example.com',
       });
       const genre = await seedGenre(app, admin.accessToken, 'Sports');
       const classification = await seedContentClassification(
@@ -247,19 +247,19 @@ describe('Admin Animes (e2e)', () => {
       );
 
       const createRes = await request(app.getHttpServer())
-        .post('/api/admin/animes')
+        .post('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .send({
           name: 'Haikyuu!!',
-          synopsis: 'Volleyball anime.',
+          synopsis: 'Volleyball series.',
           contentClassificationId: classification.id,
           genreIds: [genre.id],
         })
         .expect(201);
-      const created = createRes.body as AnimeWithDetails;
+      const created = createRes.body as SeriesWithDetails;
 
       await request(app.getHttpServer())
-        .post(`/api/admin/animes/${created.id}/banner`)
+        .post(`/api/admin/series/${created.id}/banner`)
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .attach('file', Buffer.from('fake-banner-bytes'), {
           filename: 'banner.png',
@@ -268,17 +268,17 @@ describe('Admin Animes (e2e)', () => {
         .expect(200);
 
       const getRes = await request(app.getHttpServer())
-        .get(`/api/admin/animes/${created.id}`)
+        .get(`/api/admin/series/${created.id}`)
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .expect(200);
-      const body = getRes.body as AnimeWithDetails;
+      const body = getRes.body as SeriesWithDetails;
 
       expect(body).toHaveProperty('bannerKey', 'banners/test-upload.png');
     });
 
     it('should reject unsupported mime type (400)', async () => {
       const admin = await registerAdmin(app, {
-        email: 'admin-invalid-upload-anime@example.com',
+        email: 'admin-invalid-upload-series@example.com',
       });
       const genre = await seedGenre(app, admin.accessToken, 'Thriller');
       const classification = await seedContentClassification(
@@ -288,7 +288,7 @@ describe('Admin Animes (e2e)', () => {
       );
 
       const createRes = await request(app.getHttpServer())
-        .post('/api/admin/animes')
+        .post('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .send({
           name: 'Invalid Upload',
@@ -297,10 +297,10 @@ describe('Admin Animes (e2e)', () => {
           genreIds: [genre.id],
         })
         .expect(201);
-      const created = createRes.body as AnimeWithDetails;
+      const created = createRes.body as SeriesWithDetails;
 
       await request(app.getHttpServer())
-        .post(`/api/admin/animes/${created.id}/banner`)
+        .post(`/api/admin/series/${created.id}/banner`)
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .attach('file', Buffer.from('not-an-image'), {
           filename: 'banner.txt',
@@ -310,10 +310,10 @@ describe('Admin Animes (e2e)', () => {
     });
   });
 
-  describe('DELETE /api/admin/animes/:id', () => {
-    it('should delete anime', async () => {
+  describe('DELETE /api/admin/series/:id', () => {
+    it('should delete series', async () => {
       const admin = await registerAdmin(app, {
-        email: 'admin-delete-anime@example.com',
+        email: 'admin-delete-series@example.com',
       });
       const genre = await seedGenre(app, admin.accessToken, 'Romance');
       const classification = await seedContentClassification(
@@ -323,24 +323,24 @@ describe('Admin Animes (e2e)', () => {
       );
 
       const createRes = await request(app.getHttpServer())
-        .post('/api/admin/animes')
+        .post('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .send({
-          name: 'Delete Anime',
-          synopsis: 'Anime to delete.',
+          name: 'Delete Series',
+          synopsis: 'Series to delete.',
           contentClassificationId: classification.id,
           genreIds: [genre.id],
         })
         .expect(201);
-      const created = createRes.body as AnimeWithDetails;
+      const created = createRes.body as SeriesWithDetails;
 
       await request(app.getHttpServer())
-        .delete(`/api/admin/animes/${created.id}`)
+        .delete(`/api/admin/series/${created.id}`)
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .expect(204);
 
       await request(app.getHttpServer())
-        .get(`/api/admin/animes/${created.id}`)
+        .get(`/api/admin/series/${created.id}`)
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .expect(404);
     });

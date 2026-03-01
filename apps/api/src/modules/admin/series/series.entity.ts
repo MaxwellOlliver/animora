@@ -10,7 +10,7 @@ import { sql } from 'drizzle-orm';
 import { contentClassifications } from '../content-classifications/content-classification.entity';
 import type { Genre } from '../genres/genre.entity';
 
-export const animes = pgTable('animes', {
+export const series = pgTable('series', {
   id: uuid('id')
     .default(sql`uuid_generate_v7()`)
     .primaryKey(),
@@ -25,6 +25,6 @@ export const animes = pgTable('animes', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export type Anime = typeof animes.$inferSelect;
-export type NewAnime = typeof animes.$inferInsert;
-export type AnimeWithDetails = Anime & { genres: Genre[] };
+export type Series = typeof series.$inferSelect;
+export type NewSeries = typeof series.$inferInsert;
+export type SeriesWithDetails = Series & { genres: Genre[] };
