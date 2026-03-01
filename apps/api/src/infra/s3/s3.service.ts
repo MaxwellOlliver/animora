@@ -3,8 +3,14 @@ import {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
+  DeleteObjectsCommand,
+  CreateMultipartUploadCommand,
+  UploadPartCopyCommand,
+  CompleteMultipartUploadCommand,
+  AbortMultipartUploadCommand,
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
+import type { Readable } from 'stream';
 import { randomUUID } from 'crypto';
 import { S3_CLIENT } from './s3.tokens';
 
@@ -37,6 +43,75 @@ export class S3Service {
       }),
     );
     return key;
+  }
+
+  async putStream(key: string, stream: Readable): Promise<void> {
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        Body: stream,
+      }),
+    );
+  }
+
+  /**
+   * Composes multiple existing objects into one via S3 multipart upload copy.
+   * Source objects must each be ≥ 5 MB (except the last one).
+   */
+  async composeObjects(sourceKeys: string[], targetKey: string): Promise<void> {
+    const { UploadId } = await this.client.send(
+      new CreateMultipartUploadCommand({ Bucket: this.bucket, Key: targetKey }),
+    );
+
+    try {
+      const parts = await Promise.all(
+        sourceKeys.map((sourceKey, i) =>
+          this.client
+            .send(
+              new UploadPartCopyCommand({
+                Bucket: this.bucket,
+                Key: targetKey,
+                UploadId: UploadId!,
+                PartNumber: i + 1,
+                CopySource: `${this.bucket}/${sourceKey}`,
+              }),
+            )
+            .then((res) => ({
+              PartNumber: i + 1,
+              ETag: res.CopyPartResult!.ETag!,
+            })),
+        ),
+      );
+
+      await this.client.send(
+        new CompleteMultipartUploadCommand({
+          Bucket: this.bucket,
+          Key: targetKey,
+          UploadId: UploadId!,
+          MultipartUpload: { Parts: parts },
+        }),
+      );
+    } catch (err) {
+      await this.client.send(
+        new AbortMultipartUploadCommand({
+          Bucket: this.bucket,
+          Key: targetKey,
+          UploadId: UploadId!,
+        }),
+      );
+      throw err;
+    }
+  }
+
+  async deleteMany(keys: string[]): Promise<void> {
+    if (keys.length === 0) return;
+    await this.client.send(
+      new DeleteObjectsCommand({
+        Bucket: this.bucket,
+        Delete: { Objects: keys.map((Key) => ({ Key })) },
+      }),
+    );
   }
 
   async delete(key: string): Promise<void> {

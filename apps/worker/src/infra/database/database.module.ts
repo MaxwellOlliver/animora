@@ -1,6 +1,6 @@
 import { Global, Inject, Module, OnApplicationShutdown } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import postgres, { Sql } from 'postgres';
+import postgres, { type Sql } from 'postgres';
 
 export const SQL = Symbol('SQL');
 

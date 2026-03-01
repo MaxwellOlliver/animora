@@ -1,9 +1,4 @@
-import {
-  pgTable,
-  uuid,
-  integer,
-  timestamp,
-} from 'drizzle-orm/pg-core';
+import { pgTable, uuid, integer, timestamp } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { videos } from '../videos/video.entity';
 import { episodes } from '../episodes/episode.entity';

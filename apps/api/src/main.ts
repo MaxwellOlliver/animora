@@ -4,8 +4,11 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 import fastifyMultipart from '@fastify/multipart';
+import { QUEUES } from '@animora/contracts';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
@@ -14,6 +17,17 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+
+  const config = app.get(ConfigService);
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [config.getOrThrow<string>('RABBITMQ_URL')],
+      queue: QUEUES.VIDEO_PROCESSED,
+      queueOptions: { durable: true },
+      noAck: false,
+    },
+  });
 
   await app
     .getHttpAdapter()
@@ -40,6 +54,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
+  await app.startAllMicroservices();
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 void bootstrap();
