@@ -83,6 +83,41 @@ chunk: <binary blob>
 }
 ```
 
+Also, the client must save on localStorage the upload id alongside with the file fingerprint in order to resume a failed upload.
+
+Fingerprint suggestion:
+
+```ts
+async function fingerprintFile(file) {
+  const slices = [
+    file.slice(0, 64 * 1024), // first 64KB
+    file.slice(
+      Math.floor(file.size / 2),
+      Math.floor(file.size / 2) + 64 * 1024,
+    ), // middle 64KB
+    file.slice(-64 * 1024), // last 64KB
+  ];
+
+  const buffers = await Promise.all(slices.map((s) => s.arrayBuffer()));
+  const combined = new Uint8Array(
+    buffers.reduce((acc, b) => acc + b.byteLength, 0),
+  );
+
+  let offset = 0;
+  for (const buf of buffers) {
+    combined.set(new Uint8Array(buf), offset);
+    offset += buf.byteLength;
+  }
+
+  const hash = await crypto.subtle.digest("SHA-256", combined);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+```
+
+It generates a hash with the first 64 bytes, middle 64 bytes, and last 64 bytes of the file. This is a fast way to create a unique fingerprint without reading the entire file.
+
 The API streams each chunk directly to MinIO using a `PassThrough` stream, bypassing memory entirely:
 
 ```
