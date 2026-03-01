@@ -12,6 +12,10 @@ import * as classificationSchema from '@/modules/admin/content-classifications/c
 import * as seriesSchema from '@/modules/admin/series/series.entity';
 import * as seriesGenreSchema from '@/modules/admin/series/series-genre.entity';
 import * as playlistSchema from '@/modules/admin/playlists/playlist.entity';
+import * as episodeSchema from '@/modules/admin/episodes/episode.entity';
+import * as videoSchema from '@/modules/admin/videos/video.entity';
+import * as uploadSchema from '@/modules/admin/uploads/upload.entity';
+import * as uploadChunkSchema from '@/modules/admin/uploads/upload-chunk.entity';
 
 const schema = {
   ...userSchema,
@@ -23,6 +27,10 @@ const schema = {
   ...seriesSchema,
   ...seriesGenreSchema,
   ...playlistSchema,
+  ...episodeSchema,
+  ...videoSchema,
+  ...uploadSchema,
+  ...uploadChunkSchema,
 };
 
 export const DRIZZLE = Symbol('DRIZZLE');
