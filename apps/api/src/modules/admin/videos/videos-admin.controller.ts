@@ -4,7 +4,6 @@ import {
   HttpCode,
   HttpStatus,
   MessageEvent,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Sse,
@@ -13,8 +12,8 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { DeleteVideoUseCase } from './use-cases/delete-video.use-case';
+import { GetVideoUseCase } from './use-cases/get-video.use-case';
 import { VideoEventsService } from './video-events.service';
-import { VideosRepository } from './videos.repository';
 
 const TERMINAL = new Set(['ready', 'failed']);
 
@@ -25,7 +24,7 @@ const TERMINAL = new Set(['ready', 'failed']);
 export class VideosAdminController {
   constructor(
     private readonly deleteVideoUseCase: DeleteVideoUseCase,
-    private readonly videosRepository: VideosRepository,
+    private readonly getVideoUseCase: GetVideoUseCase,
     private readonly videoEventsService: VideoEventsService,
   ) {}
 
@@ -51,13 +50,9 @@ export class VideosAdminController {
         },
       });
 
-      this.videosRepository
-        .findById(videoId)
+      this.getVideoUseCase
+        .execute(videoId)
         .then((video) => {
-          if (!video) {
-            subscriber.error(new NotFoundException('Video not found'));
-            return;
-          }
           subscriber.next({ data: { status: video.status } });
           if (TERMINAL.has(video.status)) {
             subscriber.complete();
