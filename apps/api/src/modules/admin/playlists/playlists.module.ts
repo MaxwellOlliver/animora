@@ -21,5 +21,6 @@ import { UploadPlaylistCoverUseCase } from './use-cases/upload-playlist-cover.us
     DeletePlaylistUseCase,
     UploadPlaylistCoverUseCase,
   ],
+  exports: [PlaylistsRepository],
 })
 export class PlaylistsModule {}

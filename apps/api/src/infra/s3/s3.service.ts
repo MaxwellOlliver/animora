@@ -6,7 +6,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
-import { S3_CLIENT } from './s3.module';
+import { S3_CLIENT } from './s3.tokens';
 
 @Injectable()
 export class S3Service {

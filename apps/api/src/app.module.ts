@@ -10,6 +10,7 @@ import { GenresModule } from './modules/admin/genres/genres.module';
 import { ContentClassificationsModule } from './modules/admin/content-classifications/content-classifications.module';
 import { SeriesModule } from './modules/admin/series/series.module';
 import { PlaylistsModule } from './modules/admin/playlists/playlists.module';
+import { EpisodesModule } from './modules/admin/episodes/episodes.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 
@@ -25,6 +26,7 @@ import { RolesGuard } from './common/guards/roles.guard';
     ContentClassificationsModule,
     SeriesModule,
     PlaylistsModule,
+    EpisodesModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },
