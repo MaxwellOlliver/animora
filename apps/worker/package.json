@@ -11,7 +11,8 @@
     "start:dev": "tsx watch src/main.ts",
     "start:prod": "node dist/main.js",
     "lint": "eslint \"src/**/*.ts\" --fix",
-    "test:e2e": "bun test test/e2e.test.ts --timeout 20000"
+    "test:e2e": "bun test test/e2e.test.ts --timeout 20000",
+    "test:unit": "bun test test/handler.test.ts --timeout 20000"
   },
   "dependencies": {
     "@animora/contracts": "workspace:*",
