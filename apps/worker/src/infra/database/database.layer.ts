@@ -1,5 +1,6 @@
 import { Context, Effect, Layer } from 'effect';
 import postgres, { type Sql } from 'postgres';
+import { AppConfig } from '../config/config.layer';
 
 export class SqlClient extends Context.Tag('SqlClient')<SqlClient, Sql>() {}
 
@@ -7,7 +8,8 @@ export const DatabaseLive = Layer.scoped(
   SqlClient,
   Effect.acquireRelease(
     Effect.gen(function* () {
-      const sql = yield* Effect.sync(() => postgres(process.env.DATABASE_URL!));
+      const { databaseUrl } = yield* AppConfig;
+      const sql = yield* Effect.sync(() => postgres(databaseUrl));
       yield* Effect.log('Database connection acquired');
       return sql;
     }),

@@ -1,5 +1,6 @@
 import { Context, Effect, Layer } from 'effect';
 import * as amqplib from 'amqplib';
+import { AppConfig } from '../config/config.layer';
 
 export class AmqpConnection extends Context.Tag('AmqpConnection')<
   AmqpConnection,
@@ -15,9 +16,8 @@ const ConnectionLive = Layer.scoped(
   AmqpConnection,
   Effect.acquireRelease(
     Effect.gen(function* () {
-      const conn = yield* Effect.tryPromise(() =>
-        amqplib.connect(process.env.RABBITMQ_URL!),
-      );
+      const { rabbitmqUrl } = yield* AppConfig;
+      const conn = yield* Effect.tryPromise(() => amqplib.connect(rabbitmqUrl));
       yield* Effect.log('RabbitMQ connection acquired');
       return conn;
     }),
