@@ -1,8 +1,10 @@
 import 'dotenv/config';
 import { Effect, Exit, Fiber, Layer, Schedule, Duration } from 'effect';
 import { program } from './program';
+import { ConfigLive } from './infra/config/config.layer';
 import { DatabaseLive } from './infra/database/database.layer';
 import { AmqpChannelLive } from './infra/rabbitmq/rabbitmq.layer';
+import { ConsumerLive } from './infra/rabbitmq/rabbitmq.consumer';
 import { PublisherLive } from './infra/rabbitmq/rabbitmq.publisher';
 import { FfmpegLive } from './videos/ffmpeg.service';
 import { VideosRepositoryLive } from './videos/videos.repository';
@@ -10,9 +12,11 @@ import { VideosRepositoryLive } from './videos/videos.repository';
 const AppLayer = Layer.mergeAll(
   AmqpChannelLive,
   FfmpegLive,
+  ConsumerLive.pipe(Layer.provide(AmqpChannelLive)),
   VideosRepositoryLive.pipe(Layer.provide(DatabaseLive)),
   PublisherLive.pipe(Layer.provide(AmqpChannelLive)),
-);
+  ConfigLive,
+).pipe(Layer.provide(ConfigLive));
 
 const resilientProgram = Effect.retry(
   program,

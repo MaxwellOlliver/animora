@@ -1,50 +1,81 @@
-import { Effect, Queue } from 'effect';
+import { Context, Effect, Layer, Queue, Schema, Scope } from 'effect';
 import * as amqplib from 'amqplib';
 import { AmqpChannel } from './rabbitmq.layer';
+import { MessageParseError } from '../../errors/message-parse.error';
 
-export const consume = <E, R>(
-  queueName: string,
-  handler: (data: unknown) => Effect.Effect<void, E, R>,
-) =>
+const RabbitMqMessageSchema = Schema.Struct({
+  pattern: Schema.String,
+  data: Schema.Unknown,
+});
+
+export class ConsumerService extends Context.Tag('ConsumerService')<
+  ConsumerService,
+  {
+    consume<E, R>(
+      queueName: string,
+      handler: (pattern: string, data: unknown) => Effect.Effect<void, E, R>,
+      concurrency?: number,
+    ): Effect.Effect<void, E | MessageParseError, R | Scope.Scope>;
+  }
+>() {}
+
+export const ConsumerLive = Layer.effect(
+  ConsumerService,
   Effect.gen(function* () {
     const channel = yield* AmqpChannel;
-    const msgQueue = yield* Queue.unbounded<amqplib.Message>();
+    return {
+      consume: <E, R>(
+        queueName: string,
+        handler: (pattern: string, data: unknown) => Effect.Effect<void, E, R>,
+        concurrency = 1,
+      ) =>
+        Effect.gen(function* () {
+          const msgQueue = yield* Queue.unbounded<amqplib.Message>();
 
-    yield* Effect.acquireRelease(
-      Effect.tryPromise(async () => {
-        await channel.assertQueue(queueName, { durable: true });
-        await channel.prefetch(1);
-
-        return channel.consume(queueName, (msg) => {
-          if (msg) Queue.unsafeOffer(msgQueue, msg);
-        });
-      }),
-      ({ consumerTag }) =>
-        Effect.promise(() => channel.cancel(consumerTag)).pipe(Effect.orDie),
-    );
-
-    yield* Effect.forever(
-      Effect.gen(function* () {
-        const msg = yield* Queue.take(msgQueue);
-        yield* Effect.gen(function* () {
-          const raw = yield* Effect.try(
-            () => JSON.parse(msg.content.toString()) as { data?: unknown },
+          yield* Effect.acquireRelease(
+            Effect.tryPromise(async () => {
+              await channel.assertQueue(queueName, { durable: true });
+              await channel.prefetch(concurrency);
+              return channel.consume(queueName, (msg) => {
+                if (msg) Queue.unsafeOffer(msgQueue, msg);
+              });
+            }).pipe(Effect.orDie),
+            ({ consumerTag }) =>
+              Effect.promise(() => channel.cancel(consumerTag)).pipe(
+                Effect.orDie,
+              ),
           );
-          const data = raw?.data ?? raw;
-          yield* handler(data);
-          yield* Effect.sync(() => channel.ack(msg));
-        }).pipe(
-          Effect.catchAll((error) =>
+
+          const worker = Effect.forever(
             Effect.gen(function* () {
-              const underlying =
-                error instanceof Error && 'error' in error
-                  ? String((error as Error & { error: unknown }).error)
-                  : String(error);
-              yield* Effect.log(`Message nacked: ${underlying}`);
-              yield* Effect.sync(() => channel.nack(msg, false, false));
+              const msg = yield* Queue.take(msgQueue);
+
+              yield* Effect.gen(function* () {
+                const { pattern, data } = yield* Effect.try(
+                  () => JSON.parse(msg.content.toString()) as unknown,
+                ).pipe(
+                  Effect.flatMap(Schema.decodeUnknown(RabbitMqMessageSchema)),
+                  Effect.mapError((cause) => new MessageParseError({ cause })),
+                );
+
+                yield* handler(pattern, data);
+                yield* Effect.sync(() => channel.ack(msg));
+              }).pipe(
+                Effect.catchAll((error) =>
+                  Effect.gen(function* () {
+                    yield* Effect.logError(`Message nacked: ${String(error)}`);
+                    yield* Effect.sync(() => channel.nack(msg, false, false));
+                  }),
+                ),
+              );
             }),
-          ),
-        );
-      }),
-    );
-  });
+          );
+
+          yield* Effect.all(
+            Array.from({ length: concurrency }, () => worker),
+            { concurrency },
+          );
+        }),
+    };
+  }),
+);
