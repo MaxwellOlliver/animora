@@ -1,10 +1,14 @@
 import { describe, test, expect } from 'bun:test';
-import { Effect, Layer } from 'effect';
+import { Effect, Exit, Layer } from 'effect';
+import { createRouter } from '../src/infra/rabbitmq/rabbitmq.router';
+import { UnknownPatternError } from '../src/errors/unknown-pattern.error';
 import { EVENTS, QUEUES, type VideoUploadedEvent } from '@animora/contracts';
 import { handleVideoUploaded } from '../src/videos/handlers/video-uploaded.handler';
 import { FfmpegService } from '../src/videos/ffmpeg.service';
 import { VideosRepository } from '../src/videos/videos.repository';
 import { PublisherService } from '../src/infra/rabbitmq/rabbitmq.publisher';
+import { DatabaseError } from '../src/errors/database.error';
+import { TranscodeError } from '../src/errors/transcode.error';
 
 const testEvent: VideoUploadedEvent = {
   videoId: 'video-123',
@@ -23,7 +27,7 @@ function makeLayer({
 }: {
   transcode?: (
     input: any,
-  ) => Effect.Effect<{ masterPlaylistKey: string }, Error>;
+  ) => Effect.Effect<{ masterPlaylistKey: string }, TranscodeError>;
   updateStatus?: (
     id: string,
     status: string,
@@ -33,7 +37,7 @@ function makeLayer({
     queue: string,
     pattern: string,
     data: unknown,
-  ) => Effect.Effect<void, any>;
+  ) => Effect.Effect<void, never>;
 } = {}) {
   return Layer.mergeAll(
     Layer.succeed(FfmpegService, { transcode }),
@@ -97,7 +101,8 @@ describe('handleVideoUploaded', () => {
     await run(
       testEvent,
       makeLayer({
-        transcode: () => Effect.fail(new Error('FFmpeg crashed')),
+        transcode: () =>
+          Effect.fail(new TranscodeError({ cause: 'FFmpeg crashed' })),
         publish: (queue, pattern, data) =>
           Effect.sync(() => {
             published.push({ queue, pattern, data });
@@ -132,24 +137,67 @@ describe('handleVideoUploaded', () => {
   test('still publishes when db update fails', async () => {
     const published: Published[] = [];
 
-    expect(
-      await Effect.runPromise(
-        handleVideoUploaded(testEvent).pipe(
-          Effect.provide(
-            makeLayer({
-              updateStatus: () => Effect.fail(new Error('DB down')),
-              publish: (queue, pattern, data) =>
-                Effect.sync(() => {
-                  published.push({ queue, pattern, data });
-                }),
-            }),
-          ),
+    const exit = await Effect.runPromiseExit(
+      handleVideoUploaded(testEvent).pipe(
+        Effect.provide(
+          makeLayer({
+            updateStatus: () =>
+              Effect.fail(new DatabaseError({ cause: 'DB down' })),
+            publish: (queue, pattern, data) =>
+              Effect.sync(() => {
+                published.push({ queue, pattern, data });
+              }),
+          }),
         ),
       ),
-    ).rejects.toThrow();
+    );
 
+    expect(Exit.isFailure(exit)).toBe(true);
     // publish is after updateStatus — so it won't fire if DB fails
     // this test documents the current behavior
     expect(published).toHaveLength(0);
+  });
+});
+
+describe('createRouter', () => {
+  test('dispatches to the correct handler by pattern', async () => {
+    const calls: string[] = [];
+
+    const router = createRouter({
+      'event.a': () => Effect.sync(() => { calls.push('a'); }),
+      'event.b': () => Effect.sync(() => { calls.push('b'); }),
+    });
+
+    await Effect.runPromise(router('event.a', {}));
+    await Effect.runPromise(router('event.b', {}));
+
+    expect(calls).toEqual(['a', 'b']);
+  });
+
+  test('passes data to the handler', async () => {
+    let received: unknown;
+
+    const router = createRouter({
+      'event.a': (data) => Effect.sync(() => { received = data; }),
+    });
+
+    await Effect.runPromise(router('event.a', { videoId: '123' }));
+
+    expect(received).toEqual({ videoId: '123' });
+  });
+
+  test('fails with UnknownPatternError for unregistered patterns', async () => {
+    const router = createRouter({
+      'event.a': () => Effect.void,
+    });
+
+    const exit = await Effect.runPromiseExit(router('event.unknown', {}));
+
+    expect(Exit.isFailure(exit)).toBe(true);
+    if (Exit.isFailure(exit)) {
+      const error = exit.cause._tag === 'Fail' ? exit.cause.error : null;
+      expect(error).toBeInstanceOf(UnknownPatternError);
+      expect((error as UnknownPatternError).pattern).toBe('event.unknown');
+    }
   });
 });
