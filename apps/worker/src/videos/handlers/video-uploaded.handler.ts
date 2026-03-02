@@ -1,17 +1,25 @@
-import { Effect } from 'effect';
-import {
-  EVENTS,
-  QUEUES,
-  type VideoUploadedEvent,
-  type VideoProcessedEvent,
-} from '@animora/contracts';
+import { Effect, Schema } from 'effect';
+import { EVENTS, QUEUES, type VideoProcessedEvent } from '@animora/contracts';
 import { FfmpegService } from '../ffmpeg.service';
 import { PublisherService } from '../../infra/rabbitmq/rabbitmq.publisher';
 import { updateVideoStatus } from '../use-cases/update-video-status.use-case';
+import { InvalidEventError } from '../../errors/invalid-event.error';
+
+const VideoQualitySchema = Schema.Literal('360p', '720p', '1080p');
+
+const VideoUploadedEventSchema = Schema.Struct({
+  videoId: Schema.String,
+  episodeId: Schema.String,
+  rawObjectKey: Schema.NonEmptyString,
+  qualities: Schema.Array(VideoQualitySchema),
+});
 
 export const handleVideoUploaded = (data: unknown) =>
   Effect.gen(function* () {
-    const event = data as VideoUploadedEvent;
+    const event = yield* Schema.decodeUnknown(VideoUploadedEventSchema)(
+      data,
+    ).pipe(Effect.mapError((cause) => new InvalidEventError({ cause })));
+
     const ffmpeg = yield* FfmpegService;
     const publisher = yield* PublisherService;
 
@@ -27,10 +35,12 @@ export const handleVideoUploaded = (data: unknown) =>
           status: 'ready' as const,
           masterPlaylistKey: output.masterPlaylistKey,
         })),
-        Effect.catchAll(() =>
-          Effect.succeed({
-            status: 'failed' as const,
-            masterPlaylistKey: undefined,
+        Effect.catchTag('TranscodeError', (error) =>
+          Effect.gen(function* () {
+            yield* Effect.logError(
+              `Transcode failed for video ${event.videoId}: ${String(error.cause)}`,
+            );
+            return { status: 'failed' as const, masterPlaylistKey: undefined };
           }),
         ),
       );

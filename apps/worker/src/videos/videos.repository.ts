@@ -1,5 +1,6 @@
 import { Context, Effect, Layer } from 'effect';
 import { SqlClient } from '../infra/database/database.layer';
+import { DatabaseError } from '../errors/database.error';
 
 export class VideosRepository extends Context.Tag('VideosRepository')<
   VideosRepository,
@@ -8,7 +9,7 @@ export class VideosRepository extends Context.Tag('VideosRepository')<
       id: string,
       status: string,
       masterPlaylistKey?: string,
-    ): Effect.Effect<void, unknown>;
+    ): Effect.Effect<void, DatabaseError>;
   }
 >() {}
 
@@ -18,8 +19,8 @@ export const VideosRepositoryLive = Layer.effect(
     const sql = yield* SqlClient;
     return {
       updateStatus: (id: string, status: string, masterPlaylistKey?: string) =>
-        Effect.tryPromise(
-          () =>
+        Effect.tryPromise({
+          try: () =>
             sql`
             UPDATE videos
             SET status = ${status},
@@ -27,7 +28,8 @@ export const VideosRepositoryLive = Layer.effect(
                 updated_at = NOW()
             WHERE id = ${id}
           `,
-        ),
+          catch: (cause) => new DatabaseError({ cause }),
+        }),
     };
   }),
 );

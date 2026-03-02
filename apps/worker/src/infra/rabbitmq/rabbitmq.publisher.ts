@@ -8,7 +8,7 @@ export class PublisherService extends Context.Tag('PublisherService')<
       queueName: string,
       pattern: string,
       data: unknown,
-    ): Effect.Effect<void, unknown>;
+    ): Effect.Effect<void, never>;
   }
 >() {}
 
@@ -23,12 +23,10 @@ export const PublisherLive = Layer.effect(
             channel.sendToQueue(
               queueName,
               Buffer.from(JSON.stringify({ pattern, data })),
-              {
-                persistent: true,
-              },
+              { persistent: true },
             );
           }),
-        ),
+        ).pipe(Effect.orDie),
     };
   }),
 );
