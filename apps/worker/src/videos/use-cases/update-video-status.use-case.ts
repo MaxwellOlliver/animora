@@ -1,16 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Effect } from 'effect';
 import type { VideoProcessedEvent } from '@animora/contracts';
 import { VideosRepository } from '../videos.repository';
 
-@Injectable()
-export class UpdateVideoStatusUseCase {
-  constructor(private readonly videosRepository: VideosRepository) {}
-
-  async execute(event: VideoProcessedEvent): Promise<void> {
-    await this.videosRepository.updateStatus(
+export const updateVideoStatus = (event: VideoProcessedEvent) =>
+  Effect.gen(function* () {
+    const repo = yield* VideosRepository;
+    yield* repo.updateStatus(
       event.videoId,
       event.status,
       event.masterPlaylistKey,
     );
-  }
-}
+  });
