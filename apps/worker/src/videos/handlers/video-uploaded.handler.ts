@@ -1,11 +1,12 @@
 import { Effect, Schema } from 'effect';
 import { EVENTS, QUEUES, type VideoProcessedEvent } from '@animora/contracts';
-import { FfmpegService } from '../ffmpeg.service';
+import { processVideo } from '../use-cases/process-video.use-case';
 import { PublisherService } from '../../infra/rabbitmq/rabbitmq.publisher';
 import { updateVideoStatus } from '../use-cases/update-video-status.use-case';
 import { InvalidEventError } from '../../errors/invalid-event.error';
 import { S3Service } from '../../infra/s3/s3.service';
 import { createWriteStream } from 'node:fs';
+import { mkdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pipeline } from 'node:stream/promises';
 
@@ -24,11 +25,13 @@ export const handleVideoUploaded = (data: unknown) =>
       data,
     ).pipe(Effect.mapError((cause) => new InvalidEventError({ cause })));
 
-    const ffmpeg = yield* FfmpegService;
     const publisher = yield* PublisherService;
     const s3Service = yield* S3Service;
 
     yield* Effect.log(`Processing video ${event.videoId}`);
+
+    const outputDir = join('tmp', event.videoId);
+    yield* Effect.promise(() => mkdir(outputDir, { recursive: true }));
 
     const body = yield* s3Service.getObject(event.rawObjectKey);
 
@@ -36,29 +39,42 @@ export const handleVideoUploaded = (data: unknown) =>
       `Fetched video ${event.videoId} from S3 with key ${event.rawObjectKey}`,
     );
 
-    const destPath = join('tmp', `${event.videoId}.mp4`);
+    const destPath = join(outputDir, 'original.mp4');
     yield* Effect.promise(() => pipeline(body, createWriteStream(destPath)));
 
-    const transcodeResult = yield* ffmpeg
-      .transcode({
-        rawObjectKey: event.rawObjectKey,
-        videoId: event.videoId,
-        qualities: event.qualities,
-      })
-      .pipe(
-        Effect.map((output) => ({
-          status: 'ready' as const,
-          masterPlaylistKey: output.masterPlaylistKey,
-        })),
-        Effect.catchTag('TranscodeError', (error) =>
-          Effect.gen(function* () {
-            yield* Effect.logError(
-              `Transcode failed for video ${event.videoId}: ${String(error.cause)}`,
-            );
-            return { status: 'failed' as const, masterPlaylistKey: undefined };
-          }),
-        ),
-      );
+    const cleanup = Effect.promise(() =>
+      rm(outputDir, { recursive: true, force: true }),
+    ).pipe(Effect.ignore);
+
+    const transcodeResult = yield* processVideo({
+      videoId: event.videoId,
+      inputPath: destPath,
+      outputDir,
+      qualities: event.qualities,
+    }).pipe(
+      Effect.tap(() => s3Service.deleteObject(event.rawObjectKey)),
+      Effect.map((output) => ({
+        status: 'ready' as const,
+        masterPlaylistKey: output.masterPlaylistKey,
+      })),
+      Effect.catchTag('TranscodeError', (error) =>
+        Effect.gen(function* () {
+          yield* Effect.logError(
+            `Transcode failed for video ${event.videoId}: ${String(error.cause)}`,
+          );
+          return { status: 'failed' as const, masterPlaylistKey: undefined };
+        }),
+      ),
+      Effect.catchTag('S3Error', (error) =>
+        Effect.gen(function* () {
+          yield* Effect.logError(
+            `Upload failed for video ${event.videoId}: ${String(error.cause)}`,
+          );
+          return { status: 'failed' as const, masterPlaylistKey: undefined };
+        }),
+      ),
+      Effect.ensuring(cleanup),
+    );
 
     const result: VideoProcessedEvent = {
       videoId: event.videoId,

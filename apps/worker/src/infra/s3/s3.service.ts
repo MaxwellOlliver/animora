@@ -1,17 +1,25 @@
 import { Context, Effect, Layer } from 'effect';
 import { S3Client, S3ClientLive } from './s3.layer';
-import { GetObjectCommand } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { AppConfig } from '../config/config.layer';
 import { S3Error } from '../../errors/s3.error';
 import type { Readable } from 'node:stream';
 
-interface IS3Service {
-  getObject: (key: string) => Effect.Effect<Readable, S3Error>;
-}
-
 export class S3Service extends Context.Tag('S3Service')<
   S3Service,
-  IS3Service
+  {
+    getObject(key: string): Effect.Effect<Readable, S3Error>;
+    putObject(
+      key: string,
+      body: Readable | Buffer,
+      contentType?: string,
+    ): Effect.Effect<void, S3Error>;
+    deleteObject(key: string): Effect.Effect<void, S3Error>;
+  }
 >() {}
 
 export const S3ServiceLive = Layer.effect(
@@ -42,6 +50,32 @@ export const S3ServiceLive = Layer.effect(
 
           return res.Body as Readable;
         }),
+
+      putObject: (key: string, body: Readable | Buffer, contentType?: string) =>
+        Effect.tryPromise({
+          try: () =>
+            client.send(
+              new PutObjectCommand({
+                Bucket: config.s3Bucket,
+                Key: key,
+                Body: body,
+                ...(contentType ? { ContentType: contentType } : {}),
+              }),
+            ),
+          catch: (cause) => new S3Error({ cause }),
+        }).pipe(Effect.asVoid),
+
+      deleteObject: (key: string) =>
+        Effect.tryPromise({
+          try: () =>
+            client.send(
+              new DeleteObjectCommand({
+                Bucket: config.s3Bucket,
+                Key: key,
+              }),
+            ),
+          catch: (cause) => new S3Error({ cause }),
+        }).pipe(Effect.asVoid),
     };
   }),
 ).pipe(Layer.provide(S3ClientLive));

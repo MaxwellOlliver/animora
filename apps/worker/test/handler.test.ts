@@ -1,10 +1,12 @@
 import { describe, test, expect } from 'bun:test';
 import { Effect, Exit, Layer } from 'effect';
+import { Readable } from 'node:stream';
 import { createRouter } from '../src/infra/rabbitmq/rabbitmq.router';
 import { UnknownPatternError } from '../src/errors/unknown-pattern.error';
 import { EVENTS, QUEUES, type VideoUploadedEvent } from '@animora/contracts';
 import { handleVideoUploaded } from '../src/videos/handlers/video-uploaded.handler';
-import { FfmpegService } from '../src/videos/ffmpeg.service';
+import { TranscodeService } from '../src/videos/transcode.service';
+import { S3Service } from '../src/infra/s3/s3.service';
 import { VideosRepository } from '../src/videos/videos.repository';
 import { PublisherService } from '../src/infra/rabbitmq/rabbitmq.publisher';
 import { DatabaseError } from '../src/errors/database.error';
@@ -40,9 +42,14 @@ function makeLayer({
   ) => Effect.Effect<void, never>;
 } = {}) {
   return Layer.mergeAll(
-    Layer.succeed(FfmpegService, { transcode }),
+    Layer.succeed(TranscodeService, { transcode }),
     Layer.succeed(VideosRepository, { updateStatus }),
     Layer.succeed(PublisherService, { publish }),
+    Layer.succeed(S3Service, {
+      getObject: () => Effect.succeed(Readable.from(Buffer.from('fake'))),
+      putObject: () => Effect.void,
+      deleteObject: () => Effect.void,
+    }),
   );
 }
 
