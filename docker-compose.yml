@@ -23,6 +23,16 @@ services:
       - minio_data:/data
     command: server /data --console-address ":9001"
 
+  minio-init:
+    image: minio/mc
+    depends_on:
+      - minio
+    volumes:
+      - ./docker/minio/init.sh:/init.sh
+      - ./docker/minio/policy.json:/policy.json
+    entrypoint: /init.sh
+    restart: 'no'
+
   rabbitmq:
     image: rabbitmq:4-management-alpine
     ports:
