@@ -1,6 +1,6 @@
 import { Context, Effect, Layer } from 'effect';
 import { TranscodeError } from '../../errors/transcode.error';
-import { execFile } from 'node:child_process';
+import { spawn } from 'node:child_process';
 
 export class FfmpegService extends Context.Tag('FfmpegService')<
   FfmpegService,
@@ -14,9 +14,16 @@ export const FfmpegLive = Layer.succeed(FfmpegService, {
     Effect.tryPromise({
       try: () =>
         new Promise<void>((resolve, reject) => {
-          execFile('ffmpeg', args, { timeout: 600_000 }, (error) => {
-            if (error) reject(error as Error);
-            else resolve();
+          const child = spawn('ffmpeg', args, {
+            stdio: ['ignore', 'ignore', 'pipe'],
+          });
+
+          child.stderr.on('data', () => {});
+
+          child.on('error', (err) => reject(err));
+          child.on('close', (code) => {
+            if (code === 0) resolve();
+            else reject(new Error(`ffmpeg exited with code ${code}`));
           });
         }),
       catch: (cause) => new TranscodeError({ cause }),
