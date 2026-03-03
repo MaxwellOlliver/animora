@@ -13,7 +13,6 @@ const TIMEOUT_MS = 15_000;
 let conn: amqplib.ChannelModel;
 let ch: amqplib.Channel;
 
-// Single consumer dispatches results to the right test by videoId
 const pending = new Map<string, (result: VideoProcessedEvent) => void>();
 
 beforeAll(async () => {
@@ -88,60 +87,57 @@ describe('worker e2e', () => {
     expect(result.status).toBe('ready');
   });
 
-  // test('processes multiple messages and all return status ready', async () => {
-  //   const events = Array.from({ length: 5 }, () => makeEvent());
-  //   const results = await Promise.all(events.map(publish));
+  test('processes multiple messages and all return status ready', async () => {
+    const events = Array.from({ length: 5 }, () => makeEvent());
+    const results = await Promise.all(events.map(publish));
 
-  //   expect(results).toHaveLength(5);
-  //   for (const [i, result] of results.entries()) {
-  //     expect(result.videoId).toBe(events[i].videoId);
-  //     expect(result.status).toBe('ready');
-  //   }
-  // });
+    expect(results).toHaveLength(5);
+    for (const [i, result] of results.entries()) {
+      expect(result.videoId).toBe(events[i].videoId);
+      expect(result.status).toBe('ready');
+    }
+  });
 
-  // test('response is wrapped in the NestJS envelope with correct pattern', async () => {
-  //   const event = makeEvent();
+  test('response is wrapped in the NestJS envelope with correct pattern', async () => {
+    const event = makeEvent();
 
-  //   const raw = await new Promise<{
-  //     pattern: string;
-  //     data: VideoProcessedEvent;
-  //   }>((resolve, reject) => {
-  //     const timer = setTimeout(
-  //       () => reject(new Error('Timed out')),
-  //       TIMEOUT_MS,
-  //     );
+    const raw = await new Promise<{
+      pattern: string;
+      data: VideoProcessedEvent;
+    }>((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error('Timed out')),
+        TIMEOUT_MS,
+      );
 
-  //     pending.set(event.videoId, (data) => {
-  //       clearTimeout(timer);
-  //       resolve({ pattern: EVENTS.VIDEO_PROCESSED, data });
-  //     });
+      pending.set(event.videoId, (data) => {
+        clearTimeout(timer);
+        resolve({ pattern: EVENTS.VIDEO_PROCESSED, data });
+      });
 
-  //     ch.sendToQueue(
-  //       QUEUES.VIDEO_PROCESSING,
-  //       Buffer.from(
-  //         JSON.stringify({ pattern: EVENTS.VIDEO_UPLOADED, data: event }),
-  //       ),
-  //       { persistent: true },
-  //     );
-  //   });
+      ch.sendToQueue(
+        QUEUES.VIDEO_PROCESSING,
+        Buffer.from(
+          JSON.stringify({ pattern: EVENTS.VIDEO_UPLOADED, data: event }),
+        ),
+        { persistent: true },
+      );
+    });
 
-  //   expect(raw.pattern).toBe(EVENTS.VIDEO_PROCESSED);
-  //   expect(raw.data.videoId).toBe(event.videoId);
-  // });
+    expect(raw.pattern).toBe(EVENTS.VIDEO_PROCESSED);
+    expect(raw.data.videoId).toBe(event.videoId);
+  });
 
-  // test('worker survives a malformed message and keeps processing', async () => {
-  //   // publish an unparseable message — worker should nack and continue
-  //   ch.sendToQueue(QUEUES.VIDEO_PROCESSING, Buffer.from('not valid json {{'), {
-  //     persistent: true,
-  //   });
+  test('worker survives a malformed message and keeps processing', async () => {
+    ch.sendToQueue(QUEUES.VIDEO_PROCESSING, Buffer.from('not valid json {{'), {
+      persistent: true,
+    });
 
-  //   // give the worker a moment to nack it
-  //   await Bun.sleep(500);
+    await Bun.sleep(500);
 
-  //   // worker should still be alive and processing valid messages
-  //   const event = makeEvent();
-  //   const result = await publish(event);
+    const event = makeEvent();
+    const result = await publish(event);
 
-  //   expect(result.status).toBe('ready');
-  // });
+    expect(result.status).toBe('ready');
+  });
 });
