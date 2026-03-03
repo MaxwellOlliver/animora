@@ -1,8 +1,9 @@
-import { Global, Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ConfigService } from '@nestjs/config';
 import { QUEUES } from '@animora/contracts';
-import { RabbitMQService, RABBITMQ_CLIENT } from './rabbitmq.service';
+import { Global, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+
+import { RABBITMQ_CLIENT, RabbitMQService } from './rabbitmq.service';
 
 @Global()
 @Module({

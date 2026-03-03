@@ -11,16 +11,23 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
+
 import { Roles } from '@/common/decorators/roles.decorator';
+
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
 import { CreateSeriesUseCase } from './use-cases/create-series.use-case';
+import { DeleteSeriesUseCase } from './use-cases/delete-series.use-case';
 import { GetSeriesUseCase } from './use-cases/get-series.use-case';
 import { GetSeriesByIdUseCase } from './use-cases/get-series-by-id.use-case';
 import { UpdateSeriesUseCase } from './use-cases/update-series.use-case';
-import { DeleteSeriesUseCase } from './use-cases/delete-series.use-case';
 import { UploadSeriesBannerUseCase } from './use-cases/upload-series-banner.use-case';
 
 @ApiTags('Admin / Series')

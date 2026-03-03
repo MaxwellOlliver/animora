@@ -1,7 +1,8 @@
-import { pgTable, uuid, integer, timestamp } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
-import { videos } from '../videos/video.entity';
+import { integer, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core';
+
 import { episodes } from '../episodes/episode.entity';
+import { videos } from '../videos/video.entity';
 
 export const uploads = pgTable('uploads', {
   id: uuid('id')

@@ -1,15 +1,17 @@
+import { EVENTS, VideoUploadedEvent } from '@animora/contracts';
 import {
   BadRequestException,
   GoneException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { EVENTS, VideoUploadedEvent } from '@animora/contracts';
-import { S3Service } from '@/infra/s3/s3.service';
+
 import { RabbitMQService } from '@/infra/rabbitmq/rabbitmq.service';
-import { UploadsRepository } from '../uploads.repository';
-import { VideosRepository } from '../../videos/videos.repository';
+import { S3Service } from '@/infra/s3/s3.service';
+
 import { VideoEventsService } from '../../videos/video-events.service';
+import { VideosRepository } from '../../videos/videos.repository';
+import { UploadsRepository } from '../uploads.repository';
 
 @Injectable()
 export class CompleteUploadUseCase {

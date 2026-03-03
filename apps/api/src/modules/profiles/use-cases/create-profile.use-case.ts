@@ -3,9 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ProfilesRepository } from '../profiles.repository';
+
 import { AvatarsRepository } from '../../admin/avatars/avatars.repository';
 import type { Profile } from '../profile.entity';
+import { ProfilesRepository } from '../profiles.repository';
 
 @Injectable()
 export class CreateProfileUseCase {

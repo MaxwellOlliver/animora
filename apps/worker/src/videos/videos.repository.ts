@@ -1,6 +1,7 @@
 import { Context, Effect, Layer } from 'effect';
-import { SqlClient } from '../infra/database/database.layer';
+
 import { DatabaseError } from '../errors/database.error';
+import { SqlClient } from '../infra/database/database.layer';
 
 export class VideosRepository extends Context.Tag('VideosRepository')<
   VideosRepository,

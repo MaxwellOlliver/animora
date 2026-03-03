@@ -10,7 +10,9 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
+
 import { Roles } from '@/common/decorators/roles.decorator';
+
 import { DeleteVideoUseCase } from './use-cases/delete-video.use-case';
 import { GetVideoUseCase } from './use-cases/get-video.use-case';
 import { VideoEventsService } from './video-events.service';

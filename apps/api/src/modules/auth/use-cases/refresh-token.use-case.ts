@@ -1,7 +1,8 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
+
 import { UsersRepository } from '../../users/users.repository';
 import { RefreshTokenRepository } from '../refresh-token.repository';
 import { JwtPayload } from '../strategies/jwt.strategy';

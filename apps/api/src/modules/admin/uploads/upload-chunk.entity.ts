@@ -1,4 +1,11 @@
-import { pgTable, uuid, integer, boolean, primaryKey } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  integer,
+  pgTable,
+  primaryKey,
+  uuid,
+} from 'drizzle-orm/pg-core';
+
 import { uploads } from './upload.entity';
 
 export const uploadChunks = pgTable(

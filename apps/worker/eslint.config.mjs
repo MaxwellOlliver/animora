@@ -1,4 +1,5 @@
 // @ts-check
+import { config as baseConfig } from '@animora/eslint-config/base';
 import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
@@ -11,6 +12,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   eslintPluginPrettierRecommended,
+  ...baseConfig,
   {
     languageOptions: {
       globals: {

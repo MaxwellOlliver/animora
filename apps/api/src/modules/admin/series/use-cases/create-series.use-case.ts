@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SeriesRepository } from '../series.repository';
-import { GenresRepository } from '../../genres/genres.repository';
+
 import { ContentClassificationsRepository } from '../../content-classifications/content-classifications.repository';
+import { GenresRepository } from '../../genres/genres.repository';
 import type { CreateSeriesDto } from '../dto/create-series.dto';
 import type { SeriesWithDetails } from '../series.entity';
+import { SeriesRepository } from '../series.repository';
 
 @Injectable()
 export class CreateSeriesUseCase {

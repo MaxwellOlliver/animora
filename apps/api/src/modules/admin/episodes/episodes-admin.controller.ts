@@ -20,14 +20,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
+
 import { Roles } from '@/common/decorators/roles.decorator';
+
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { CreateEpisodeUseCase } from './use-cases/create-episode.use-case';
-import { GetEpisodesUseCase } from './use-cases/get-episodes.use-case';
-import { GetEpisodeUseCase } from './use-cases/get-episode.use-case';
-import { UpdateEpisodeUseCase } from './use-cases/update-episode.use-case';
 import { DeleteEpisodeUseCase } from './use-cases/delete-episode.use-case';
+import { GetEpisodeUseCase } from './use-cases/get-episode.use-case';
+import { GetEpisodesUseCase } from './use-cases/get-episodes.use-case';
+import { UpdateEpisodeUseCase } from './use-cases/update-episode.use-case';
 import { UploadEpisodeThumbnailUseCase } from './use-cases/upload-episode-thumbnail.use-case';
 
 @ApiTags('Admin / Episodes')

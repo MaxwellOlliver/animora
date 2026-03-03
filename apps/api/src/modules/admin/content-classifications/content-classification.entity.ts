@@ -1,12 +1,12 @@
+import { sql } from 'drizzle-orm';
 import {
+  boolean,
   pgTable,
+  text,
+  timestamp,
   uuid,
   varchar,
-  text,
-  boolean,
-  timestamp,
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
 
 export const contentClassifications = pgTable('content_classifications', {
   id: uuid('id')

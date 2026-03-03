@@ -1,15 +1,17 @@
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import request from 'supertest';
 import type { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { startTestDatabase, stopTestDatabase } from './setup/test-database';
-import { createTestApp } from './setup/test-app';
+import request from 'supertest';
+
+import type { Genre } from '@/modules/admin/genres/genre.entity';
+
 import {
   registerAdmin,
   registerUser,
   seedDefaultAvatar,
   truncateTables,
 } from './setup/helpers';
-import type { Genre } from '@/modules/admin/genres/genre.entity';
+import { createTestApp } from './setup/test-app';
+import { startTestDatabase, stopTestDatabase } from './setup/test-database';
 
 describe('Admin Genres (e2e)', () => {
   let app: NestFastifyApplication;

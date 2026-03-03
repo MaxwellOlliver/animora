@@ -1,10 +1,11 @@
-import { Test } from '@nestjs/testing';
+import fastifyMultipart from '@fastify/multipart';
 import { ValidationPipe } from '@nestjs/common';
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import fastifyMultipart from '@fastify/multipart';
+import { Test } from '@nestjs/testing';
+
 import { AppModule } from '@/app.module';
 import { S3Service } from '@/infra/s3/s3.service';
 

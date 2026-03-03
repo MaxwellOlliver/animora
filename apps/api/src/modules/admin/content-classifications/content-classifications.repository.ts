@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { DRIZZLE } from '@/infra/database/database.module';
+
 import type { DrizzleDB } from '@/infra/database/database.module';
+import { DRIZZLE } from '@/infra/database/database.module';
+
 import {
-  contentClassifications,
   ContentClassification,
+  contentClassifications,
   NewContentClassification,
 } from './content-classification.entity';
 

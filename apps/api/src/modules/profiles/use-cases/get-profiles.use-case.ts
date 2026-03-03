@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ProfilesRepository } from '../profiles.repository';
+
 import type { Profile } from '../profile.entity';
+import { ProfilesRepository } from '../profiles.repository';
 
 @Injectable()
 export class GetProfilesUseCase {

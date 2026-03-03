@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ContentClassificationsAdminController } from './content-classifications-admin.controller';
+
 import { ContentClassificationsRepository } from './content-classifications.repository';
+import { ContentClassificationsAdminController } from './content-classifications-admin.controller';
 import { CreateContentClassificationUseCase } from './use-cases/create-content-classification.use-case';
-import { GetContentClassificationsUseCase } from './use-cases/get-content-classifications.use-case';
-import { GetContentClassificationUseCase } from './use-cases/get-content-classification.use-case';
-import { UpdateContentClassificationUseCase } from './use-cases/update-content-classification.use-case';
 import { DeleteContentClassificationUseCase } from './use-cases/delete-content-classification.use-case';
+import { GetContentClassificationUseCase } from './use-cases/get-content-classification.use-case';
+import { GetContentClassificationsUseCase } from './use-cases/get-content-classifications.use-case';
+import { UpdateContentClassificationUseCase } from './use-cases/update-content-classification.use-case';
 import { UploadContentClassificationIconUseCase } from './use-cases/upload-content-classification-icon.use-case';
 
 @Module({

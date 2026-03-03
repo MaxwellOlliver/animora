@@ -1,8 +1,13 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { VideosRepository } from '../videos.repository';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
 import { EpisodesRepository } from '../../episodes/episodes.repository';
 import type { CreateVideoDto } from '../dto/create-video.dto';
 import type { Video } from '../video.entity';
+import { VideosRepository } from '../videos.repository';
 
 @Injectable()
 export class CreateVideoUseCase {

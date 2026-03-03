@@ -11,14 +11,16 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+
 import { Roles } from '@/common/decorators/roles.decorator';
+
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 import { CreateGenreUseCase } from './use-cases/create-genre.use-case';
-import { GetGenresUseCase } from './use-cases/get-genres.use-case';
-import { GetGenreUseCase } from './use-cases/get-genre.use-case';
-import { UpdateGenreUseCase } from './use-cases/update-genre.use-case';
 import { DeleteGenreUseCase } from './use-cases/delete-genre.use-case';
+import { GetGenreUseCase } from './use-cases/get-genre.use-case';
+import { GetGenresUseCase } from './use-cases/get-genres.use-case';
+import { UpdateGenreUseCase } from './use-cases/update-genre.use-case';
 
 @ApiTags('Admin / Genres')
 @ApiBearerAuth()

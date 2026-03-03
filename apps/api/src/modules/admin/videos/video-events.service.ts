@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import type { MessageEvent } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 

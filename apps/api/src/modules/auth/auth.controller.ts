@@ -8,24 +8,26 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { Public } from '@/common/decorators/public.decorator';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { Public } from '@/common/decorators/public.decorator';
+
+import { CreateProfileUseCase } from '../profiles/use-cases/create-profile.use-case';
+import { CreateUserUseCase } from '../users/use-cases/create-user.use-case';
+import type { User } from '../users/user.entity';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
-import { LoginUseCase } from './use-cases/login.use-case';
-import { GoogleAuthUseCase } from './use-cases/google-auth.use-case';
-import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
-import { LogoutUseCase } from './use-cases/logout.use-case';
-import { CreateUserUseCase } from '../users/use-cases/create-user.use-case';
-import { CreateProfileUseCase } from '../profiles/use-cases/create-profile.use-case';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import type { GoogleProfile } from './strategies/google.strategy';
 import type { JwtPayload } from './strategies/jwt.strategy';
 import type { JwtRefreshPayload } from './strategies/jwt-refresh.strategy';
-import type { GoogleProfile } from './strategies/google.strategy';
-import type { User } from '../users/user.entity';
+import { GoogleAuthUseCase } from './use-cases/google-auth.use-case';
+import { LoginUseCase } from './use-cases/login.use-case';
+import { LogoutUseCase } from './use-cases/logout.use-case';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
 
 @ApiTags('Auth')
 @Controller('auth')

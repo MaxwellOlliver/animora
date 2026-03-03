@@ -1,16 +1,19 @@
 import 'dotenv/config';
-import { Effect, Exit, Fiber, Layer, Schedule, Duration } from 'effect';
+
 import { mkdir } from 'node:fs/promises';
-import { program } from './program';
+
+import { Duration, Effect, Exit, Fiber, Layer, Schedule } from 'effect';
+
 import { ConfigLive } from './infra/config/config.layer';
 import { DatabaseLive } from './infra/database/database.layer';
-import { AmqpChannelLive } from './infra/rabbitmq/rabbitmq.layer';
-import { ConsumerLive } from './infra/rabbitmq/rabbitmq.consumer';
-import { PublisherLive } from './infra/rabbitmq/rabbitmq.publisher';
 import { FfmpegLive } from './infra/ffmpeg/ffmpeg.layer';
+import { ConsumerLive } from './infra/rabbitmq/rabbitmq.consumer';
+import { AmqpChannelLive } from './infra/rabbitmq/rabbitmq.layer';
+import { PublisherLive } from './infra/rabbitmq/rabbitmq.publisher';
+import { S3ServiceLive } from './infra/s3/s3.service';
+import { program } from './program';
 import { TranscodeLive } from './videos/transcode.service';
 import { VideosRepositoryLive } from './videos/videos.repository';
-import { S3ServiceLive } from './infra/s3/s3.service';
 
 const AppLayer = Layer.mergeAll(
   AmqpChannelLive,

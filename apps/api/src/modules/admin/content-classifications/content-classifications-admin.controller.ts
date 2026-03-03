@@ -11,16 +11,23 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
+
 import { Roles } from '@/common/decorators/roles.decorator';
+
 import { CreateContentClassificationDto } from './dto/create-content-classification.dto';
 import { UpdateContentClassificationDto } from './dto/update-content-classification.dto';
 import { CreateContentClassificationUseCase } from './use-cases/create-content-classification.use-case';
-import { GetContentClassificationsUseCase } from './use-cases/get-content-classifications.use-case';
-import { GetContentClassificationUseCase } from './use-cases/get-content-classification.use-case';
-import { UpdateContentClassificationUseCase } from './use-cases/update-content-classification.use-case';
 import { DeleteContentClassificationUseCase } from './use-cases/delete-content-classification.use-case';
+import { GetContentClassificationUseCase } from './use-cases/get-content-classification.use-case';
+import { GetContentClassificationsUseCase } from './use-cases/get-content-classifications.use-case';
+import { UpdateContentClassificationUseCase } from './use-cases/update-content-classification.use-case';
 import { UploadContentClassificationIconUseCase } from './use-cases/upload-content-classification-icon.use-case';
 
 @ApiTags('Admin / Content Classifications')

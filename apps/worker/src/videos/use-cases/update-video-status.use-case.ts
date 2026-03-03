@@ -1,5 +1,6 @@
-import { Effect } from 'effect';
 import type { VideoProcessedEvent } from '@animora/contracts';
+import { Effect } from 'effect';
+
 import { VideosRepository } from '../videos.repository';
 
 export const updateVideoStatus = (event: VideoProcessedEvent) =>

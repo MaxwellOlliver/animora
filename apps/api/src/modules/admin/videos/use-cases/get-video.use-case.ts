@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { VideosRepository } from '../videos.repository';
+
 import type { Video } from '../video.entity';
+import { VideosRepository } from '../videos.repository';
 
 @Injectable()
 export class GetVideoUseCase {

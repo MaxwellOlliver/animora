@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SeriesRepository } from '../series.repository';
-import { GenresRepository } from '../../genres/genres.repository';
+
 import { ContentClassificationsRepository } from '../../content-classifications/content-classifications.repository';
+import { GenresRepository } from '../../genres/genres.repository';
 import type { UpdateSeriesDto } from '../dto/update-series.dto';
 import type { SeriesWithDetails } from '../series.entity';
+import { SeriesRepository } from '../series.repository';
 
 @Injectable()
 export class UpdateSeriesUseCase {
@@ -21,7 +22,8 @@ export class UpdateSeriesUseCase {
       const classification = await this.classificationsRepository.findById(
         dto.contentClassificationId,
       );
-      if (!classification) throw new NotFoundException('Content classification not found');
+      if (!classification)
+        throw new NotFoundException('Content classification not found');
     }
 
     if (dto.genreIds) {

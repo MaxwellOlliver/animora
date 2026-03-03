@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ContentClassificationsRepository } from '../content-classifications.repository';
+
 import type { ContentClassification } from '../content-classification.entity';
+import { ContentClassificationsRepository } from '../content-classifications.repository';
 
 @Injectable()
 export class GetContentClassificationsUseCase {

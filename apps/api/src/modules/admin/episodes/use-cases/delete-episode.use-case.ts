@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { EpisodesRepository } from '../episodes.repository';
+
 import { S3Service } from '@/infra/s3/s3.service';
+
+import { EpisodesRepository } from '../episodes.repository';
 
 @Injectable()
 export class DeleteEpisodeUseCase {

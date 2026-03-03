@@ -1,5 +1,6 @@
-import { pgTable, uuid, varchar, timestamp, pgEnum } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
+import { pgEnum, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+
 import { episodes } from '../episodes/episode.entity';
 
 export const videoStatusEnum = pgEnum('video_status', [

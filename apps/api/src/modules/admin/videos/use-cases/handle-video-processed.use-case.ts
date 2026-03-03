@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
 import type { VideoProcessedEvent } from '@animora/contracts';
+import { Injectable } from '@nestjs/common';
+
 import { VideoEventsService } from '../video-events.service';
 
 @Injectable()

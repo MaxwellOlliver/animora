@@ -1,6 +1,7 @@
+import { EVENTS, VideoProcessedEvent } from '@animora/contracts';
 import { Controller } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import { EVENTS, VideoProcessedEvent } from '@animora/contracts';
+
 import { HandleVideoProcessedUseCase } from './use-cases/handle-video-processed.use-case';
 
 @Controller()

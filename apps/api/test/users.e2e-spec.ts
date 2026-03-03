@@ -1,14 +1,16 @@
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import request from 'supertest';
 import type { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { startTestDatabase, stopTestDatabase } from './setup/test-database';
-import { createTestApp } from './setup/test-app';
+import request from 'supertest';
+
+import type { User } from '@/modules/users/user.entity';
+
 import {
-  seedDefaultAvatar,
   registerUser,
+  seedDefaultAvatar,
   truncateTables,
 } from './setup/helpers';
-import type { User } from '@/modules/users/user.entity';
+import { createTestApp } from './setup/test-app';
+import { startTestDatabase, stopTestDatabase } from './setup/test-database';
 
 describe('Users (e2e)', () => {
   let app: NestFastifyApplication;

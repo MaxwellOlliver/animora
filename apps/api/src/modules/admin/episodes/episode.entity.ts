@@ -1,13 +1,14 @@
+import { sql } from 'drizzle-orm';
 import {
-  pgTable,
-  uuid,
-  varchar,
   integer,
+  pgTable,
   text,
   timestamp,
   unique,
+  uuid,
+  varchar,
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
+
 import { playlists } from '../playlists/playlist.entity';
 
 export const episodes = pgTable(

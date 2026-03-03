@@ -1,8 +1,13 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { EpisodesRepository } from '../episodes.repository';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
 import { PlaylistsRepository } from '../../playlists/playlists.repository';
 import type { CreateEpisodeDto } from '../dto/create-episode.dto';
 import type { Episode } from '../episode.entity';
+import { EpisodesRepository } from '../episodes.repository';
 
 @Injectable()
 export class CreateEpisodeUseCase {
@@ -15,7 +20,9 @@ export class CreateEpisodeUseCase {
     const playlist = await this.playlistsRepository.findById(dto.playlistId);
     if (!playlist) throw new NotFoundException('Playlist not found');
 
-    const existing = await this.episodesRepository.findByPlaylistId(dto.playlistId);
+    const existing = await this.episodesRepository.findByPlaylistId(
+      dto.playlistId,
+    );
     const conflict = existing.find((e) => e.number === dto.number);
     if (conflict) {
       throw new ConflictException(

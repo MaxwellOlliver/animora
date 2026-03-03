@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { EpisodesRepository } from '../episodes.repository';
+
 import type { Episode } from '../episode.entity';
+import { EpisodesRepository } from '../episodes.repository';
 
 @Injectable()
 export class GetEpisodeUseCase {

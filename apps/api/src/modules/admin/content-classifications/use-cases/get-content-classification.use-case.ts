@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ContentClassificationsRepository } from '../content-classifications.repository';
+
 import type { ContentClassification } from '../content-classification.entity';
+import { ContentClassificationsRepository } from '../content-classifications.repository';
 
 @Injectable()
 export class GetContentClassificationUseCase {
@@ -8,7 +9,8 @@ export class GetContentClassificationUseCase {
 
   async execute(id: string): Promise<ContentClassification> {
     const classification = await this.repo.findById(id);
-    if (!classification) throw new NotFoundException('Content classification not found');
+    if (!classification)
+      throw new NotFoundException('Content classification not found');
     return classification;
   }
 }

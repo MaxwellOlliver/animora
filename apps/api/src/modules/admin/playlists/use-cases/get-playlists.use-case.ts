@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PlaylistsRepository } from '../playlists.repository';
+
 import { SeriesRepository } from '../../series/series.repository';
 import type { Playlist } from '../playlist.entity';
+import { PlaylistsRepository } from '../playlists.repository';
 
 @Injectable()
 export class GetPlaylistsUseCase {

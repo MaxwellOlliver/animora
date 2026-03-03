@@ -1,5 +1,6 @@
-import { Context, Effect, Layer } from 'effect';
 import { S3Client as AWS_S3Client } from '@aws-sdk/client-s3';
+import { Context, Effect, Layer } from 'effect';
+
 import { AppConfig } from '../config/config.layer';
 
 export class S3Client extends Context.Tag('S3Client')<

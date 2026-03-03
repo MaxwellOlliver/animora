@@ -1,5 +1,5 @@
-import { pgTable, uuid, varchar, timestamp, pgEnum } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
+import { pgEnum, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 
 export const roleEnum = pgEnum('role', ['USER', 'ADMIN']);
 export const authProviderEnum = pgEnum('auth_provider', ['LOCAL', 'GOOGLE']);

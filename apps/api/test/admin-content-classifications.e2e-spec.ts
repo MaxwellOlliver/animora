@@ -1,15 +1,17 @@
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import request from 'supertest';
 import type { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { startTestDatabase, stopTestDatabase } from './setup/test-database';
-import { createTestApp } from './setup/test-app';
+import request from 'supertest';
+
+import type { ContentClassification } from '@/modules/admin/content-classifications/content-classification.entity';
+
 import {
   registerAdmin,
   registerUser,
   seedDefaultAvatar,
   truncateTables,
 } from './setup/helpers';
-import type { ContentClassification } from '@/modules/admin/content-classifications/content-classification.entity';
+import { createTestApp } from './setup/test-app';
+import { startTestDatabase, stopTestDatabase } from './setup/test-database';
 
 describe('Admin Content Classifications (e2e)', () => {
   let app: NestFastifyApplication;

@@ -1,13 +1,14 @@
+import { sql } from 'drizzle-orm';
 import {
+  integer,
+  pgEnum,
   pgTable,
+  timestamp,
+  unique,
   uuid,
   varchar,
-  integer,
-  timestamp,
-  pgEnum,
-  unique,
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
+
 import { series } from '../series/series.entity';
 
 export const playlistTypeEnum = pgEnum('playlist_type', [

@@ -1,7 +1,12 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { PlaylistsRepository } from '../playlists.repository';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
 import type { UpdatePlaylistDto } from '../dto/update-playlist.dto';
 import type { Playlist } from '../playlist.entity';
+import { PlaylistsRepository } from '../playlists.repository';
 
 @Injectable()
 export class UpdatePlaylistUseCase {

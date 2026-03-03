@@ -1,13 +1,15 @@
-import { Effect } from 'effect';
-import type { VideoQuality } from '@animora/contracts';
-import {
-  TranscodeService,
-  collectOutputFiles,
-  hlsContentType,
-} from '../transcode.service';
-import { S3Service } from '../../infra/s3/s3.service';
 import { createReadStream } from 'node:fs';
 import { join } from 'node:path';
+
+import type { VideoQuality } from '@animora/contracts';
+import { Effect } from 'effect';
+
+import { S3Service } from '../../infra/s3/s3.service';
+import {
+  collectOutputFiles,
+  hlsContentType,
+  TranscodeService,
+} from '../transcode.service';
 
 export interface ProcessVideoInput {
   videoId: string;

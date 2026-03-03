@@ -1,13 +1,15 @@
-import { Context, Effect, Layer } from 'effect';
-import { S3Client, S3ClientLive } from './s3.layer';
+import type { Readable } from 'node:stream';
+
 import {
   DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
-import { AppConfig } from '../config/config.layer';
+import { Context, Effect, Layer } from 'effect';
+
 import { S3Error } from '../../errors/s3.error';
-import type { Readable } from 'node:stream';
+import { AppConfig } from '../config/config.layer';
+import { S3Client, S3ClientLive } from './s3.layer';
 
 export class S3Service extends Context.Tag('S3Service')<
   S3Service,

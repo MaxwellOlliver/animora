@@ -1,5 +1,6 @@
-import { Context, Effect, Layer } from 'effect';
 import * as amqplib from 'amqplib';
+import { Context, Effect, Layer } from 'effect';
+
 import { AppConfig } from '../config/config.layer';
 
 export class AmqpConnection extends Context.Tag('AmqpConnection')<

@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq, asc } from 'drizzle-orm';
-import { DRIZZLE } from '@/infra/database/database.module';
+import { asc, eq } from 'drizzle-orm';
+
 import type { DrizzleDB } from '@/infra/database/database.module';
-import { playlists, Playlist, NewPlaylist } from './playlist.entity';
+import { DRIZZLE } from '@/infra/database/database.module';
+
+import { NewPlaylist, Playlist, playlists } from './playlist.entity';
 
 @Injectable()
 export class PlaylistsRepository {

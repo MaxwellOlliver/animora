@@ -1,11 +1,13 @@
+import type { MultipartFile } from '@fastify/multipart';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { MultipartFile } from '@fastify/multipart';
-import { PlaylistsRepository } from '../playlists.repository';
+
 import { S3Service } from '@/infra/s3/s3.service';
+
+import { PlaylistsRepository } from '../playlists.repository';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MIME_TO_EXT: Record<string, string> = {

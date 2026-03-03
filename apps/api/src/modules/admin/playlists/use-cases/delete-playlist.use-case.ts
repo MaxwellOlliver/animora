@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PlaylistsRepository } from '../playlists.repository';
+
 import { S3Service } from '@/infra/s3/s3.service';
+
+import { PlaylistsRepository } from '../playlists.repository';
 
 @Injectable()
 export class DeletePlaylistUseCase {

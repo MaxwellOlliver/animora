@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { DRIZZLE } from '@/infra/database/database.module';
+
 import type { DrizzleDB } from '@/infra/database/database.module';
-import { videos, Video, NewVideo } from './video.entity';
+import { DRIZZLE } from '@/infra/database/database.module';
+
+import { NewVideo, Video, videos } from './video.entity';
 
 @Injectable()
 export class VideosRepository {

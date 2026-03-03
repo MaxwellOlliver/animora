@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq, asc } from 'drizzle-orm';
-import { DRIZZLE } from '@/infra/database/database.module';
+import { asc, eq } from 'drizzle-orm';
+
 import type { DrizzleDB } from '@/infra/database/database.module';
-import { episodes, Episode, NewEpisode } from './episode.entity';
+import { DRIZZLE } from '@/infra/database/database.module';
+
+import { Episode, episodes, NewEpisode } from './episode.entity';
 
 @Injectable()
 export class EpisodesRepository {

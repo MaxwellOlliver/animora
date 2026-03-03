@@ -1,7 +1,12 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { GenresRepository } from '../genres.repository';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
 import type { UpdateGenreDto } from '../dto/update-genre.dto';
 import type { Genre } from '../genre.entity';
+import { GenresRepository } from '../genres.repository';
 
 @Injectable()
 export class UpdateGenreUseCase {
@@ -13,7 +18,8 @@ export class UpdateGenreUseCase {
 
     if (dto.name && dto.name !== genre.name) {
       const existing = await this.genresRepository.findByName(dto.name);
-      if (existing) throw new ConflictException('Genre with this name already exists');
+      if (existing)
+        throw new ConflictException('Genre with this name already exists');
     }
 
     return this.genresRepository.update(id, dto);

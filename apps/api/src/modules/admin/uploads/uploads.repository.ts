@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
-import { DRIZZLE } from '@/infra/database/database.module';
+
 import type { DrizzleDB } from '@/infra/database/database.module';
-import { uploads, Upload, NewUpload } from './upload.entity';
+import { DRIZZLE } from '@/infra/database/database.module';
+
+import { NewUpload, Upload, uploads } from './upload.entity';
 import { uploadChunks } from './upload-chunk.entity';
 
 @Injectable()

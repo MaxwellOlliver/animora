@@ -1,17 +1,19 @@
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import request from 'supertest';
 import type { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { startTestDatabase, stopTestDatabase } from './setup/test-database';
-import { createTestApp } from './setup/test-app';
+import request from 'supertest';
+
+import type { ContentClassification } from '@/modules/admin/content-classifications/content-classification.entity';
+import type { Genre } from '@/modules/admin/genres/genre.entity';
+import type { SeriesWithDetails } from '@/modules/admin/series/series.entity';
+
 import {
   registerAdmin,
   registerUser,
   seedDefaultAvatar,
   truncateTables,
 } from './setup/helpers';
-import type { SeriesWithDetails } from '@/modules/admin/series/series.entity';
-import type { ContentClassification } from '@/modules/admin/content-classifications/content-classification.entity';
-import type { Genre } from '@/modules/admin/genres/genre.entity';
+import { createTestApp } from './setup/test-app';
+import { startTestDatabase, stopTestDatabase } from './setup/test-database';
 
 async function seedGenre(
   app: NestFastifyApplication,
@@ -96,7 +98,9 @@ describe('Admin Series (e2e)', () => {
     });
 
     it('should reject non-admin user (403)', async () => {
-      const user = await registerUser(app, { email: 'user-series@example.com' });
+      const user = await registerUser(app, {
+        email: 'user-series@example.com',
+      });
 
       await request(app.getHttpServer())
         .get('/api/admin/series')

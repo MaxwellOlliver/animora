@@ -1,17 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
 import {
-  S3Client,
-  PutObjectCommand,
+  AbortMultipartUploadCommand,
+  CompleteMultipartUploadCommand,
+  CreateMultipartUploadCommand,
   DeleteObjectCommand,
   DeleteObjectsCommand,
-  CreateMultipartUploadCommand,
+  PutObjectCommand,
+  S3Client,
   UploadPartCopyCommand,
-  CompleteMultipartUploadCommand,
-  AbortMultipartUploadCommand,
 } from '@aws-sdk/client-s3';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Readable } from 'stream';
 import { randomUUID } from 'crypto';
+import type { Readable } from 'stream';
+
 import { S3_CLIENT } from './s3.tokens';
 
 @Injectable()

@@ -1,4 +1,5 @@
 import { Effect } from 'effect';
+
 import { UnknownPatternError } from '../../errors/unknown-pattern.error';
 
 type RouteHandler<E, R> = (data: unknown) => Effect.Effect<void, E, R>;

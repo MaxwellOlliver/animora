@@ -1,14 +1,16 @@
-import { Effect, Schema } from 'effect';
-import { EVENTS, QUEUES, type VideoProcessedEvent } from '@animora/contracts';
-import { processVideo } from '../use-cases/process-video.use-case';
-import { PublisherService } from '../../infra/rabbitmq/rabbitmq.publisher';
-import { updateVideoStatus } from '../use-cases/update-video-status.use-case';
-import { InvalidEventError } from '../../errors/invalid-event.error';
-import { S3Service } from '../../infra/s3/s3.service';
 import { createWriteStream } from 'node:fs';
 import { mkdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pipeline } from 'node:stream/promises';
+
+import { EVENTS, QUEUES, type VideoProcessedEvent } from '@animora/contracts';
+import { Effect, Schema } from 'effect';
+
+import { InvalidEventError } from '../../errors/invalid-event.error';
+import { PublisherService } from '../../infra/rabbitmq/rabbitmq.publisher';
+import { S3Service } from '../../infra/s3/s3.service';
+import { processVideo } from '../use-cases/process-video.use-case';
+import { updateVideoStatus } from '../use-cases/update-video-status.use-case';
 
 const VideoQualitySchema = Schema.Literal('360p', '720p', '1080p');
 

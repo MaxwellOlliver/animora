@@ -1,7 +1,8 @@
-import { pgTable, uuid, varchar, timestamp } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
-import { users } from '../users/user.entity';
+import { pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+
 import { avatars } from '../admin/avatars/avatar.entity';
+import { users } from '../users/user.entity';
 
 export const profiles = pgTable('profiles', {
   id: uuid('id')

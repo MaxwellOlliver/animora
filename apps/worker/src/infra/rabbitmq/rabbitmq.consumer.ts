@@ -1,7 +1,8 @@
-import { Context, Effect, Layer, Queue, Schema, Scope } from 'effect';
 import * as amqplib from 'amqplib';
-import { AmqpChannel } from './rabbitmq.layer';
+import { Context, Effect, Layer, Queue, Schema, Scope } from 'effect';
+
 import { MessageParseError } from '../../errors/message-parse.error';
+import { AmqpChannel } from './rabbitmq.layer';
 
 const RabbitMqMessageSchema = Schema.Struct({
   pattern: Schema.String,

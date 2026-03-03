@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
-import { DRIZZLE } from '@/infra/database/database.module';
+
 import type { DrizzleDB } from '@/infra/database/database.module';
-import { series, Series, NewSeries, SeriesWithDetails } from './series.entity';
-import { seriesGenres } from './series-genre.entity';
+import { DRIZZLE } from '@/infra/database/database.module';
+
 import { genres } from '../genres/genre.entity';
+import { NewSeries, Series, series, SeriesWithDetails } from './series.entity';
+import { seriesGenres } from './series-genre.entity';
 
 @Injectable()
 export class SeriesRepository {

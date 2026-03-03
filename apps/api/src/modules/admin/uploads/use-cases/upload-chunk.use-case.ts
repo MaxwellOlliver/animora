@@ -1,11 +1,13 @@
+import type { MultipartFile } from '@fastify/multipart';
 import {
   BadRequestException,
   GoneException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { MultipartFile } from '@fastify/multipart';
+
 import { S3Service } from '@/infra/s3/s3.service';
+
 import { UploadsRepository } from '../uploads.repository';
 
 @Injectable()

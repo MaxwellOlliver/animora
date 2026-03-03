@@ -1,7 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { GenresRepository } from '../genres.repository';
+
 import type { CreateGenreDto } from '../dto/create-genre.dto';
 import type { Genre } from '../genre.entity';
+import { GenresRepository } from '../genres.repository';
 
 @Injectable()
 export class CreateGenreUseCase {

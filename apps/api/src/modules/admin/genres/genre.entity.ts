@@ -1,11 +1,11 @@
+import { sql } from 'drizzle-orm';
 import {
+  boolean,
   pgTable,
+  timestamp,
   uuid,
   varchar,
-  boolean,
-  timestamp,
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
 
 export const genres = pgTable('genres', {
   id: uuid('id')

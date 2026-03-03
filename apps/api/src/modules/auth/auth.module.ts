@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtSignOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from '../users/users.module';
+
 import { ProfilesModule } from '../profiles/profiles.module';
+import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
+import { RefreshTokenRepository } from './refresh-token.repository';
+import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { GoogleStrategy } from './strategies/google.strategy';
-import { LoginUseCase } from './use-cases/login.use-case';
-import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
 import { GoogleAuthUseCase } from './use-cases/google-auth.use-case';
+import { LoginUseCase } from './use-cases/login.use-case';
 import { LogoutUseCase } from './use-cases/logout.use-case';
-import { RefreshTokenRepository } from './refresh-token.repository';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
 
 @Module({
   imports: [

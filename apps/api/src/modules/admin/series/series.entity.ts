@@ -1,12 +1,13 @@
+import { sql } from 'drizzle-orm';
 import {
+  boolean,
   pgTable,
+  text,
+  timestamp,
   uuid,
   varchar,
-  text,
-  boolean,
-  timestamp,
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
+
 import { contentClassifications } from '../content-classifications/content-classification.entity';
 import type { Genre } from '../genres/genre.entity';
 

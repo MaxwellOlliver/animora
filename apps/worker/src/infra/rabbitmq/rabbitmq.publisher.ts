@@ -1,4 +1,5 @@
 import { Context, Effect, Layer } from 'effect';
+
 import { AmqpChannel } from './rabbitmq.layer';
 
 export class PublisherService extends Context.Tag('PublisherService')<

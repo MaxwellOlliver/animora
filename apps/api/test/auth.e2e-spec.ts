@@ -1,16 +1,18 @@
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import request from 'supertest';
 import type { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { startTestDatabase, stopTestDatabase } from './setup/test-database';
-import { createTestApp } from './setup/test-app';
-import {
-  seedDefaultAvatar,
-  registerUser,
-  loginUser,
-  truncateTables,
-} from './setup/helpers';
+import request from 'supertest';
+
 import type { AuthResponseDto } from '@/modules/auth/dto/auth-response.dto';
 import type { Profile } from '@/modules/profiles/profile.entity';
+
+import {
+  loginUser,
+  registerUser,
+  seedDefaultAvatar,
+  truncateTables,
+} from './setup/helpers';
+import { createTestApp } from './setup/test-app';
+import { startTestDatabase, stopTestDatabase } from './setup/test-database';
 
 describe('Auth (e2e)', () => {
   let app: NestFastifyApplication;
@@ -201,9 +203,7 @@ describe('Auth (e2e)', () => {
     });
 
     it('should reject unauthenticated (401)', async () => {
-      await request(app.getHttpServer())
-        .post('/api/auth/logout')
-        .expect(401);
+      await request(app.getHttpServer()).post('/api/auth/logout').expect(401);
     });
   });
 });

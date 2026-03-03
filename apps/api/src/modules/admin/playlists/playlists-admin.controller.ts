@@ -12,16 +12,24 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
+
 import { Roles } from '@/common/decorators/roles.decorator';
+
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { CreatePlaylistUseCase } from './use-cases/create-playlist.use-case';
-import { GetPlaylistsUseCase } from './use-cases/get-playlists.use-case';
-import { GetPlaylistUseCase } from './use-cases/get-playlist.use-case';
-import { UpdatePlaylistUseCase } from './use-cases/update-playlist.use-case';
 import { DeletePlaylistUseCase } from './use-cases/delete-playlist.use-case';
+import { GetPlaylistUseCase } from './use-cases/get-playlist.use-case';
+import { GetPlaylistsUseCase } from './use-cases/get-playlists.use-case';
+import { UpdatePlaylistUseCase } from './use-cases/update-playlist.use-case';
 import { UploadPlaylistCoverUseCase } from './use-cases/upload-playlist-cover.use-case';
 
 @ApiTags('Admin / Playlists')
@@ -59,7 +67,10 @@ export class PlaylistsAdminController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a playlist' })
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdatePlaylistDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdatePlaylistDto,
+  ) {
     return this.updatePlaylistUseCase.execute(id, dto);
   }
 

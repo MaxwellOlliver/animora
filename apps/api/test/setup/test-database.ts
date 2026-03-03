@@ -2,9 +2,9 @@ import {
   PostgreSqlContainer,
   type StartedPostgreSqlContainer,
 } from '@testcontainers/postgresql';
-import { Client } from 'pg';
 import { execSync } from 'child_process';
 import path from 'path';
+import { Client } from 'pg';
 
 export interface TestDatabase {
   databaseUrl: string;

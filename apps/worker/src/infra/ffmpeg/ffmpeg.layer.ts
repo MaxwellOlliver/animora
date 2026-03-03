@@ -1,6 +1,8 @@
-import { Context, Effect, Layer } from 'effect';
-import { TranscodeError } from '../../errors/transcode.error';
 import { spawn } from 'node:child_process';
+
+import { Context, Effect, Layer } from 'effect';
+
+import { TranscodeError } from '../../errors/transcode.error';
 
 export class FfmpegService extends Context.Tag('FfmpegService')<
   FfmpegService,

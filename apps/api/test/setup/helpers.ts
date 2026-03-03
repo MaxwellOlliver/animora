@@ -1,17 +1,18 @@
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import request from 'supertest';
 import { eq } from 'drizzle-orm';
-import { DRIZZLE } from '@/infra/database/database.module';
+import request from 'supertest';
+
 import type { DrizzleDB } from '@/infra/database/database.module';
-import { avatars } from '@/modules/admin/avatars/avatar.entity';
-import { animeGenres } from '@/modules/admin/animes/anime-genre.entity';
+import { DRIZZLE } from '@/infra/database/database.module';
 import { animes } from '@/modules/admin/animes/anime.entity';
+import { animeGenres } from '@/modules/admin/animes/anime-genre.entity';
+import { avatars } from '@/modules/admin/avatars/avatar.entity';
 import { contentClassifications } from '@/modules/admin/content-classifications/content-classification.entity';
 import { genres } from '@/modules/admin/genres/genre.entity';
-import { profiles } from '@/modules/profiles/profile.entity';
-import { refreshTokens } from '@/modules/auth/refresh-token.entity';
-import { users } from '@/modules/users/user.entity';
 import type { AuthResponseDto } from '@/modules/auth/dto/auth-response.dto';
+import { refreshTokens } from '@/modules/auth/refresh-token.entity';
+import { profiles } from '@/modules/profiles/profile.entity';
+import { users } from '@/modules/users/user.entity';
 
 const defaultUser = {
   email: 'test@example.com',
