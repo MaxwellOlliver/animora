@@ -98,7 +98,7 @@ describe('handleVideoUploaded', () => {
     );
 
     expect((published[0].data as any).masterPlaylistKey).toBe(
-      'hls/test/master.m3u8',
+      `hls/${testEvent.videoId}/master.m3u8`,
     );
   });
 
