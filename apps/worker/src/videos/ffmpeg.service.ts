@@ -4,6 +4,7 @@ import { TranscodeError } from '../errors/transcode.error';
 
 export interface TranscodeInput {
   rawObjectKey: string;
+  videoId: string;
   qualities: readonly VideoQuality[];
 }
 
@@ -28,7 +29,7 @@ export const FfmpegLive = Layer.succeed(FfmpegService, {
       );
       // TODO: real FFmpeg pipeline
       return {
-        masterPlaylistKey: `hls/${input.rawObjectKey.replace('uploads/', '')}/master.m3u8`,
+        masterPlaylistKey: `hls/${input.videoId}/master.m3u8`,
       };
     }),
 });

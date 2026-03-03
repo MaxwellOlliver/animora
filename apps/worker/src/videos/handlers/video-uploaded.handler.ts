@@ -4,6 +4,10 @@ import { FfmpegService } from '../ffmpeg.service';
 import { PublisherService } from '../../infra/rabbitmq/rabbitmq.publisher';
 import { updateVideoStatus } from '../use-cases/update-video-status.use-case';
 import { InvalidEventError } from '../../errors/invalid-event.error';
+import { S3Service } from '../../infra/s3/s3.service';
+import { createWriteStream } from 'node:fs';
+import { join } from 'node:path';
+import { pipeline } from 'node:stream/promises';
 
 const VideoQualitySchema = Schema.Literal('360p', '720p', '1080p');
 
@@ -22,12 +26,23 @@ export const handleVideoUploaded = (data: unknown) =>
 
     const ffmpeg = yield* FfmpegService;
     const publisher = yield* PublisherService;
+    const s3Service = yield* S3Service;
 
     yield* Effect.log(`Processing video ${event.videoId}`);
+
+    const body = yield* s3Service.getObject(event.rawObjectKey);
+
+    yield* Effect.log(
+      `Fetched video ${event.videoId} from S3 with key ${event.rawObjectKey}`,
+    );
+
+    const destPath = join('tmp', `${event.videoId}.mp4`);
+    yield* Effect.promise(() => pipeline(body, createWriteStream(destPath)));
 
     const transcodeResult = yield* ffmpeg
       .transcode({
         rawObjectKey: event.rawObjectKey,
+        videoId: event.videoId,
         qualities: event.qualities,
       })
       .pipe(
@@ -57,6 +72,7 @@ export const handleVideoUploaded = (data: unknown) =>
       EVENTS.VIDEO_PROCESSED,
       result,
     );
+
     yield* Effect.log(
       `Video processed ${event.videoId} with status ${result.status}`,
     );
