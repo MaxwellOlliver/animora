@@ -28,7 +28,7 @@ export async function seedDefaultAvatar(
     .insert(avatars)
     .values({
       name: 'Default Avatar',
-      url: 'https://example.com/default.png',
+      pictureKey: 'avatars/default.png',
       active: true,
       default: true,
     })
@@ -42,7 +42,7 @@ export async function seedAvatar(app: NestFastifyApplication): Promise<string> {
     .insert(avatars)
     .values({
       name: 'Custom Avatar',
-      url: 'https://example.com/custom.png',
+      pictureKey: 'avatars/custom.png',
       active: true,
       default: false,
     })

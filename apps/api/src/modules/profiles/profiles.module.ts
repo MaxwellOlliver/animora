@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { AvatarsRepository } from '../admin/avatars/avatars.repository';
+import { AvatarsModule } from '../admin/avatars/avatars.module';
 import { ProfilesController } from './profiles.controller';
 import { ProfilesRepository } from './profiles.repository';
 import { CreateProfileUseCase } from './use-cases/create-profile.use-case';
@@ -10,10 +10,10 @@ import { GetProfilesUseCase } from './use-cases/get-profiles.use-case';
 import { UpdateProfileUseCase } from './use-cases/update-profile.use-case';
 
 @Module({
+  imports: [AvatarsModule],
   controllers: [ProfilesController],
   providers: [
     ProfilesRepository,
-    AvatarsRepository,
     CreateProfileUseCase,
     GetProfilesUseCase,
     GetProfileUseCase,

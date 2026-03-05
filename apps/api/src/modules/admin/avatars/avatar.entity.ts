@@ -12,7 +12,7 @@ export const avatars = pgTable('avatars', {
     .default(sql`uuid_generate_v7()`)
     .primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
-  url: varchar('url', { length: 500 }).notNull(),
+  pictureKey: varchar('picture_key', { length: 500 }),
   active: boolean('active').notNull().default(true),
   default: boolean('default').notNull().default(false),
   createdAt: timestamp('created_at').defaultNow().notNull(),

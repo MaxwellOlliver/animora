@@ -7,6 +7,7 @@ import { RolesGuard } from './common/guards/roles.guard';
 import { DatabaseModule } from './infra/database/database.module';
 import { RabbitMQModule } from './infra/rabbitmq/rabbitmq.module';
 import { S3Module } from './infra/s3/s3.module';
+import { AvatarsModule } from './modules/admin/avatars/avatars.module';
 import { ContentClassificationsModule } from './modules/admin/content-classifications/content-classifications.module';
 import { EpisodesModule } from './modules/admin/episodes/episodes.module';
 import { GenresModule } from './modules/admin/genres/genres.module';
@@ -27,6 +28,7 @@ import { UsersModule } from './modules/users/users.module';
     AuthModule,
     UsersModule,
     ProfilesModule,
+    AvatarsModule,
     GenresModule,
     ContentClassificationsModule,
     SeriesModule,
