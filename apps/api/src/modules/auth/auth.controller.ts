@@ -45,6 +45,7 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   async register(@Body() dto: RegisterDto) {
+    // TODO: Replace with a single use case that handles both user and profile creation in a transaction
     const user = await this.createUserUseCase.execute(dto);
     await this.createProfileUseCase.execute({
       userId: user.id,

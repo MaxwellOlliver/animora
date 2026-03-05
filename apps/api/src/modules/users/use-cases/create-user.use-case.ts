@@ -15,6 +15,7 @@ export class CreateUserUseCase {
       throw new ConflictException('Email already in use');
     }
 
+    // TODO: Move to infrastructure layer
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     return this.usersRepository.create({

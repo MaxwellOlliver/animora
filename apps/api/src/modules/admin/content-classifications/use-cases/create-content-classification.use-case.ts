@@ -17,6 +17,6 @@ export class CreateContentClassificationUseCase {
         'Content classification with this name already exists',
       );
     }
-    return this.repo.create({ name: dto.name });
+    return this.repo.create({ name: dto.name, description: dto.description });
   }
 }

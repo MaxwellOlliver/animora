@@ -36,6 +36,7 @@ async function bootstrap() {
     .register(fastifyMultipart, { limits: { fileSize: 10_485_760 } }); // 10 MB
 
   app.setGlobalPrefix('api');
+  app.enableCors({ origin: '*' });
 
   app.useGlobalPipes(
     new ValidationPipe({
