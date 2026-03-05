@@ -1,20 +1,24 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConsumes,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
@@ -45,9 +49,14 @@ export class SeriesAdminController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'List all series' })
-  list() {
-    return this.getSeriesUseCase.execute();
+  @ApiOperation({ summary: 'List series (cursor paginated)' })
+  @ApiQuery({ name: 'cursor', required: false, type: String })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  list(
+    @Query('cursor', new ParseUUIDPipe({ optional: true })) cursor?: string,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return this.getSeriesUseCase.execute({ cursor, limit });
   }
 
   @Post()

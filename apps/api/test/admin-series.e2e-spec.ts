@@ -2,6 +2,7 @@ import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import type { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import request from 'supertest';
 
+import type { CursorPaginatedResponse } from '@/common/types/pagination.types';
 import type { ContentClassification } from '@/modules/admin/content-classifications/content-classification.entity';
 import type { Genre } from '@/modules/admin/genres/genre.entity';
 import type { SeriesWithDetails } from '@/modules/admin/series/series.entity';
@@ -90,11 +91,12 @@ describe('Admin Series (e2e)', () => {
         .get('/api/admin/series')
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .expect(200);
-      const body = res.body as SeriesWithDetails[];
+      const body = res.body as CursorPaginatedResponse<SeriesWithDetails>;
 
-      expect(body).toHaveLength(1);
-      expect(body[0]).toHaveProperty('name', 'Attack on Titan');
-      expect(body[0].genres).toHaveLength(1);
+      expect(body.items).toHaveLength(1);
+      expect(body.items[0]).toHaveProperty('name', 'Attack on Titan');
+      expect(body.items[0].genres).toHaveLength(1);
+      expect(body).toHaveProperty('nextCursor', null);
     });
 
     it('should reject non-admin user (403)', async () => {

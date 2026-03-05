@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq, inArray } from 'drizzle-orm';
+import { desc, eq, inArray, lt } from 'drizzle-orm';
 
+import type {
+  CursorPaginatedRequest,
+  CursorPaginatedResponse,
+} from '@/common/types/pagination.types';
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
 
@@ -12,9 +16,28 @@ import { seriesGenres } from './series-genre.entity';
 export class SeriesRepository {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
-  async findAll(): Promise<SeriesWithDetails[]> {
-    const all = await this.db.select().from(series);
-    if (all.length === 0) return [];
+  async findAllCursor({
+    cursor,
+    limit = 20,
+  }: CursorPaginatedRequest): Promise<
+    CursorPaginatedResponse<SeriesWithDetails>
+  > {
+    const rows = cursor
+      ? await this.db
+          .select()
+          .from(series)
+          .where(lt(series.id, cursor))
+          .orderBy(desc(series.id))
+          .limit(limit + 1)
+      : await this.db
+          .select()
+          .from(series)
+          .orderBy(desc(series.id))
+          .limit(limit + 1);
+
+    const hasNextPage = rows.length > limit;
+    const items = hasNextPage ? rows.slice(0, limit) : rows;
+    if (items.length === 0) return { items: [], nextCursor: null };
 
     const genreRows = await this.db
       .select({ seriesId: seriesGenres.seriesId, genre: genres })
@@ -23,7 +46,7 @@ export class SeriesRepository {
       .where(
         inArray(
           seriesGenres.seriesId,
-          all.map((s) => s.id),
+          items.map((s) => s.id),
         ),
       );
 
@@ -35,10 +58,13 @@ export class SeriesRepository {
       return acc;
     }, {});
 
-    return all.map((s) => ({
-      ...s,
-      genres: genresBySeriesId[s.id] ?? [],
-    }));
+    return {
+      items: items.map((s) => ({
+        ...s,
+        genres: genresBySeriesId[s.id] ?? [],
+      })),
+      nextCursor: hasNextPage ? (items[items.length - 1]?.id ?? null) : null,
+    };
   }
 
   async findById(id: string): Promise<SeriesWithDetails | undefined> {
