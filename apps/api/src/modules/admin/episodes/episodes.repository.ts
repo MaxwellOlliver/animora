@@ -1,19 +1,47 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { asc, eq } from 'drizzle-orm';
+import { asc, desc, eq } from 'drizzle-orm';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
 import { media } from '@/modules/media/media.entity';
 
+import { playlists } from '../playlists/playlist.entity';
+import { series } from '../series/series.entity';
 import { type Episode, episodes, type NewEpisode } from './episode.entity';
 
 export type EpisodeWithMedia = Episode & {
   thumbnail: typeof media.$inferSelect | null;
 };
 
+export type EpisodeWithContext = EpisodeWithMedia & {
+  playlistName: string | null;
+  seriesName: string;
+};
+
 @Injectable()
 export class EpisodesRepository {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
+
+  async findAll(): Promise<EpisodeWithContext[]> {
+    const rows = await this.db
+      .select({
+        episode: episodes,
+        thumbnail: media,
+        playlistName: playlists.title,
+        seriesName: series.name,
+      })
+      .from(episodes)
+      .leftJoin(media, eq(episodes.thumbnailId, media.id))
+      .innerJoin(playlists, eq(episodes.playlistId, playlists.id))
+      .innerJoin(series, eq(playlists.seriesId, series.id))
+      .orderBy(desc(episodes.createdAt));
+    return rows.map((r) => ({
+      ...r.episode,
+      thumbnail: r.thumbnail,
+      playlistName: r.playlistName,
+      seriesName: r.seriesName,
+    }));
+  }
 
   async findByPlaylistId(playlistId: string): Promise<EpisodeWithMedia[]> {
     const rows = await this.db

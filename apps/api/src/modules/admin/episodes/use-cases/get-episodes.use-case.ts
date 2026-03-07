@@ -1,8 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PlaylistsRepository } from '../../playlists/playlists.repository';
-import type { Episode } from '../episode.entity';
-import { EpisodesRepository } from '../episodes.repository';
+import {
+  EpisodesRepository,
+  type EpisodeWithContext,
+  type EpisodeWithMedia,
+} from '../episodes.repository';
 
 @Injectable()
 export class GetEpisodesUseCase {
@@ -11,10 +14,16 @@ export class GetEpisodesUseCase {
     private readonly playlistsRepository: PlaylistsRepository,
   ) {}
 
-  async execute(playlistId: string): Promise<Episode[]> {
-    const playlist = await this.playlistsRepository.findById(playlistId);
-    if (!playlist) throw new NotFoundException('Playlist not found');
+  async execute(
+    playlistId?: string,
+  ): Promise<EpisodeWithMedia[] | EpisodeWithContext[]> {
+    if (playlistId) {
+      const playlist = await this.playlistsRepository.findById(playlistId);
+      if (!playlist) throw new NotFoundException('Playlist not found');
 
-    return this.episodesRepository.findByPlaylistId(playlistId);
+      return this.episodesRepository.findByPlaylistId(playlistId);
+    }
+
+    return this.episodesRepository.findAll();
   }
 }

@@ -47,9 +47,9 @@ export class EpisodesAdminController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'List episodes for a playlist' })
-  @ApiQuery({ name: 'playlistId', required: true, type: String })
-  list(@Query('playlistId', ParseUUIDPipe) playlistId: string) {
+  @ApiOperation({ summary: 'List episodes, optionally filtered by playlist' })
+  @ApiQuery({ name: 'playlistId', required: false, type: String })
+  list(@Query('playlistId') playlistId?: string) {
     return this.getEpisodesUseCase.execute(playlistId);
   }
 
@@ -82,7 +82,7 @@ export class EpisodesAdminController {
   }
 
   @Post(':id/thumbnail')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload episode thumbnail' })
   async uploadThumbnail(
