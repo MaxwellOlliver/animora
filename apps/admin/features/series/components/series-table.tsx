@@ -9,6 +9,7 @@ import {
   ArrowUp,
   ArrowDown,
   MoreHorizontal,
+  ListVideo,
   Pencil,
   Plus,
   Trash,
@@ -280,6 +281,12 @@ export function SeriesTable() {
                     <Link href={`/series/${series.id}/edit`}>
                       <Pencil className="size-4" />
                       Edit
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/playlists?seriesId=${series.id}`}>
+                      <ListVideo className="size-4" />
+                      Playlists
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem variant="destructive">

@@ -1,19 +1,38 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { asc, eq } from 'drizzle-orm';
+import { asc, desc, eq } from 'drizzle-orm';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
 import { media } from '@/modules/media/media.entity';
 
+import { series } from '../series/series.entity';
 import { type NewPlaylist, type Playlist, playlists } from './playlist.entity';
 
 export type PlaylistWithMedia = Playlist & {
   cover: typeof media.$inferSelect | null;
 };
 
+export type PlaylistWithMediaAndSeries = PlaylistWithMedia & {
+  seriesName: string;
+};
+
 @Injectable()
 export class PlaylistsRepository {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
+
+  async findAll(): Promise<PlaylistWithMediaAndSeries[]> {
+    const rows = await this.db
+      .select({ playlist: playlists, cover: media, seriesName: series.name })
+      .from(playlists)
+      .leftJoin(media, eq(playlists.coverId, media.id))
+      .innerJoin(series, eq(playlists.seriesId, series.id))
+      .orderBy(desc(playlists.createdAt));
+    return rows.map((r) => ({
+      ...r.playlist,
+      cover: r.cover,
+      seriesName: r.seriesName,
+    }));
+  }
 
   async findBySeriesId(seriesId: string): Promise<PlaylistWithMedia[]> {
     const rows = await this.db

@@ -47,9 +47,9 @@ export class PlaylistsAdminController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'List playlists for a series' })
-  @ApiQuery({ name: 'seriesId', required: true, type: String })
-  list(@Query('seriesId', ParseUUIDPipe) seriesId: string) {
+  @ApiOperation({ summary: 'List playlists, optionally filtered by series' })
+  @ApiQuery({ name: 'seriesId', required: false, type: String })
+  list(@Query('seriesId') seriesId?: string) {
     return this.getPlaylistsUseCase.execute(seriesId);
   }
 
@@ -82,7 +82,7 @@ export class PlaylistsAdminController {
   }
 
   @Post(':id/cover')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload playlist cover image' })
   async uploadCover(
