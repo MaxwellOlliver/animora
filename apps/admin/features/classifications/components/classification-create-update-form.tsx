@@ -5,7 +5,7 @@ import { useEffect, useId, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,8 +23,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { FormSection } from "@/components/form-section";
+import { Grid } from "@/components/grid";
 import { getMediaImageUrl } from "@/lib/s3";
 import type { Media } from "../types";
+import { FormSectionGroup } from "@/components/form-section-group";
 
 const classificationSchema = z.object({
   name: z
@@ -94,7 +97,12 @@ export function ClassificationCreateUpdateForm({
       description: initialValues?.description ?? "",
       active: initialValues?.active ?? true,
     });
-  }, [form, initialValues?.name, initialValues?.description, initialValues?.active]);
+  }, [
+    form,
+    initialValues?.name,
+    initialValues?.description,
+    initialValues?.active,
+  ]);
 
   const isBusy = isSubmitting || form.formState.isSubmitting;
   const errorMessage = localError ?? submitError ?? null;
@@ -114,61 +122,74 @@ export function ClassificationCreateUpdateForm({
       });
     } catch (error) {
       setLocalError(
-        error instanceof Error ? error.message : "Failed to save classification.",
+        error instanceof Error
+          ? error.message
+          : "Failed to save classification.",
       );
     }
   });
 
   return (
-    <form className="max-w-2xl" onSubmit={handleSubmit}>
-      <div className="rounded-lg border p-4 md:p-6">
-        <FieldGroup>
-          {errorMessage && (
-            <div
-              role="alert"
-              aria-live="polite"
-              className="rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-            >
-              {errorMessage}
-            </div>
-          )}
+    <form onSubmit={handleSubmit}>
+      {errorMessage && (
+        <div
+          role="alert"
+          aria-live="polite"
+          className="mb-4 flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+        >
+          <AlertCircle className="mt-0.5 size-4 shrink-0" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
+      <FormSectionGroup>
+        <FormSection title="Details" separator={false}>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor={nameId}>Name</FieldLabel>
+              <Input
+                id={nameId}
+                placeholder="e.g. PG-13, R, TV-MA"
+                disabled={isBusy}
+                aria-invalid={!!form.formState.errors.name}
+                {...form.register("name")}
+              />
+              <FieldError errors={[form.formState.errors.name]} />
+            </Field>
 
-          <PhotoUploadField
-            value={photoValue}
-            onChange={setPhotoValue}
-            label="Icon"
-            description="Choose an icon image for this classification."
-            disabled={isBusy}
-          />
-
-          <Field>
-            <FieldLabel htmlFor={nameId}>Name</FieldLabel>
-            <Input
-              id={nameId}
-              placeholder="+14"
-              disabled={isBusy}
-              aria-invalid={!!form.formState.errors.name}
-              {...form.register("name")}
-            />
-            <FieldError errors={[form.formState.errors.name]} />
-          </Field>
-
-          <Field>
-            <FieldLabel htmlFor={descriptionId}>Description</FieldLabel>
-            <Textarea
-              id={descriptionId}
-              placeholder="Not recommended for children under 14."
-              disabled={isBusy}
-              {...form.register("description")}
-            />
-            <FieldError errors={[form.formState.errors.description]} />
-          </Field>
-
-          <Field orientation="horizontal">
+            <Field>
+              <FieldLabel htmlFor={descriptionId}>Description</FieldLabel>
+              <Textarea
+                id={descriptionId}
+                placeholder="Describe what this classification means..."
+                disabled={isBusy}
+                {...form.register("description")}
+              />
+              <FieldError errors={[form.formState.errors.description]} />
+            </Field>
+          </FieldGroup>
+        </FormSection>
+        <FormSection title="Icon" separator={false}>
+          <Grid>
+            <FieldGroup>
+              <PhotoUploadField
+                value={photoValue}
+                onChange={setPhotoValue}
+                label="Classification icon"
+                description="Choose an icon image for this classification."
+                disabled={isBusy}
+              />
+            </FieldGroup>
+          </Grid>
+        </FormSection>
+      </FormSectionGroup>
+      <FormSection title="Visibility">
+        <Grid>
+          <div className="flex gap-8 items-center">
             <div className="space-y-0.5">
               <FieldLabel htmlFor={activeId}>Active</FieldLabel>
               <FieldDescription>
-                Controls whether this classification is available for use.
+                Controls whether this classification is visible and available
+                for use.
               </FieldDescription>
             </div>
             <Controller
@@ -183,24 +204,23 @@ export function ClassificationCreateUpdateForm({
                 />
               )}
             />
-          </Field>
-
-          <div className="flex items-center gap-2">
-            <Button type="submit" disabled={isBusy}>
-              {isBusy ? (
-                <>
-                  <Loader2 className="animate-spin" aria-hidden="true" />
-                  Saving...
-                </>
-              ) : (
-                submitLabel
-              )}
-            </Button>
-            <Button type="button" variant="outline" asChild>
-              <Link href={cancelHref}>Cancel</Link>
-            </Button>
           </div>
-        </FieldGroup>
+        </Grid>
+      </FormSection>
+      <div className="mt-8 flex gap-4 ">
+        <Button type="submit" size="sm" disabled={isBusy}>
+          {isBusy ? (
+            <>
+              <Loader2 className="animate-spin" aria-hidden="true" />
+              Saving...
+            </>
+          ) : (
+            submitLabel
+          )}
+        </Button>
+        <Button type="button" variant="ghost" size="sm" asChild>
+          <Link href={cancelHref}>Cancel</Link>
+        </Button>
       </div>
     </form>
   );

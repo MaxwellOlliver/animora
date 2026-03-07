@@ -29,6 +29,8 @@ export default function EditGenrePage() {
     router.refresh();
   }
 
+  const genreName = genreQuery.data?.name;
+
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -49,7 +51,9 @@ export default function EditGenrePage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Edit</BreadcrumbPage>
+                <BreadcrumbPage>
+                  {genreName ? `Edit: ${genreName}` : "Edit"}
+                </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -58,24 +62,59 @@ export default function EditGenrePage() {
 
       <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Edit Genre</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {genreName ? (
+              <>
+                Edit - <span className="text-primary/80">{genreName}</span>
+              </>
+            ) : genreQuery.isLoading ? (
+              <span className="inline-flex items-center gap-3">
+                Edit <Skeleton className="inline-block h-6 w-32 align-middle" />
+              </span>
+            ) : (
+              "Edit Genre"
+            )}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Update genre details and availability.
           </p>
         </div>
 
         {genreQuery.isLoading ? (
-          <div className="max-w-xl space-y-4 rounded-lg border p-4 md:p-6">
-            <Skeleton className="h-5 w-24" />
-            <Skeleton className="h-9 w-full" />
-            <Skeleton className="h-5 w-32" />
-            <Skeleton className="h-10 w-36" />
+          <div className="max-w-xl overflow-hidden rounded-xl border bg-card shadow-sm">
+            <div className="px-5 py-4 md:px-6">
+              <Skeleton className="h-4 w-16" />
+            </div>
+            <Separator />
+            <div className="space-y-5 px-5 py-5 md:px-6">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-9 w-full" />
+              </div>
+            </div>
+            <Separator />
+            <div className="px-5 py-4 md:px-6">
+              <Skeleton className="h-4 w-20" />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between px-5 py-5 md:px-6">
+              <div className="space-y-1">
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-3 w-48" />
+              </div>
+              <Skeleton className="h-5 w-8 rounded-full" />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between bg-muted/30 px-5 py-4 md:px-6">
+              <Skeleton className="h-8 w-16" />
+              <Skeleton className="h-8 w-24" />
+            </div>
           </div>
         ) : genreQuery.isError ? (
           <div
             role="alert"
             aria-live="polite"
-            className="max-w-xl rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            className="max-w-xl rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
           >
             {genreQuery.error instanceof Error
               ? genreQuery.error.message

@@ -1,8 +1,6 @@
 "use client";
 
-import {
-  type ColumnDef,
-} from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import {
   Loader2,
   ImageOff,
@@ -11,11 +9,11 @@ import {
   ArrowUp,
   ArrowDown,
   MoreHorizontal,
+  Pencil,
+  Plus,
+  Trash,
 } from "lucide-react";
-import {
-  TableCell,
-  TableRow,
-} from "@/components/ui/table";
+import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from "@/components/ui/data-table";
+import Link from "next/link";
 
 function BannerCell({ series }: { series: Series }) {
   if (!series.banner) {
@@ -277,8 +276,16 @@ export function SeriesTable() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/series/${series.id}/edit`}>
+                      <Pencil className="size-4" />
+                      Edit
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem variant="destructive">
+                    <Trash />
+                    Delete
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -304,6 +311,14 @@ export function SeriesTable() {
         filterColumnId="name"
         filterPlaceholder="Filter by name..."
         getRowId={(row) => row.id}
+        toolbar={
+          <Button asChild>
+            <Link href="/series/create">
+              <Plus aria-hidden="true" />
+              Create series
+            </Link>
+          </Button>
+        }
       />
 
       {hasNextPage && (

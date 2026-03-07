@@ -45,6 +45,8 @@ export default function EditClassificationPage() {
     router.refresh();
   }
 
+  const classificationName = classificationQuery.data?.name;
+
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -67,7 +69,11 @@ export default function EditClassificationPage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Edit</BreadcrumbPage>
+                <BreadcrumbPage>
+                  {classificationName
+                    ? `Edit: ${classificationName}`
+                    : "Edit"}
+                </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -76,26 +82,81 @@ export default function EditClassificationPage() {
       <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Edit Classification
+            {classificationName ? (
+              <>
+                Edit <span className="text-muted-foreground">&mdash;</span>{" "}
+                <span className="text-primary/80">{classificationName}</span>
+              </>
+            ) : classificationQuery.isLoading ? (
+              <span className="inline-flex items-center gap-3">
+                Edit <Skeleton className="inline-block h-6 w-32 align-middle" />
+              </span>
+            ) : (
+              "Edit Classification"
+            )}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             Update classification details and icon.
           </p>
         </div>
 
         {classificationQuery.isLoading ? (
-          <div className="max-w-2xl space-y-4 rounded-lg border p-4 md:p-6">
-            <Skeleton className="h-20 w-20 rounded-md" />
-            <Skeleton className="h-5 w-24" />
-            <Skeleton className="h-9 w-full" />
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-10 w-36" />
+          <div className="max-w-2xl overflow-hidden rounded-xl border bg-card shadow-sm">
+            {/* Icon skeleton */}
+            <div className="px-5 py-4 md:px-6">
+              <Skeleton className="h-4 w-10" />
+            </div>
+            <Separator />
+            <div className="px-5 py-5 md:px-6">
+              <div className="flex items-start gap-4">
+                <Skeleton className="size-20 rounded-md" />
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-28" />
+                  <Skeleton className="h-3 w-40" />
+                </div>
+              </div>
+            </div>
+            {/* Details skeleton */}
+            <Separator />
+            <div className="px-5 py-4 md:px-6">
+              <Skeleton className="h-4 w-16" />
+            </div>
+            <Separator />
+            <div className="space-y-5 px-5 py-5 md:px-6">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-9 w-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            </div>
+            {/* Visibility skeleton */}
+            <Separator />
+            <div className="px-5 py-4 md:px-6">
+              <Skeleton className="h-4 w-20" />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between px-5 py-5 md:px-6">
+              <div className="space-y-1">
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-3 w-56" />
+              </div>
+              <Skeleton className="h-5 w-8 rounded-full" />
+            </div>
+            {/* Actions skeleton */}
+            <Separator />
+            <div className="flex items-center justify-between bg-muted/30 px-5 py-4 md:px-6">
+              <Skeleton className="h-8 w-16" />
+              <Skeleton className="h-8 w-24" />
+            </div>
           </div>
         ) : classificationQuery.isError ? (
           <div
             role="alert"
             aria-live="polite"
-            className="max-w-xl rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            className="max-w-xl rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
           >
             {classificationQuery.error instanceof Error
               ? classificationQuery.error.message

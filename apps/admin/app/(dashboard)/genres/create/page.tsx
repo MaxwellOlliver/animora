@@ -12,9 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 import { GenreCreateUpdateForm } from "@/features/genres/components/genre-create-update-form";
-import {
-  type CreateGenreInput,
-} from "@/features/genres/api";
+import { type CreateGenreInput } from "@/features/genres/api";
 import { useCreateGenre } from "@/features/genres/hooks";
 
 export default function CreateGenrePage() {
@@ -56,8 +54,10 @@ export default function CreateGenrePage() {
 
       <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Create Genre</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Create Genre
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Add a new genre to your catalog.
           </p>
         </div>

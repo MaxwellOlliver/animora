@@ -1,7 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 
 import type { Avatar } from '../avatar.entity';
 import { AvatarsRepository } from '../avatars.repository';

@@ -5,12 +5,20 @@ import { useEffect, useId, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { FormSection } from "@/components/form-section";
+import { Grid } from "@/components/grid";
 
 export const genreCreateUpdateSchema = z.object({
   name: z
@@ -76,36 +84,41 @@ export function GenreCreateUpdateForm({
   });
 
   return (
-    <form className="max-w-xl" onSubmit={handleSubmit}>
-      <div className="rounded-lg border p-4 md:p-6">
-        <FieldGroup>
-          {errorMessage && (
-            <div
-              role="alert"
-              aria-live="polite"
-              className="rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-            >
-              {errorMessage}
-            </div>
-          )}
-
-          <Field>
-            <FieldLabel htmlFor={nameId}>Name</FieldLabel>
-            <Input
-              id={nameId}
-              placeholder="Action"
-              disabled={isBusy}
-              aria-invalid={!!form.formState.errors.name}
-              {...form.register("name")}
-            />
-            <FieldError errors={[form.formState.errors.name]} />
-          </Field>
-
-          <Field orientation="horizontal">
+    <form onSubmit={handleSubmit}>
+      {errorMessage && (
+        <div
+          role="alert"
+          aria-live="polite"
+          className="mb-4 flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+        >
+          <AlertCircle className="mt-0.5 size-4 shrink-0" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
+      <FormSection title="Details">
+        <Grid>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor={nameId}>Name</FieldLabel>
+              <Input
+                id={nameId}
+                placeholder="e.g. Action, Romance, Sci-Fi"
+                disabled={isBusy}
+                aria-invalid={!!form.formState.errors.name}
+                {...form.register("name")}
+              />
+              <FieldError errors={[form.formState.errors.name]} />
+            </Field>
+          </FieldGroup>
+        </Grid>
+      </FormSection>
+      <FormSection title="Visibility">
+        <Grid>
+          <div className="flex gap-8 items-center">
             <div className="space-y-0.5">
               <FieldLabel htmlFor={activeId}>Active</FieldLabel>
               <FieldDescription>
-                Controls whether this genre is available for use.
+                Controls whether this genre is visible and available for use.
               </FieldDescription>
             </div>
             <Controller
@@ -120,24 +133,24 @@ export function GenreCreateUpdateForm({
                 />
               )}
             />
-          </Field>
-
-          <div className="flex items-center gap-2">
-            <Button type="submit" disabled={isBusy}>
-              {isBusy ? (
-                <>
-                  <Loader2 className="animate-spin" aria-hidden="true" />
-                  Saving...
-                </>
-              ) : (
-                submitLabel
-              )}
-            </Button>
-            <Button type="button" variant="outline" asChild>
-              <Link href={cancelHref}>Cancel</Link>
-            </Button>
           </div>
-        </FieldGroup>
+        </Grid>
+      </FormSection>
+
+      <div className="mt-8 flex gap-4 ">
+        <Button type="submit" size="sm" disabled={isBusy}>
+          {isBusy ? (
+            <>
+              <Loader2 className="animate-spin" aria-hidden="true" />
+              Saving...
+            </>
+          ) : (
+            submitLabel
+          )}
+        </Button>
+        <Button type="button" variant="ghost" size="sm" asChild>
+          <Link href={cancelHref}>Cancel</Link>
+        </Button>
       </div>
     </form>
   );

@@ -1,4 +1,5 @@
 import { QUEUES } from '@animora/contracts';
+import fastifyCors from '@fastify/cors';
 import fastifyMultipart from '@fastify/multipart';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -30,13 +31,16 @@ async function bootstrap() {
     },
   });
 
-  await app
-    .getHttpAdapter()
-    .getInstance()
-    .register(fastifyMultipart, { limits: { fileSize: 10_485_760 } }); // 10 MB
+  const fastify = app.getHttpAdapter().getInstance();
+  await fastify.register(fastifyCors, {
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  });
+  await fastify.register(fastifyMultipart, { limits: { fileSize: 10_485_760 } }); // 10 MB
 
   app.setGlobalPrefix('api');
-  app.enableCors({ origin: '*' });
 
   app.useGlobalPipes(
     new ValidationPipe({

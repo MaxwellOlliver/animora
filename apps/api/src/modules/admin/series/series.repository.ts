@@ -10,7 +10,12 @@ import { DRIZZLE } from '@/infra/database/database.module';
 import { media } from '@/modules/media/media.entity';
 
 import { genres } from '../genres/genre.entity';
-import { type NewSeries, type Series, series, type SeriesWithDetails } from './series.entity';
+import {
+  type NewSeries,
+  type Series,
+  series,
+  type SeriesWithDetails,
+} from './series.entity';
 import { seriesGenres } from './series-genre.entity';
 
 export type SeriesWithMedia = Series & {
@@ -70,7 +75,9 @@ export class SeriesRepository {
         banner: s.banner,
         genres: genresBySeriesId[s.series.id] ?? [],
       })),
-      nextCursor: hasNextPage ? (items[items.length - 1]?.series.id ?? null) : null,
+      nextCursor: hasNextPage
+        ? (items[items.length - 1]?.series.id ?? null)
+        : null,
     };
   }
 
