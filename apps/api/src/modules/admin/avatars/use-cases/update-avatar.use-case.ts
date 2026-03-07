@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -26,15 +25,6 @@ export class UpdateAvatarUseCase {
 
     if (dto.default === true) {
       await this.avatarsRepository.unsetDefault(id);
-    }
-
-    const pictureKey =
-      dto.pictureKey !== undefined ? dto.pictureKey : avatar.pictureKey;
-    const active = dto.active !== undefined ? dto.active : avatar.active;
-    if (active && !pictureKey) {
-      throw new BadRequestException(
-        'Avatar without pictureKey cannot be active',
-      );
     }
 
     return this.avatarsRepository.update(id, dto);

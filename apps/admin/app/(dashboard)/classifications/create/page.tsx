@@ -93,7 +93,7 @@ export default function CreateClassificationPage() {
         </div>
         <ClassificationCreateUpdateForm
           mode="create"
-          initialValues={{ name: "", description: "", active: true, iconKey: null }}
+          initialValues={{ name: "", description: "", active: true, icon: null }}
           onSubmit={handleSubmit}
           cancelHref="/classifications"
         />

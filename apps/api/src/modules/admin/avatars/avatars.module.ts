@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { MediaModule } from '@/modules/media/media.module';
+
 import { AvatarsRepository } from './avatars.repository';
 import { AvatarsAdminController } from './avatars-admin.controller';
 import { CreateAvatarUseCase } from './use-cases/create-avatar.use-case';
@@ -10,6 +12,7 @@ import { UpdateAvatarUseCase } from './use-cases/update-avatar.use-case';
 import { UpdateAvatarBannerUseCase } from './use-cases/update-avatar-banner.use-case';
 
 @Module({
+  imports: [MediaModule],
   controllers: [AvatarsAdminController],
   providers: [
     AvatarsRepository,

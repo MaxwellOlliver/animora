@@ -108,7 +108,7 @@ export default function EditClassificationPage() {
               name: classificationQuery.data.name,
               description: classificationQuery.data.description,
               active: classificationQuery.data.active,
-              iconKey: classificationQuery.data.iconKey,
+              icon: classificationQuery.data.icon,
             }}
             onSubmit={handleSubmit}
             isSubmitting={updateMutation.isPending || uploadMutation.isPending}

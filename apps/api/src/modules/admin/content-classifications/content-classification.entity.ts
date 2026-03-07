@@ -8,13 +8,15 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
+import { media } from '@/modules/media/media.entity';
+
 export const contentClassifications = pgTable('content_classifications', {
   id: uuid('id')
     .default(sql`uuid_generate_v7()`)
     .primaryKey(),
   name: varchar('name', { length: 50 }).notNull().unique(),
   description: text('description'),
-  iconKey: varchar('icon_key', { length: 500 }),
+  iconId: uuid('icon_id').references(() => media.id),
   active: boolean('active').notNull().default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

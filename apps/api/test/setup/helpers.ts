@@ -4,13 +4,12 @@ import request from 'supertest';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
-import { animes } from '@/modules/admin/animes/anime.entity';
-import { animeGenres } from '@/modules/admin/animes/anime-genre.entity';
 import { avatars } from '@/modules/admin/avatars/avatar.entity';
 import { contentClassifications } from '@/modules/admin/content-classifications/content-classification.entity';
 import { genres } from '@/modules/admin/genres/genre.entity';
 import type { AuthResponseDto } from '@/modules/auth/dto/auth-response.dto';
 import { refreshTokens } from '@/modules/auth/refresh-token.entity';
+import { media } from '@/modules/media/media.entity';
 import { profiles } from '@/modules/profiles/profile.entity';
 import { users } from '@/modules/users/user.entity';
 
@@ -28,7 +27,6 @@ export async function seedDefaultAvatar(
     .insert(avatars)
     .values({
       name: 'Default Avatar',
-      pictureKey: 'avatars/default.png',
       active: true,
       default: true,
     })
@@ -42,7 +40,6 @@ export async function seedAvatar(app: NestFastifyApplication): Promise<string> {
     .insert(avatars)
     .values({
       name: 'Custom Avatar',
-      pictureKey: 'avatars/custom.png',
       active: true,
       default: false,
     })
@@ -95,12 +92,11 @@ export async function truncateTables(
   app: NestFastifyApplication,
 ): Promise<void> {
   const db = app.get<DrizzleDB>(DRIZZLE);
-  await db.delete(animeGenres);
-  await db.delete(animes);
   await db.delete(genres);
   await db.delete(contentClassifications);
   await db.delete(profiles);
   await db.delete(refreshTokens);
   await db.delete(users);
   await db.delete(avatars);
+  await db.delete(media);
 }

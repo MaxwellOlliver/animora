@@ -26,12 +26,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { getImageUrl } from "@/lib/s3";
+import { getMediaImageUrl } from "@/lib/s3";
 import { useContentClassificationsList } from "../hooks";
 import type { ContentClassification } from "../types";
 
 function IconCell({ item }: { item: ContentClassification }) {
-  if (!item.iconKey) {
+  if (!item.icon) {
     return (
       <div className="flex size-10 items-center justify-center rounded-md bg-muted">
         <ImageOff className="size-4 text-muted-foreground" aria-hidden="true" />
@@ -41,7 +41,7 @@ function IconCell({ item }: { item: ContentClassification }) {
 
   return (
     <Image
-      src={getImageUrl(item.iconKey)}
+      src={getMediaImageUrl(item.icon.purpose, item.icon.key)}
       alt=""
       width={40}
       height={40}

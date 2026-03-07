@@ -9,6 +9,8 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
+import { media } from '@/modules/media/media.entity';
+
 import { playlists } from '../playlists/playlist.entity';
 
 export const episodes = pgTable(
@@ -23,7 +25,7 @@ export const episodes = pgTable(
     number: integer('number').notNull(),
     title: varchar('title', { length: 255 }).notNull(),
     description: text('description'),
-    thumbnailKey: varchar('thumbnail_key', { length: 500 }),
+    thumbnailId: uuid('thumbnail_id').references(() => media.id),
     durationSeconds: integer('duration_seconds'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),

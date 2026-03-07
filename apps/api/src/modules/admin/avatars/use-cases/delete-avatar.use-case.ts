@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { S3Service } from '@/infra/s3/s3.service';
+import { DeleteMediaUseCase } from '@/modules/media/use-cases/delete-media.use-case';
 
 import { AvatarsRepository } from '../avatars.repository';
 
@@ -12,7 +12,7 @@ import { AvatarsRepository } from '../avatars.repository';
 export class DeleteAvatarUseCase {
   constructor(
     private readonly avatarsRepository: AvatarsRepository,
-    private readonly s3Service: S3Service,
+    private readonly deleteMediaUseCase: DeleteMediaUseCase,
   ) {}
 
   async execute(id: string): Promise<void> {
@@ -22,10 +22,10 @@ export class DeleteAvatarUseCase {
       throw new ConflictException('Default avatar cannot be deleted');
     }
 
-    if (avatar.pictureKey) {
-      await this.s3Service.delete(avatar.pictureKey);
-    }
-
     await this.avatarsRepository.delete(id);
+
+    if (avatar.pictureId) {
+      await this.deleteMediaUseCase.execute(avatar.pictureId);
+    }
   }
 }

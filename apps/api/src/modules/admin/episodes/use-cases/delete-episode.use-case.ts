@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { S3Service } from '@/infra/s3/s3.service';
+import { DeleteMediaUseCase } from '@/modules/media/use-cases/delete-media.use-case';
 
 import { EpisodesRepository } from '../episodes.repository';
 
@@ -8,17 +8,17 @@ import { EpisodesRepository } from '../episodes.repository';
 export class DeleteEpisodeUseCase {
   constructor(
     private readonly episodesRepository: EpisodesRepository,
-    private readonly s3Service: S3Service,
+    private readonly deleteMediaUseCase: DeleteMediaUseCase,
   ) {}
 
   async execute(id: string): Promise<void> {
     const episode = await this.episodesRepository.findById(id);
     if (!episode) throw new NotFoundException('Episode not found');
 
-    if (episode.thumbnailKey) {
-      await this.s3Service.delete(episode.thumbnailKey);
-    }
-
     await this.episodesRepository.delete(id);
+
+    if (episode.thumbnailId) {
+      await this.deleteMediaUseCase.execute(episode.thumbnailId);
+    }
   }
 }

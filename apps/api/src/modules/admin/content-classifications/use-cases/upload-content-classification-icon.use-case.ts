@@ -1,33 +1,20 @@
 import type { MultipartFile } from '@fastify/multipart';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { S3Service } from '@/infra/s3/s3.service';
+import { MEDIA_PURPOSE } from '@animora/contracts';
+
+import { DeleteMediaUseCase } from '@/modules/media/use-cases/delete-media.use-case';
+import { UploadMediaUseCase } from '@/modules/media/use-cases/upload-media.use-case';
 
 import type { ContentClassification } from '../content-classification.entity';
 import { ContentClassificationsRepository } from '../content-classifications.repository';
-
-const ALLOWED_MIME_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/svg+xml',
-];
-const MIME_TO_EXT: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-  'image/svg+xml': 'svg',
-};
 
 @Injectable()
 export class UploadContentClassificationIconUseCase {
   constructor(
     private readonly repo: ContentClassificationsRepository,
-    private readonly s3Service: S3Service,
+    private readonly uploadMediaUseCase: UploadMediaUseCase,
+    private readonly deleteMediaUseCase: DeleteMediaUseCase,
   ) {}
 
   async execute(
@@ -38,25 +25,15 @@ export class UploadContentClassificationIconUseCase {
     if (!classification)
       throw new NotFoundException('Content classification not found');
 
-    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-      throw new BadRequestException(
-        `Invalid file type. Allowed: ${ALLOWED_MIME_TYPES.join(', ')}`,
-      );
+    if (classification.iconId) {
+      await this.deleteMediaUseCase.execute(classification.iconId);
     }
 
-    const buffer = await file.toBuffer();
-    const ext = MIME_TO_EXT[file.mimetype];
-    const newKey = await this.s3Service.upload(
-      'classification-icons',
-      buffer,
-      file.mimetype,
-      ext,
+    const media = await this.uploadMediaUseCase.execute(
+      file,
+      MEDIA_PURPOSE.classificationIcon,
     );
 
-    if (classification.iconKey) {
-      await this.s3Service.delete(classification.iconKey);
-    }
-
-    return this.repo.update(id, { iconKey: newKey });
+    return this.repo.update(id, { iconId: media.id });
   }
 }

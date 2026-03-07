@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { MediaModule } from '@/modules/media/media.module';
+
 import { ContentClassificationsRepository } from './content-classifications.repository';
 import { ContentClassificationsAdminController } from './content-classifications-admin.controller';
 import { CreateContentClassificationUseCase } from './use-cases/create-content-classification.use-case';
@@ -10,6 +12,7 @@ import { UpdateContentClassificationUseCase } from './use-cases/update-content-c
 import { UploadContentClassificationIconUseCase } from './use-cases/upload-content-classification-icon.use-case';
 
 @Module({
+  imports: [MediaModule],
   controllers: [ContentClassificationsAdminController],
   providers: [
     ContentClassificationsRepository,

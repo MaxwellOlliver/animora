@@ -9,24 +9,9 @@ import { avatars } from '@/modules/admin/avatars/avatar.entity';
 import { users } from '@/modules/users/user.entity';
 
 const initialAvatars = [
-  {
-    name: 'Default Avatar',
-    pictureKey: 'avatars/default.png',
-    active: true,
-    default: true,
-  },
-  {
-    name: 'Ninja',
-    pictureKey: 'avatars/ninja.png',
-    active: true,
-    default: false,
-  },
-  {
-    name: 'Samurai',
-    pictureKey: 'avatars/samurai.png',
-    active: true,
-    default: false,
-  },
+  { name: 'Default Avatar', active: true, default: true },
+  { name: 'Ninja', active: true, default: false },
+  { name: 'Samurai', active: true, default: false },
 ] as const;
 
 async function seedAdmin(db: ReturnType<typeof drizzle>) {
@@ -75,7 +60,6 @@ async function seedAvatars(db: ReturnType<typeof drizzle>) {
       const [updated] = await db
         .update(avatars)
         .set({
-          pictureKey: avatar.pictureKey,
           active: avatar.active,
           default: false,
         })
@@ -90,7 +74,6 @@ async function seedAvatars(db: ReturnType<typeof drizzle>) {
       .insert(avatars)
       .values({
         name: avatar.name,
-        pictureKey: avatar.pictureKey,
         active: avatar.active,
         default: false,
       })

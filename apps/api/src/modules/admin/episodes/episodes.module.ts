@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { MediaModule } from '@/modules/media/media.module';
+
 import { PlaylistsModule } from '../playlists/playlists.module';
 import { EpisodesRepository } from './episodes.repository';
 import { EpisodesAdminController } from './episodes-admin.controller';
@@ -11,7 +13,7 @@ import { UpdateEpisodeUseCase } from './use-cases/update-episode.use-case';
 import { UploadEpisodeThumbnailUseCase } from './use-cases/upload-episode-thumbnail.use-case';
 
 @Module({
-  imports: [PlaylistsModule],
+  imports: [PlaylistsModule, MediaModule],
   controllers: [EpisodesAdminController],
   providers: [
     EpisodesRepository,

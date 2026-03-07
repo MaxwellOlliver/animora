@@ -1,51 +1,34 @@
 import type { MultipartFile } from '@fastify/multipart';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { S3Service } from '@/infra/s3/s3.service';
+import { MEDIA_PURPOSE } from '@animora/contracts';
+
+import { DeleteMediaUseCase } from '@/modules/media/use-cases/delete-media.use-case';
+import { UploadMediaUseCase } from '@/modules/media/use-cases/upload-media.use-case';
 
 import { SeriesRepository } from '../series.repository';
-
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MIME_TO_EXT: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-};
 
 @Injectable()
 export class UploadSeriesBannerUseCase {
   constructor(
     private readonly seriesRepository: SeriesRepository,
-    private readonly s3Service: S3Service,
+    private readonly uploadMediaUseCase: UploadMediaUseCase,
+    private readonly deleteMediaUseCase: DeleteMediaUseCase,
   ) {}
 
   async execute(seriesId: string, file: MultipartFile): Promise<void> {
     const s = await this.seriesRepository.findById(seriesId);
     if (!s) throw new NotFoundException('Series not found');
 
-    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-      throw new BadRequestException(
-        `Invalid file type. Allowed: ${ALLOWED_MIME_TYPES.join(', ')}`,
-      );
+    if (s.bannerId) {
+      await this.deleteMediaUseCase.execute(s.bannerId);
     }
 
-    const buffer = await file.toBuffer();
-    const ext = MIME_TO_EXT[file.mimetype];
-    const newKey = await this.s3Service.upload(
-      'banners',
-      buffer,
-      file.mimetype,
-      ext,
+    const media = await this.uploadMediaUseCase.execute(
+      file,
+      MEDIA_PURPOSE.seriesBanner,
     );
 
-    if (s.bannerKey) {
-      await this.s3Service.delete(s.bannerKey);
-    }
-
-    await this.seriesRepository.update(seriesId, { bannerKey: newKey });
+    await this.seriesRepository.update(seriesId, { bannerId: media.id });
   }
 }

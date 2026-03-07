@@ -8,6 +8,8 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
+import { media } from '@/modules/media/media.entity';
+
 import { contentClassifications } from '../content-classifications/content-classification.entity';
 import type { Genre } from '../genres/genre.entity';
 
@@ -17,7 +19,7 @@ export const series = pgTable('series', {
     .primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   synopsis: text('synopsis').notNull(),
-  bannerKey: varchar('banner_key', { length: 500 }),
+  bannerId: uuid('banner_id').references(() => media.id),
   contentClassificationId: uuid('content_classification_id')
     .notNull()
     .references(() => contentClassifications.id),

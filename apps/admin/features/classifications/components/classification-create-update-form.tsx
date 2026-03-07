@@ -23,7 +23,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { getImageUrl } from "@/lib/s3";
+import { getMediaImageUrl } from "@/lib/s3";
+import type { Media } from "../types";
 
 const classificationSchema = z.object({
   name: z
@@ -50,7 +51,7 @@ interface ClassificationCreateUpdateFormProps {
     name?: string;
     description?: string | null;
     active?: boolean;
-    iconKey?: string | null;
+    icon?: Media | null;
   };
   onSubmit: (values: ClassificationCreateUpdateValues) => Promise<void> | void;
   isSubmitting?: boolean;
@@ -71,8 +72,8 @@ export function ClassificationCreateUpdateForm({
   const activeId = useId();
   const [localError, setLocalError] = useState<string | null>(null);
 
-  const defaultPhotoUrl = initialValues?.iconKey
-    ? getImageUrl(initialValues.iconKey)
+  const defaultPhotoUrl = initialValues?.icon
+    ? getMediaImageUrl(initialValues.icon.purpose, initialValues.icon.key)
     : null;
   const [photoValue, setPhotoValue] = useState<PhotoUploadValue>(
     createDefaultPhotoValue(defaultPhotoUrl),

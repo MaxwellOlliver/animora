@@ -1,51 +1,34 @@
 import type { MultipartFile } from '@fastify/multipart';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { S3Service } from '@/infra/s3/s3.service';
+import { MEDIA_PURPOSE } from '@animora/contracts';
+
+import { DeleteMediaUseCase } from '@/modules/media/use-cases/delete-media.use-case';
+import { UploadMediaUseCase } from '@/modules/media/use-cases/upload-media.use-case';
 
 import { PlaylistsRepository } from '../playlists.repository';
-
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MIME_TO_EXT: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-};
 
 @Injectable()
 export class UploadPlaylistCoverUseCase {
   constructor(
     private readonly playlistsRepository: PlaylistsRepository,
-    private readonly s3Service: S3Service,
+    private readonly uploadMediaUseCase: UploadMediaUseCase,
+    private readonly deleteMediaUseCase: DeleteMediaUseCase,
   ) {}
 
   async execute(id: string, file: MultipartFile): Promise<void> {
     const playlist = await this.playlistsRepository.findById(id);
     if (!playlist) throw new NotFoundException('Playlist not found');
 
-    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-      throw new BadRequestException(
-        `Invalid file type. Allowed: ${ALLOWED_MIME_TYPES.join(', ')}`,
-      );
+    if (playlist.coverId) {
+      await this.deleteMediaUseCase.execute(playlist.coverId);
     }
 
-    const buffer = await file.toBuffer();
-    const ext = MIME_TO_EXT[file.mimetype];
-    const newKey = await this.s3Service.upload(
-      'covers',
-      buffer,
-      file.mimetype,
-      ext,
+    const media = await this.uploadMediaUseCase.execute(
+      file,
+      MEDIA_PURPOSE.playlistCover,
     );
 
-    if (playlist.coverKey) {
-      await this.s3Service.delete(playlist.coverKey);
-    }
-
-    await this.playlistsRepository.update(id, { coverKey: newKey });
+    await this.playlistsRepository.update(id, { coverId: media.id });
   }
 }

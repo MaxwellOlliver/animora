@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
 } from '@nestjs/common';
@@ -18,13 +17,6 @@ export class CreateAvatarUseCase {
       throw new ConflictException('Avatar with this name already exists');
     }
 
-    const active = dto.active ?? false;
-    if (active && !dto.pictureKey) {
-      throw new BadRequestException(
-        'Avatar without pictureKey cannot be active',
-      );
-    }
-
     const shouldBeDefault = dto.default ?? false;
     if (shouldBeDefault) {
       await this.avatarsRepository.unsetDefault();
@@ -32,8 +24,7 @@ export class CreateAvatarUseCase {
 
     return this.avatarsRepository.create({
       name: dto.name,
-      pictureKey: dto.pictureKey,
-      active,
+      active: dto.active ?? false,
       default: shouldBeDefault,
     });
   }

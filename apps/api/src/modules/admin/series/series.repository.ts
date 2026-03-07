@@ -7,10 +7,18 @@ import type {
 } from '@/common/types/pagination.types';
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
+import { media } from '@/modules/media/media.entity';
 
 import { genres } from '../genres/genre.entity';
-import { NewSeries, Series, series, SeriesWithDetails } from './series.entity';
+import { type NewSeries, type Series, series, type SeriesWithDetails } from './series.entity';
 import { seriesGenres } from './series-genre.entity';
+
+export type SeriesWithMedia = Series & {
+  banner: typeof media.$inferSelect | null;
+};
+export type SeriesWithDetailsAndMedia = SeriesWithDetails & {
+  banner: typeof media.$inferSelect | null;
+};
 
 @Injectable()
 export class SeriesRepository {
@@ -20,20 +28,18 @@ export class SeriesRepository {
     cursor,
     limit = 20,
   }: CursorPaginatedRequest): Promise<
-    CursorPaginatedResponse<SeriesWithDetails>
+    CursorPaginatedResponse<SeriesWithDetailsAndMedia>
   > {
+    const query = this.db
+      .select({ series: series, banner: media })
+      .from(series)
+      .leftJoin(media, eq(series.bannerId, media.id))
+      .orderBy(desc(series.id))
+      .limit(limit + 1);
+
     const rows = cursor
-      ? await this.db
-          .select()
-          .from(series)
-          .where(lt(series.id, cursor))
-          .orderBy(desc(series.id))
-          .limit(limit + 1)
-      : await this.db
-          .select()
-          .from(series)
-          .orderBy(desc(series.id))
-          .limit(limit + 1);
+      ? await query.where(lt(series.id, cursor))
+      : await query;
 
     const hasNextPage = rows.length > limit;
     const items = hasNextPage ? rows.slice(0, limit) : rows;
@@ -46,7 +52,7 @@ export class SeriesRepository {
       .where(
         inArray(
           seriesGenres.seriesId,
-          items.map((s) => s.id),
+          items.map((s) => s.series.id),
         ),
       );
 
@@ -60,16 +66,21 @@ export class SeriesRepository {
 
     return {
       items: items.map((s) => ({
-        ...s,
-        genres: genresBySeriesId[s.id] ?? [],
+        ...s.series,
+        banner: s.banner,
+        genres: genresBySeriesId[s.series.id] ?? [],
       })),
-      nextCursor: hasNextPage ? (items[items.length - 1]?.id ?? null) : null,
+      nextCursor: hasNextPage ? (items[items.length - 1]?.series.id ?? null) : null,
     };
   }
 
-  async findById(id: string): Promise<SeriesWithDetails | undefined> {
-    const result = await this.db.select().from(series).where(eq(series.id, id));
-    if (!result[0]) return undefined;
+  async findById(id: string): Promise<SeriesWithDetailsAndMedia | undefined> {
+    const rows = await this.db
+      .select({ series: series, banner: media })
+      .from(series)
+      .leftJoin(media, eq(series.bannerId, media.id))
+      .where(eq(series.id, id));
+    if (!rows[0]) return undefined;
 
     const genreRows = await this.db
       .select({ genre: genres })
@@ -77,7 +88,11 @@ export class SeriesRepository {
       .innerJoin(genres, eq(seriesGenres.genreId, genres.id))
       .where(eq(seriesGenres.seriesId, id));
 
-    return { ...result[0], genres: genreRows.map((r) => r.genre) };
+    return {
+      ...rows[0].series,
+      banner: rows[0].banner,
+      genres: genreRows.map((r) => r.genre),
+    };
   }
 
   async create(data: NewSeries): Promise<Series> {

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { MediaModule } from '@/modules/media/media.module';
+
 import { ContentClassificationsModule } from '../content-classifications/content-classifications.module';
 import { GenresModule } from '../genres/genres.module';
 import { SeriesRepository } from './series.repository';
@@ -12,7 +14,7 @@ import { UpdateSeriesUseCase } from './use-cases/update-series.use-case';
 import { UploadSeriesBannerUseCase } from './use-cases/upload-series-banner.use-case';
 
 @Module({
-  imports: [GenresModule, ContentClassificationsModule],
+  imports: [GenresModule, ContentClassificationsModule, MediaModule],
   controllers: [SeriesAdminController],
   providers: [
     SeriesRepository,

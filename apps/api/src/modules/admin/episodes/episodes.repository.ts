@@ -3,27 +3,36 @@ import { asc, eq } from 'drizzle-orm';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
+import { media } from '@/modules/media/media.entity';
 
-import { Episode, episodes, NewEpisode } from './episode.entity';
+import { type Episode, episodes, type NewEpisode } from './episode.entity';
+
+export type EpisodeWithMedia = Episode & {
+  thumbnail: typeof media.$inferSelect | null;
+};
 
 @Injectable()
 export class EpisodesRepository {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
-  async findByPlaylistId(playlistId: string): Promise<Episode[]> {
-    return this.db
-      .select()
+  async findByPlaylistId(playlistId: string): Promise<EpisodeWithMedia[]> {
+    const rows = await this.db
+      .select({ episode: episodes, thumbnail: media })
       .from(episodes)
+      .leftJoin(media, eq(episodes.thumbnailId, media.id))
       .where(eq(episodes.playlistId, playlistId))
       .orderBy(asc(episodes.number));
+    return rows.map((r) => ({ ...r.episode, thumbnail: r.thumbnail }));
   }
 
-  async findById(id: string): Promise<Episode | undefined> {
-    const result = await this.db
-      .select()
+  async findById(id: string): Promise<EpisodeWithMedia | undefined> {
+    const rows = await this.db
+      .select({ episode: episodes, thumbnail: media })
       .from(episodes)
+      .leftJoin(media, eq(episodes.thumbnailId, media.id))
       .where(eq(episodes.id, id));
-    return result[0];
+    if (!rows[0]) return undefined;
+    return { ...rows[0].episode, thumbnail: rows[0].thumbnail };
   }
 
   async create(data: NewEpisode): Promise<Episode> {

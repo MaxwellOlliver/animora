@@ -22,7 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useSeriesList } from "../hooks";
 import type { Series } from "../types";
 import Image from "next/image";
-import { getImageUrl } from "@/lib/s3";
+import { getMediaImageUrl } from "@/lib/s3";
 import { useMemo } from "react";
 import {
   DropdownMenu,
@@ -35,7 +35,7 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 
 function BannerCell({ series }: { series: Series }) {
-  if (!series.bannerKey) {
+  if (!series.banner) {
     return (
       <div className="flex size-10 items-center justify-center rounded-md bg-muted">
         <ImageOff className="size-4 text-muted-foreground" aria-hidden="true" />
@@ -45,7 +45,7 @@ function BannerCell({ series }: { series: Series }) {
 
   return (
     <Image
-      src={getImageUrl(series.bannerKey)}
+      src={getMediaImageUrl(series.banner.purpose, series.banner.key)}
       alt=""
       width={40}
       height={40}

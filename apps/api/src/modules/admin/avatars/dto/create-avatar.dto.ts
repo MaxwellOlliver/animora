@@ -14,13 +14,6 @@ export class CreateAvatarDto {
   @MaxLength(255)
   name: string;
 
-  @ApiPropertyOptional({ example: 'avatars/7f15b95d.png' })
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(500)
-  pictureKey?: string;
-
   @ApiPropertyOptional({ example: true })
   @IsOptional()
   @IsBoolean()

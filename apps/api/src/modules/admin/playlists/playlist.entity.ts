@@ -9,6 +9,8 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
+import { media } from '@/modules/media/media.entity';
+
 import { series } from '../series/series.entity';
 
 export const playlistTypeEnum = pgEnum('playlist_type', [
@@ -29,7 +31,7 @@ export const playlists = pgTable(
     type: playlistTypeEnum('type').notNull().default('season'),
     number: integer('number').notNull(),
     title: varchar('title', { length: 255 }),
-    coverKey: varchar('cover_key', { length: 500 }),
+    coverId: uuid('cover_id').references(() => media.id),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },

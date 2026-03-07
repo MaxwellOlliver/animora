@@ -3,27 +3,40 @@ import { eq } from 'drizzle-orm';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
+import { media } from '@/modules/media/media.entity';
 
 import {
-  ContentClassification,
+  type ContentClassification,
   contentClassifications,
-  NewContentClassification,
+  type NewContentClassification,
 } from './content-classification.entity';
+
+export type ContentClassificationWithMedia = ContentClassification & {
+  icon: typeof media.$inferSelect | null;
+};
 
 @Injectable()
 export class ContentClassificationsRepository {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
-  async findAll(): Promise<ContentClassification[]> {
-    return this.db.select().from(contentClassifications);
+  async findAll(): Promise<ContentClassificationWithMedia[]> {
+    const rows = await this.db
+      .select({ classification: contentClassifications, icon: media })
+      .from(contentClassifications)
+      .leftJoin(media, eq(contentClassifications.iconId, media.id));
+    return rows.map((r) => ({ ...r.classification, icon: r.icon }));
   }
 
-  async findById(id: string): Promise<ContentClassification | undefined> {
-    const result = await this.db
-      .select()
+  async findById(
+    id: string,
+  ): Promise<ContentClassificationWithMedia | undefined> {
+    const rows = await this.db
+      .select({ classification: contentClassifications, icon: media })
       .from(contentClassifications)
+      .leftJoin(media, eq(contentClassifications.iconId, media.id))
       .where(eq(contentClassifications.id, id));
-    return result[0];
+    if (!rows[0]) return undefined;
+    return { ...rows[0].classification, icon: rows[0].icon };
   }
 
   async findByName(name: string): Promise<ContentClassification | undefined> {
