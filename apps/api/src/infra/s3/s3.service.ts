@@ -13,6 +13,8 @@ import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import type { Readable } from 'stream';
 
+import { buildStorageKey, type MediaPurpose } from '@animora/contracts';
+
 import { S3_CLIENT } from './s3.tokens';
 
 @Injectable()
@@ -44,6 +46,21 @@ export class S3Service {
       }),
     );
     return key;
+  }
+
+  async putObject(
+    key: string,
+    buffer: Buffer,
+    mimeType: string,
+  ): Promise<void> {
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: mimeType,
+      }),
+    );
   }
 
   async putStream(key: string, stream: Readable): Promise<void> {
@@ -122,6 +139,11 @@ export class S3Service {
   }
 
   getPublicUrl(key: string): string {
+    return `${this.endpoint}/${this.bucket}/${key}`;
+  }
+
+  getMediaUrl(purpose: MediaPurpose, filename: string): string {
+    const key = buildStorageKey(purpose, filename);
     return `${this.endpoint}/${this.bucket}/${key}`;
   }
 }
