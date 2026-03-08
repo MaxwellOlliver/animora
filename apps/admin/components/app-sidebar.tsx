@@ -11,6 +11,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { UploadProgressPopover } from "@/features/videos/components/upload-progress-popover";
 
 import LogoFull from "@/public/logo-full.svg";
 import LogoSymbol from "@/public/logo-symbol.svg";
@@ -42,8 +43,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="pt-4">
-        <LogoFull className="shrink-0 h-8 group-data-[state=collapsed]:hidden" />
-        <LogoSymbol className="shrink-0 h-6 group-data-[state=expanded]:hidden" />
+        <div className="flex items-center justify-between">
+          <LogoFull className="shrink-0 h-8 group-data-[state=collapsed]:hidden" />
+          <LogoSymbol className="shrink-0 h-6 group-data-[state=expanded]:hidden" />
+          <UploadProgressPopover />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navItems} />

@@ -64,11 +64,18 @@ export class S3Service {
   }
 
   async putStream(key: string, stream: Readable): Promise<void> {
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+    const buffer = Buffer.concat(chunks);
+
     await this.client.send(
       new PutObjectCommand({
         Bucket: this.bucket,
         Key: key,
-        Body: stream,
+        Body: buffer,
+        ContentLength: buffer.length,
       }),
     );
   }

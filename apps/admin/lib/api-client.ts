@@ -36,9 +36,10 @@ function buildHeaders(init?: RequestInit): HeadersInit {
   const token = getAccessToken();
   const isFormDataBody =
     typeof FormData !== "undefined" && init?.body instanceof FormData;
+  const hasBody = !!init?.body;
 
   return {
-    ...(isFormDataBody ? {} : { "Content-Type": "application/json" }),
+    ...(hasBody && !isFormDataBody ? { "Content-Type": "application/json" } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...init?.headers,
   };

@@ -19,6 +19,7 @@ export class S3Service extends Context.Tag('S3Service')<
       key: string,
       body: Readable | Buffer,
       contentType?: string,
+      contentLength?: number,
     ): Effect.Effect<void, S3Error>;
     deleteObject(key: string): Effect.Effect<void, S3Error>;
   }
@@ -53,7 +54,7 @@ export const S3ServiceLive = Layer.effect(
           return res.Body as Readable;
         }),
 
-      putObject: (key: string, body: Readable | Buffer, contentType?: string) =>
+      putObject: (key: string, body: Readable | Buffer, contentType?: string, contentLength?: number) =>
         Effect.tryPromise({
           try: () =>
             client.send(
@@ -62,6 +63,7 @@ export const S3ServiceLive = Layer.effect(
                 Key: key,
                 Body: body,
                 ...(contentType ? { ContentType: contentType } : {}),
+                ...(contentLength !== undefined ? { ContentLength: contentLength } : {}),
               }),
             ),
           catch: (cause) => new S3Error({ cause }),
