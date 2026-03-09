@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ContentClassificationsRepository } from '../../content-classifications/content-classifications.repository';
 import { GenresRepository } from '../../genres/genres.repository';
 import type { UpdateSeriesDto } from '../dto/update-series.dto';
-import type { SeriesWithDetails } from '../series.entity';
+import type { SeriesWithDetailsAndMedia } from '../series.repository';
 import { SeriesRepository } from '../series.repository';
 
 @Injectable()
@@ -14,7 +14,10 @@ export class UpdateSeriesUseCase {
     private readonly classificationsRepository: ContentClassificationsRepository,
   ) {}
 
-  async execute(id: string, dto: UpdateSeriesDto): Promise<SeriesWithDetails> {
+  async execute(
+    id: string,
+    dto: UpdateSeriesDto,
+  ): Promise<SeriesWithDetailsAndMedia> {
     const s = await this.seriesRepository.findById(id);
     if (!s) throw new NotFoundException('Series not found');
 
@@ -39,6 +42,8 @@ export class UpdateSeriesUseCase {
       await this.seriesRepository.update(id, fields);
     }
 
-    return this.seriesRepository.findById(id) as Promise<SeriesWithDetails>;
+    return this.seriesRepository.findById(
+      id,
+    ) as Promise<SeriesWithDetailsAndMedia>;
   }
 }

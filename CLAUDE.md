@@ -50,6 +50,10 @@ src/
   common/                        # Guards, decorators, filters, pipes shared across modules
 ```
 
+### Migrations
+
+- **Never create migration files manually.** Always use `cd apps/api && bunx drizzle-kit generate` to generate migrations from entity changes. This keeps the journal and snapshots in sync.
+
 ### Key Rules
 
 1. **Use cases over fat services** — each operation gets its own use-case class with `execute()`. No multi-method service files for business logic.

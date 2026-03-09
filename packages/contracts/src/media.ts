@@ -1,6 +1,8 @@
 export const MEDIA_PURPOSE = {
   userAvatar: 'user-avatar',
   seriesBanner: 'series-banner',
+  seriesLogo: 'series-logo',
+  seriesTrailer: 'series-trailer',
   playlistCover: 'playlist-cover',
   episodeThumbnail: 'episode-thumbnail',
   classificationIcon: 'classification-icon',
@@ -14,6 +16,8 @@ export type MediaPurpose =
 const PURPOSE_TO_FOLDER: Record<MediaPurpose, string> = {
   'user-avatar': 'p/avatars',
   'series-banner': 'p/banners',
+  'series-logo': 'p/logos',
+  'series-trailer': 'p/trailers',
   'playlist-cover': 'p/covers',
   'episode-thumbnail': 'p/thumbnails',
   'classification-icon': 'p/classification-icons',

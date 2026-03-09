@@ -5,8 +5,10 @@ import type {
   CursorPaginatedResponse,
 } from '@/common/types/pagination.types';
 
-import type { SeriesWithDetails } from '../series.entity';
-import { SeriesRepository } from '../series.repository';
+import {
+  SeriesRepository,
+  type SeriesWithDetailsAndMedia,
+} from '../series.repository';
 
 @Injectable()
 export class GetSeriesUseCase {
@@ -14,7 +16,7 @@ export class GetSeriesUseCase {
 
   async execute(
     input: CursorPaginatedRequest,
-  ): Promise<CursorPaginatedResponse<SeriesWithDetails>> {
+  ): Promise<CursorPaginatedResponse<SeriesWithDetailsAndMedia>> {
     const limit = Math.min(Math.max(input.limit ?? 20, 1), 100);
 
     return this.seriesRepository.findAllCursor({

@@ -7,7 +7,6 @@ import type {
 } from '@/common/types/pagination.types';
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
-import { media } from '@/modules/media/media.entity';
 
 import { genres } from '../genres/genre.entity';
 import {
@@ -16,18 +15,20 @@ import {
   series,
   type SeriesWithDetails,
 } from './series.entity';
+import type { SeriesAssetWithMedia } from './series-assets.repository';
+import { SeriesAssetsRepository } from './series-assets.repository';
 import { seriesGenres } from './series-genre.entity';
 
-export type SeriesWithMedia = Series & {
-  banner: typeof media.$inferSelect | null;
-};
 export type SeriesWithDetailsAndMedia = SeriesWithDetails & {
-  banner: typeof media.$inferSelect | null;
+  assets: SeriesAssetWithMedia[];
 };
 
 @Injectable()
 export class SeriesRepository {
-  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
+  constructor(
+    @Inject(DRIZZLE) private readonly db: DrizzleDB,
+    private readonly seriesAssetsRepository: SeriesAssetsRepository,
+  ) {}
 
   async findAllCursor({
     cursor,
@@ -36,9 +37,8 @@ export class SeriesRepository {
     CursorPaginatedResponse<SeriesWithDetailsAndMedia>
   > {
     const query = this.db
-      .select({ series: series, banner: media })
+      .select()
       .from(series)
-      .leftJoin(media, eq(series.bannerId, media.id))
       .orderBy(desc(series.id))
       .limit(limit + 1);
 
@@ -50,16 +50,16 @@ export class SeriesRepository {
     const items = hasNextPage ? rows.slice(0, limit) : rows;
     if (items.length === 0) return { items: [], nextCursor: null };
 
-    const genreRows = await this.db
-      .select({ seriesId: seriesGenres.seriesId, genre: genres })
-      .from(seriesGenres)
-      .innerJoin(genres, eq(seriesGenres.genreId, genres.id))
-      .where(
-        inArray(
-          seriesGenres.seriesId,
-          items.map((s) => s.series.id),
-        ),
-      );
+    const seriesIds = items.map((s) => s.id);
+
+    const [genreRows, allAssets] = await Promise.all([
+      this.db
+        .select({ seriesId: seriesGenres.seriesId, genre: genres })
+        .from(seriesGenres)
+        .innerJoin(genres, eq(seriesGenres.genreId, genres.id))
+        .where(inArray(seriesGenres.seriesId, seriesIds)),
+      this.seriesAssetsRepository.findBySeriesIds(seriesIds),
+    ]);
 
     const genresBySeriesId = genreRows.reduce<
       Record<string, (typeof genres.$inferSelect)[]>
@@ -69,36 +69,41 @@ export class SeriesRepository {
       return acc;
     }, {});
 
+    const assetsBySeriesId = allAssets.reduce<
+      Record<string, SeriesAssetWithMedia[]>
+    >((acc, asset) => {
+      if (!acc[asset.seriesId]) acc[asset.seriesId] = [];
+      acc[asset.seriesId].push(asset);
+      return acc;
+    }, {});
+
     return {
       items: items.map((s) => ({
-        ...s.series,
-        banner: s.banner,
-        genres: genresBySeriesId[s.series.id] ?? [],
+        ...s,
+        genres: genresBySeriesId[s.id] ?? [],
+        assets: assetsBySeriesId[s.id] ?? [],
       })),
-      nextCursor: hasNextPage
-        ? (items[items.length - 1]?.series.id ?? null)
-        : null,
+      nextCursor: hasNextPage ? (items[items.length - 1]?.id ?? null) : null,
     };
   }
 
   async findById(id: string): Promise<SeriesWithDetailsAndMedia | undefined> {
-    const rows = await this.db
-      .select({ series: series, banner: media })
-      .from(series)
-      .leftJoin(media, eq(series.bannerId, media.id))
-      .where(eq(series.id, id));
+    const rows = await this.db.select().from(series).where(eq(series.id, id));
     if (!rows[0]) return undefined;
 
-    const genreRows = await this.db
-      .select({ genre: genres })
-      .from(seriesGenres)
-      .innerJoin(genres, eq(seriesGenres.genreId, genres.id))
-      .where(eq(seriesGenres.seriesId, id));
+    const [genreRows, assets] = await Promise.all([
+      this.db
+        .select({ genre: genres })
+        .from(seriesGenres)
+        .innerJoin(genres, eq(seriesGenres.genreId, genres.id))
+        .where(eq(seriesGenres.seriesId, id)),
+      this.seriesAssetsRepository.findBySeriesId(id),
+    ]);
 
     return {
-      ...rows[0].series,
-      banner: rows[0].banner,
+      ...rows[0],
       genres: genreRows.map((r) => r.genre),
+      assets,
     };
   }
 

@@ -18,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiConsumes,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -26,13 +27,18 @@ import type { FastifyRequest } from 'fastify';
 import { Roles } from '@/common/decorators/roles.decorator';
 
 import { CreateSeriesDto } from './dto/create-series.dto';
+import {
+  SERIES_ASSET_PURPOSES,
+  type SeriesAssetPurpose,
+} from './dto/series-asset.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
+import { ParseAssetPurposePipe } from './pipes/parse-asset-purpose.pipe';
 import { CreateSeriesUseCase } from './use-cases/create-series.use-case';
 import { DeleteSeriesUseCase } from './use-cases/delete-series.use-case';
 import { GetSeriesUseCase } from './use-cases/get-series.use-case';
 import { GetSeriesByIdUseCase } from './use-cases/get-series-by-id.use-case';
 import { UpdateSeriesUseCase } from './use-cases/update-series.use-case';
-import { UploadSeriesBannerUseCase } from './use-cases/upload-series-banner.use-case';
+import { UpsertSeriesAssetUseCase } from './use-cases/upsert-series-asset.use-case';
 
 @ApiTags('Admin / Series')
 @ApiBearerAuth()
@@ -45,7 +51,7 @@ export class SeriesAdminController {
     private readonly getSeriesByIdUseCase: GetSeriesByIdUseCase,
     private readonly updateSeriesUseCase: UpdateSeriesUseCase,
     private readonly deleteSeriesUseCase: DeleteSeriesUseCase,
-    private readonly uploadSeriesBannerUseCase: UploadSeriesBannerUseCase,
+    private readonly upsertSeriesAssetUseCase: UpsertSeriesAssetUseCase,
   ) {}
 
   @Get()
@@ -60,7 +66,7 @@ export class SeriesAdminController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create a series' })
+  @ApiOperation({ summary: 'Create a series (created as inactive)' })
   create(@Body() dto: CreateSeriesDto) {
     return this.createSeriesUseCase.execute(dto);
   }
@@ -84,15 +90,20 @@ export class SeriesAdminController {
     await this.deleteSeriesUseCase.execute(id);
   }
 
-  @Post(':id/banner')
+  @Post(':id/assets/:purpose')
   @HttpCode(HttpStatus.OK)
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Upload series banner image' })
-  async uploadBanner(
+  @ApiOperation({ summary: 'Upload or replace a series asset' })
+  @ApiParam({
+    name: 'purpose',
+    enum: SERIES_ASSET_PURPOSES,
+  })
+  async upsertAsset(
     @Param('id', ParseUUIDPipe) id: string,
+    @Param('purpose', ParseAssetPurposePipe) purpose: SeriesAssetPurpose,
     @Req() req: FastifyRequest,
   ) {
     const file = await req.file();
-    return this.uploadSeriesBannerUseCase.execute(id, file!);
+    return this.upsertSeriesAssetUseCase.execute(id, purpose, file!);
   }
 }
