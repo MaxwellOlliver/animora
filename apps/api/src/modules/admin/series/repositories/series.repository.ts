@@ -8,16 +8,16 @@ import type {
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
 
-import { genres } from '../genres/genre.entity';
+import { genres } from '../../genres/genre.entity';
 import {
   type NewSeries,
   type Series,
   series,
   type SeriesWithDetails,
-} from './series.entity';
+} from '../entities/series.entity';
 import type { SeriesAssetWithMedia } from './series-assets.repository';
 import { SeriesAssetsRepository } from './series-assets.repository';
-import { seriesGenres } from './series-genre.entity';
+import { seriesGenres } from '../entities/series-genre.entity';
 
 export type SeriesWithDetailsAndMedia = SeriesWithDetails & {
   assets: SeriesAssetWithMedia[];

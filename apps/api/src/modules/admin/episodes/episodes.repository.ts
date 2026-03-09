@@ -6,7 +6,7 @@ import { DRIZZLE } from '@/infra/database/database.module';
 import { media } from '@/modules/media/media.entity';
 
 import { playlists } from '../playlists/playlist.entity';
-import { series } from '../series/series.entity';
+import { series } from '../series/entities/series.entity';
 import { type Episode, episodes, type NewEpisode } from './episode.entity';
 
 export type EpisodeWithMedia = Episode & {

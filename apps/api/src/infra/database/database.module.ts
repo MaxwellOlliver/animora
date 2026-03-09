@@ -9,11 +9,11 @@ import * as classificationSchema from '@/modules/admin/content-classifications/c
 import * as episodeSchema from '@/modules/admin/episodes/episode.entity';
 import * as genreSchema from '@/modules/admin/genres/genre.entity';
 import * as playlistSchema from '@/modules/admin/playlists/playlist.entity';
-import * as seriesSchema from '@/modules/admin/series/series.entity';
-import * as seriesAssetSchema from '@/modules/admin/series/series-asset.entity';
-import * as seriesGenreSchema from '@/modules/admin/series/series-genre.entity';
-import * as uploadSchema from '@/modules/admin/uploads/upload.entity';
-import * as uploadChunkSchema from '@/modules/admin/uploads/upload-chunk.entity';
+import * as seriesSchema from '@/modules/admin/series/entities/series.entity';
+import * as seriesAssetSchema from '@/modules/admin/series/entities/series-asset.entity';
+import * as seriesGenreSchema from '@/modules/admin/series/entities/series-genre.entity';
+import * as uploadSchema from '@/modules/admin/uploads/entities/upload.entity';
+import * as uploadChunkSchema from '@/modules/admin/uploads/entities/upload-chunk.entity';
 import * as videoSchema from '@/modules/admin/videos/video.entity';
 import * as authSchema from '@/modules/auth/refresh-token.entity';
 import * as profileSchema from '@/modules/profiles/profile.entity';

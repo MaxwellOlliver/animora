@@ -7,9 +7,9 @@ import { DeleteMediaUseCase } from '@/modules/media/use-cases/delete-media.use-c
 import { UploadMediaUseCase } from '@/modules/media/use-cases/upload-media.use-case';
 
 import type { SeriesAssetPurpose } from '../dto/series-asset.dto';
-import { SeriesAssetsRepository } from '../series-assets.repository';
-import type { SeriesWithDetailsAndMedia } from '../series.repository';
-import { SeriesRepository } from '../series.repository';
+import { SeriesAssetsRepository } from '../repositories/series-assets.repository';
+import type { SeriesWithDetailsAndMedia } from '../repositories/series.repository';
+import { SeriesRepository } from '../repositories/series.repository';
 
 const PURPOSE_TO_MEDIA: Record<SeriesAssetPurpose, MediaPurpose> = {
   banner: MEDIA_PURPOSE.seriesBanner,

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { SeriesRepository } from '../../series/series.repository';
+import { SeriesRepository } from '../../series/repositories/series.repository';
 import type { CreatePlaylistDto } from '../dto/create-playlist.dto';
 import type { Playlist } from '../playlist.entity';
 import { PlaylistsRepository } from '../playlists.repository';

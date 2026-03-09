@@ -8,7 +8,7 @@ import type {
 import {
   SeriesRepository,
   type SeriesWithDetailsAndMedia,
-} from '../series.repository';
+} from '../repositories/series.repository';
 
 @Injectable()
 export class GetSeriesUseCase {

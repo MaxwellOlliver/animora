@@ -9,7 +9,7 @@ import {
   type NewSeriesAsset,
   type SeriesAsset,
   seriesAssets,
-} from './series-asset.entity';
+} from '../entities/series-asset.entity';
 
 export type SeriesAssetWithMedia = SeriesAsset & {
   media: typeof media.$inferSelect;

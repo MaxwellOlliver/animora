@@ -4,8 +4,8 @@ import { eq, sql } from 'drizzle-orm';
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
 
-import { NewUpload, Upload, uploads } from './upload.entity';
-import { uploadChunks } from './upload-chunk.entity';
+import { NewUpload, Upload, uploads } from '../entities/upload.entity';
+import { uploadChunks } from '../entities/upload-chunk.entity';
 
 @Injectable()
 export class UploadsRepository {

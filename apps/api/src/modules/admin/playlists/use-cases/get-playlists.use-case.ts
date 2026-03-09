@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { SeriesRepository } from '../../series/series.repository';
+import { SeriesRepository } from '../../series/repositories/series.repository';
 import type { Playlist } from '../playlist.entity';
 import {
   PlaylistsRepository,

@@ -11,7 +11,7 @@ import { S3Service } from '@/infra/s3/s3.service';
 
 import { VideoEventsService } from '../../videos/video-events.service';
 import { VideosRepository } from '../../videos/videos.repository';
-import { UploadsRepository } from '../uploads.repository';
+import { UploadsRepository } from '../repositories/uploads.repository';
 
 @Injectable()
 export class CompleteUploadUseCase {

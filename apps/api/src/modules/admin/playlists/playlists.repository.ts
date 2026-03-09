@@ -5,7 +5,7 @@ import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
 import { media } from '@/modules/media/media.entity';
 
-import { series } from '../series/series.entity';
+import { series } from '../series/entities/series.entity';
 import { type NewPlaylist, type Playlist, playlists } from './playlist.entity';
 
 export type PlaylistWithMedia = Playlist & {

@@ -3,8 +3,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ContentClassificationsRepository } from '../../content-classifications/content-classifications.repository';
 import { GenresRepository } from '../../genres/genres.repository';
 import type { UpdateSeriesDto } from '../dto/update-series.dto';
-import type { SeriesWithDetailsAndMedia } from '../series.repository';
-import { SeriesRepository } from '../series.repository';
+import type { SeriesWithDetailsAndMedia } from '../repositories/series.repository';
+import { SeriesRepository } from '../repositories/series.repository';
 
 @Injectable()
 export class UpdateSeriesUseCase {

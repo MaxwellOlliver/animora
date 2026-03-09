@@ -10,8 +10,8 @@ import {
 
 import { media } from '@/modules/media/media.entity';
 
-import { contentClassifications } from '../content-classifications/content-classification.entity';
-import type { Genre } from '../genres/genre.entity';
+import { contentClassifications } from '../../content-classifications/content-classification.entity';
+import type { Genre } from '../../genres/genre.entity';
 
 export const series = pgTable('series', {
   id: uuid('id')

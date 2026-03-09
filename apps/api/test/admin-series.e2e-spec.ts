@@ -5,7 +5,7 @@ import request from 'supertest';
 import type { CursorPaginatedResponse } from '@/common/types/pagination.types';
 import type { ContentClassification } from '@/modules/admin/content-classifications/content-classification.entity';
 import type { Genre } from '@/modules/admin/genres/genre.entity';
-import type { SeriesWithDetails } from '@/modules/admin/series/series.entity';
+import type { SeriesWithDetails } from '@/modules/admin/series/entities/series.entity';
 
 import {
   registerAdmin,

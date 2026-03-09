@@ -59,7 +59,7 @@ src/
 1. **Use cases over fat services** — each operation gets its own use-case class with `execute()`. No multi-method service files for business logic.
 2. **Services = dumb wrappers** — services wrap external systems (MinIO, RabbitMQ). No `if` based on domain state. Use cases call services, never the reverse.
 3. **Repositories = raw DB only** — no business logic in repositories.
-4. **Flat module files** — entity, repository, controller, service live at module root. Only `use-cases/` and `dto/` get folders (they grow).
+4. **Flat by default, folders when there's more than one** — entity, repository, controller, service live at module root. When a module has multiple entities or repositories, group them into `entities/` and `repositories/` folders. `use-cases/` and `dto/` always get folders.
 5. **No cross-module internal imports** — modules communicate through exported services/use-cases only. Never import another module's repositories/entities/use-cases directly.
 
 ### Auth

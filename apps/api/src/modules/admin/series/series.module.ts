@@ -4,9 +4,9 @@ import { MediaModule } from '@/modules/media/media.module';
 
 import { ContentClassificationsModule } from '../content-classifications/content-classifications.module';
 import { GenresModule } from '../genres/genres.module';
-import { SeriesRepository } from './series.repository';
+import { SeriesRepository } from './repositories/series.repository';
+import { SeriesAssetsRepository } from './repositories/series-assets.repository';
 import { SeriesAdminController } from './series-admin.controller';
-import { SeriesAssetsRepository } from './series-assets.repository';
 import { CreateSeriesUseCase } from './use-cases/create-series.use-case';
 import { DeleteSeriesUseCase } from './use-cases/delete-series.use-case';
 import { GetSeriesUseCase } from './use-cases/get-series.use-case';

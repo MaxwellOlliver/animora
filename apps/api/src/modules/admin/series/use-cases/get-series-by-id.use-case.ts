@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   type SeriesWithDetailsAndMedia,
   SeriesRepository,
-} from '../series.repository';
+} from '../repositories/series.repository';
 
 @Injectable()
 export class GetSeriesByIdUseCase {

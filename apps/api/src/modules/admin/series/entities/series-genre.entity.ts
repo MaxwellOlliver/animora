@@ -1,6 +1,6 @@
 import { pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
 
-import { genres } from '../genres/genre.entity';
+import { genres } from '../../genres/genre.entity';
 import { series } from './series.entity';
 
 export const seriesGenres = pgTable(

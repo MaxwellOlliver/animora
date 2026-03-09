@@ -8,7 +8,7 @@ import {
 
 import { S3Service } from '@/infra/s3/s3.service';
 
-import { UploadsRepository } from '../uploads.repository';
+import { UploadsRepository } from '../repositories/uploads.repository';
 
 @Injectable()
 export class UploadChunkUseCase {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { CreateVideoUseCase } from '../../videos/use-cases/create-video.use-case';
 import type { InitUploadDto } from '../dto/init-upload.dto';
-import { UploadsRepository } from '../uploads.repository';
+import { UploadsRepository } from '../repositories/uploads.repository';
 
 export const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB
 const UPLOAD_TTL_HOURS = 24;
