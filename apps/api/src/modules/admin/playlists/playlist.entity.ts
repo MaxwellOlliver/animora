@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import {
+  date,
   integer,
   pgEnum,
   pgTable,
@@ -11,12 +12,18 @@ import {
 
 import { media } from '@/modules/media/media.entity';
 
-import { series } from '../series/series.entity';
+import { series } from '../series/entities/series.entity';
 
 export const playlistTypeEnum = pgEnum('playlist_type', [
   'season',
   'movie',
   'special',
+]);
+
+export const playlistStatusEnum = pgEnum('playlist_status', [
+  'upcoming',
+  'airing',
+  'finished',
 ]);
 
 export const playlists = pgTable(
@@ -29,9 +36,13 @@ export const playlists = pgTable(
       .notNull()
       .references(() => series.id, { onDelete: 'cascade' }),
     type: playlistTypeEnum('type').notNull().default('season'),
+    status: playlistStatusEnum('status'),
     number: integer('number').notNull(),
     title: varchar('title', { length: 255 }),
+    studio: varchar('studio', { length: 255 }),
     coverId: uuid('cover_id').references(() => media.id),
+    airStartDate: date('air_start_date'),
+    airEndDate: date('air_end_date'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },

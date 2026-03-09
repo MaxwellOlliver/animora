@@ -120,6 +120,13 @@
       "when": 1773024134588,
       "tag": "0016_series_assets",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1773027631177,
+      "tag": "0017_playlist_metadata",
+      "breakpoints": true
     }
   ]
 }

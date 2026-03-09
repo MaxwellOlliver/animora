@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsDateString,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -15,9 +16,20 @@ export class CreatePlaylistDto {
   @IsUUID()
   seriesId: string;
 
-  @ApiProperty({ enum: ['season', 'movie', 'special'], example: 'season' })
+  @ApiProperty({
+    enum: ['season', 'movie', 'special'],
+    example: 'season',
+  })
   @IsEnum(['season', 'movie', 'special'])
   type: 'season' | 'movie' | 'special';
+
+  @ApiPropertyOptional({
+    enum: ['upcoming', 'airing', 'finished'],
+    example: 'airing',
+  })
+  @IsOptional()
+  @IsEnum(['upcoming', 'airing', 'finished'])
+  status?: 'upcoming' | 'airing' | 'finished';
 
   @ApiProperty({ example: 1 })
   @IsInt()
@@ -30,4 +42,21 @@ export class CreatePlaylistDto {
   @IsNotEmpty()
   @MaxLength(255)
   title?: string;
+
+  @ApiPropertyOptional({ example: 'MAPPA' })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  studio?: string;
+
+  @ApiPropertyOptional({ example: '2025-04-01' })
+  @IsOptional()
+  @IsDateString()
+  airStartDate?: string;
+
+  @ApiPropertyOptional({ example: '2025-09-30' })
+  @IsOptional()
+  @IsDateString()
+  airEndDate?: string;
 }
