@@ -127,6 +127,20 @@
       "when": 1773027631177,
       "tag": "0017_playlist_metadata",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1773106135745,
+      "tag": "0018_watch_history",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1773113097197,
+      "tag": "0019_watch_history_index",
+      "breakpoints": true
     }
   ]
 }

@@ -20,6 +20,6 @@ import { UpdateProfileUseCase } from './use-cases/update-profile.use-case';
     UpdateProfileUseCase,
     DeleteProfileUseCase,
   ],
-  exports: [CreateProfileUseCase],
+  exports: [ProfilesRepository, CreateProfileUseCase],
 })
 export class ProfilesModule {}

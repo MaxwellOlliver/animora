@@ -1,0 +1,1 @@
+CREATE INDEX "watch_history_profile_updated_at_idx" ON "watch_history" USING btree ("profile_id","updated_at");

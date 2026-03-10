@@ -18,6 +18,7 @@ import * as videoSchema from '@/modules/admin/videos/video.entity';
 import * as authSchema from '@/modules/auth/refresh-token.entity';
 import * as profileSchema from '@/modules/profiles/profile.entity';
 import * as userSchema from '@/modules/users/user.entity';
+import * as watchHistorySchema from '@/modules/watch-history/watch-history.entity';
 
 const schema = {
   ...userSchema,
@@ -34,6 +35,7 @@ const schema = {
   ...videoSchema,
   ...uploadSchema,
   ...uploadChunkSchema,
+  ...watchHistorySchema,
 };
 
 export const DRIZZLE = Symbol('DRIZZLE');

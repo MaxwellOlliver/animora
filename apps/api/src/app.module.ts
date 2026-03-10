@@ -15,10 +15,11 @@ import { PlaylistsModule } from './modules/admin/playlists/playlists.module';
 import { SeriesModule } from './modules/admin/series/series.module';
 import { UploadsModule } from './modules/admin/uploads/uploads.module';
 import { VideosModule } from './modules/admin/videos/videos.module';
-import { MediaModule } from './modules/media/media.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { MediaModule } from './modules/media/media.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
 import { UsersModule } from './modules/users/users.module';
+import { WatchHistoryModule } from './modules/watch-history/watch-history.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { UsersModule } from './modules/users/users.module';
     EpisodesModule,
     VideosModule,
     UploadsModule,
+    WatchHistoryModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },
