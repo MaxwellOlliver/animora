@@ -14,8 +14,11 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Animora",
+  title: "animora",
   description: "Your story starts here.",
+  icons: {
+    icon: "/images/logo-symbol.svg",
+  },
 };
 
 export default function RootLayout({
@@ -25,7 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} ${poppins.variable} font-sans antialiased `}
+      >
         {children}
       </body>
     </html>
