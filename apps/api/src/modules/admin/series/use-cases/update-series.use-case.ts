@@ -29,15 +29,16 @@ export class UpdateSeriesUseCase {
         throw new NotFoundException('Content classification not found');
     }
 
-    if (dto.genreIds) {
-      for (const genreId of dto.genreIds) {
+    const { genreIds, ...fields } = dto;
+
+    if (genreIds) {
+      for (const genreId of genreIds) {
         const genre = await this.genresRepository.findById(genreId);
         if (!genre) throw new NotFoundException(`Genre ${genreId} not found`);
       }
-      await this.seriesRepository.setGenres(id, dto.genreIds);
+      await this.seriesRepository.setGenres(id, genreIds);
     }
 
-    const { genreIds: _, ...fields } = dto;
     if (Object.keys(fields).length > 0) {
       await this.seriesRepository.update(id, fields);
     }

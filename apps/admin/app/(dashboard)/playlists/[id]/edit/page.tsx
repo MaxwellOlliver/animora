@@ -38,6 +38,10 @@ export default function EditPlaylistPage() {
       type: values.type,
       number: values.number,
       title: values.title,
+      status: values.status,
+      studio: values.studio,
+      airStartDate: values.airStartDate,
+      airEndDate: values.airEndDate,
     });
 
     if (values.photo.kind === "new") {
@@ -139,8 +143,12 @@ export default function EditPlaylistPage() {
             initialValues={{
               seriesId: playlistQuery.data.seriesId,
               type: playlistQuery.data.type,
+              status: playlistQuery.data.status,
               number: playlistQuery.data.number,
               title: playlistQuery.data.title,
+              studio: playlistQuery.data.studio,
+              airStartDate: playlistQuery.data.airStartDate,
+              airEndDate: playlistQuery.data.airEndDate,
               cover: playlistQuery.data.cover,
             }}
             onSubmit={handleSubmit}

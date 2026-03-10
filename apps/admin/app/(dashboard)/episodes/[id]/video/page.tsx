@@ -264,7 +264,10 @@ export default function EpisodeVideoPage() {
                 <div className="px-5 py-3">
                   <p className="text-sm font-medium">Preview</p>
                 </div>
-                <VideoPlayer src={getHlsUrl(video.masterPlaylistKey)} />
+                <VideoPlayer
+                  src={getHlsUrl(video.masterPlaylistKey)}
+                  title={episodeName}
+                />
               </div>
             )}
           </div>

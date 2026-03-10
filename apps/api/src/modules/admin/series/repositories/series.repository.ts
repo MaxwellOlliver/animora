@@ -15,9 +15,9 @@ import {
   series,
   type SeriesWithDetails,
 } from '../entities/series.entity';
+import { seriesGenres } from '../entities/series-genre.entity';
 import type { SeriesAssetWithMedia } from './series-assets.repository';
 import { SeriesAssetsRepository } from './series-assets.repository';
-import { seriesGenres } from '../entities/series-genre.entity';
 
 export type SeriesWithDetailsAndMedia = SeriesWithDetails & {
   assets: SeriesAssetWithMedia[];

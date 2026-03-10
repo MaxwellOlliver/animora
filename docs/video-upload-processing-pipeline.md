@@ -8,6 +8,7 @@ At no point does the API wait for transcoding to complete.
 
 ```
 Client → API (chunked upload) → MinIO (raw file)
+Client → /uploads/:id/complete -> API validates and composes file
                               → RabbitMQ (job published)
                                          ↓
                                       Worker

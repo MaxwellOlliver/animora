@@ -20,7 +20,7 @@ import {
 import {
   useSeriesById,
   useUpdateSeries,
-  useUploadSeriesBanner,
+  useUploadSeriesAsset,
 } from "@/features/series/hooks";
 
 export default function EditSeriesPage() {
@@ -30,7 +30,7 @@ export default function EditSeriesPage() {
 
   const seriesQuery = useSeriesById(seriesId);
   const updateMutation = useUpdateSeries(seriesId);
-  const uploadBannerMutation = useUploadSeriesBanner(seriesId);
+  const uploadAssetMutation = useUploadSeriesAsset(seriesId);
 
   async function handleSubmit(values: SeriesCreateUpdateValues) {
     await updateMutation.mutateAsync({
@@ -41,8 +41,17 @@ export default function EditSeriesPage() {
       active: values.active,
     });
 
-    if (values.photo.kind === "new") {
-      await uploadBannerMutation.mutateAsync(values.photo.file);
+    if (values.bannerPhoto.kind === "new") {
+      await uploadAssetMutation.mutateAsync({
+        purpose: "banner",
+        file: values.bannerPhoto.file,
+      });
+    }
+    if (values.logoPhoto.kind === "new") {
+      await uploadAssetMutation.mutateAsync({
+        purpose: "logo",
+        file: values.logoPhoto.file,
+      });
     }
 
     router.push("/series");
@@ -98,7 +107,7 @@ export default function EditSeriesPage() {
             )}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Update series details, categorization, and banner.
+            Update series details, categorization, and assets.
           </p>
         </div>
 
@@ -106,7 +115,7 @@ export default function EditSeriesPage() {
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
             {/* Main column skeleton */}
             <div className="flex flex-col gap-6">
-              {/* Banner skeleton */}
+              {/* Assets skeleton */}
               <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
                 <div className="px-5 py-4 md:px-6">
                   <Skeleton className="h-4 w-14" />
@@ -195,17 +204,17 @@ export default function EditSeriesPage() {
                 seriesQuery.data.contentClassificationId,
               genreIds: seriesQuery.data.genres.map((g) => g.id),
               active: seriesQuery.data.active,
-              banner: seriesQuery.data.banner,
+              assets: seriesQuery.data.assets,
             }}
             onSubmit={handleSubmit}
             isSubmitting={
-              updateMutation.isPending || uploadBannerMutation.isPending
+              updateMutation.isPending || uploadAssetMutation.isPending
             }
             submitError={
               updateMutation.error instanceof Error
                 ? updateMutation.error.message
-                : uploadBannerMutation.error instanceof Error
-                  ? uploadBannerMutation.error.message
+                : uploadAssetMutation.error instanceof Error
+                  ? uploadAssetMutation.error.message
                   : null
             }
             cancelHref="/series"

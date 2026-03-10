@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -58,7 +59,14 @@ export function VideoUploadProvider({
 }) {
   const [progress, setProgress] = useState<UploadProgress>(initialProgress);
   const abortRef = useRef(false);
+  const eventSourceRef = useRef<EventSource | null>(null);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    return () => {
+      eventSourceRef.current?.close();
+    };
+  }, []);
 
   const isUploading =
     progress.phase === "uploading" ||
@@ -134,11 +142,13 @@ export function VideoUploadProvider({
         const token = getAccessToken();
         const sseUrl = `${getVideoStatusStreamUrl(videoId)}?token=${token}`;
         const eventSource = new EventSource(sseUrl);
+        eventSourceRef.current = eventSource;
 
         eventSource.onmessage = (event) => {
           const data = JSON.parse(event.data);
           if (data.status === "ready") {
             eventSource.close();
+            eventSourceRef.current = null;
             setProgress((p) => ({ ...p, phase: "ready" }));
             queryClient.invalidateQueries({ queryKey: ["episodes"] });
             queryClient.invalidateQueries({
@@ -146,6 +156,7 @@ export function VideoUploadProvider({
             });
           } else if (data.status === "failed") {
             eventSource.close();
+            eventSourceRef.current = null;
             setProgress((p) => ({
               ...p,
               phase: "failed",
@@ -156,6 +167,7 @@ export function VideoUploadProvider({
 
         eventSource.onerror = () => {
           eventSource.close();
+          eventSourceRef.current = null;
           setProgress((p) => ({
             ...p,
             phase: "failed",

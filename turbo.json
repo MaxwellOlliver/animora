@@ -1,6 +1,7 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
+  "globalEnv": ["SEED_ADMIN_EMAIL", "SEED_ADMIN_PASSWORD", "DATABASE_URL"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

@@ -17,7 +17,7 @@ import {
   type SeriesCreateUpdateValues,
 } from "@/features/series/components/series-create-update-form";
 import { useCreateSeries } from "@/features/series/hooks";
-import { uploadSeriesBanner } from "@/features/series/api";
+import { uploadSeriesAsset } from "@/features/series/api";
 
 export default function CreateSeriesPage() {
   const router = useRouter();
@@ -29,11 +29,13 @@ export default function CreateSeriesPage() {
       synopsis: values.synopsis,
       contentClassificationId: values.contentClassificationId,
       genreIds: values.genreIds,
-      active: values.active,
     });
 
-    if (values.photo.kind === "new") {
-      await uploadSeriesBanner(created.id, values.photo.file);
+    if (values.bannerPhoto.kind === "new") {
+      await uploadSeriesAsset(created.id, "banner", values.bannerPhoto.file);
+    }
+    if (values.logoPhoto.kind === "new") {
+      await uploadSeriesAsset(created.id, "logo", values.logoPhoto.file);
     }
 
     router.push("/series");

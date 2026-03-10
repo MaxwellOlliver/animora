@@ -13,8 +13,9 @@ import {
   fetchSeries,
   fetchSeriesById,
   updateSeries,
-  uploadSeriesBanner,
+  uploadSeriesAsset,
 } from "./api";
+import type { SeriesAssetPurpose } from "./types";
 
 const SERIES_PAGE_SIZE = 20;
 
@@ -61,11 +62,17 @@ export function useUpdateSeries(id: string) {
   });
 }
 
-export function useUploadSeriesBanner(id: string) {
+export function useUploadSeriesAsset(id: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (file: File) => uploadSeriesBanner(id, file),
+    mutationFn: ({
+      purpose,
+      file,
+    }: {
+      purpose: SeriesAssetPurpose;
+      file: File;
+    }) => uploadSeriesAsset(id, purpose, file),
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["series"] }),

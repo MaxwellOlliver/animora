@@ -1,17 +1,25 @@
 import { apiClient } from "@/lib/api-client";
-import type { Playlist, PlaylistType } from "./types";
+import type { Playlist, PlaylistStatus, PlaylistType } from "./types";
 
 export interface CreatePlaylistInput {
   seriesId: string;
   type: PlaylistType;
   number: number;
   title?: string;
+  status?: PlaylistStatus;
+  studio?: string;
+  airStartDate?: string;
+  airEndDate?: string;
 }
 
 export interface UpdatePlaylistInput {
   type?: PlaylistType;
   number?: number;
   title?: string;
+  status?: PlaylistStatus;
+  studio?: string;
+  airStartDate?: string;
+  airEndDate?: string;
 }
 
 export async function fetchPlaylists(seriesId?: string): Promise<Playlist[]> {

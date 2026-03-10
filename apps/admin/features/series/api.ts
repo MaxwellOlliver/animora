@@ -1,12 +1,15 @@
 import { apiClient } from "@/lib/api-client";
-import type { CursorPaginatedResponse, Series } from "./types";
+import type {
+  CursorPaginatedResponse,
+  Series,
+  SeriesAssetPurpose,
+} from "./types";
 
 export interface CreateSeriesInput {
   name: string;
   synopsis: string;
   contentClassificationId: string;
   genreIds: string[];
-  active?: boolean;
 }
 
 export interface UpdateSeriesInput {
@@ -37,7 +40,9 @@ export async function fetchSeriesById(id: string): Promise<Series> {
   return apiClient<Series>(`/admin/series/${id}`);
 }
 
-export async function createSeries(input: CreateSeriesInput): Promise<Series> {
+export async function createSeries(
+  input: CreateSeriesInput,
+): Promise<Series> {
   return apiClient<Series>("/admin/series", {
     method: "POST",
     body: JSON.stringify(input),
@@ -54,14 +59,15 @@ export async function updateSeries(
   });
 }
 
-export async function uploadSeriesBanner(
+export async function uploadSeriesAsset(
   id: string,
+  purpose: SeriesAssetPurpose,
   file: File,
 ): Promise<Series> {
   const formData = new FormData();
   formData.append("file", file);
 
-  return apiClient<Series>(`/admin/series/${id}/banner`, {
+  return apiClient<Series>(`/admin/series/${id}/assets/${purpose}`, {
     method: "POST",
     body: formData,
   });

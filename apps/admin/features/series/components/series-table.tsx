@@ -35,7 +35,8 @@ import { DataTable } from "@/components/ui/data-table";
 import Link from "next/link";
 
 function BannerCell({ series }: { series: Series }) {
-  if (!series.banner) {
+  const banner = series.assets?.find((a) => a.purpose === "banner");
+  if (!banner) {
     return (
       <div className="flex size-10 items-center justify-center rounded-md bg-muted">
         <ImageOff className="size-4 text-muted-foreground" aria-hidden="true" />
@@ -45,7 +46,7 @@ function BannerCell({ series }: { series: Series }) {
 
   return (
     <Image
-      src={getMediaImageUrl(series.banner.purpose, series.banner.key)}
+      src={getMediaImageUrl(banner.media.purpose, banner.media.key)}
       alt=""
       width={40}
       height={40}

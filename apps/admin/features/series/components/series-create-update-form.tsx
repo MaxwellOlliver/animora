@@ -51,7 +51,7 @@ import { getMediaImageUrl } from "@/lib/s3";
 import { cn } from "@/lib/utils";
 import { useGenresList } from "@/features/genres/hooks";
 import { useContentClassificationsList } from "@/features/classifications/hooks";
-import type { Media } from "../types";
+import type { SeriesAsset } from "../types";
 
 const seriesSchema = z.object({
   name: z
@@ -73,7 +73,8 @@ export interface SeriesCreateUpdateValues {
   contentClassificationId: string;
   genreIds: string[];
   active: boolean;
-  photo: PhotoUploadValue;
+  bannerPhoto: PhotoUploadValue;
+  logoPhoto: PhotoUploadValue;
 }
 
 interface SeriesCreateUpdateFormProps {
@@ -84,12 +85,21 @@ interface SeriesCreateUpdateFormProps {
     contentClassificationId?: string;
     genreIds?: string[];
     active?: boolean;
-    banner?: Media | null;
+    assets?: SeriesAsset[];
   };
   onSubmit: (values: SeriesCreateUpdateValues) => Promise<void> | void;
   isSubmitting?: boolean;
   submitError?: string | null;
   cancelHref?: string;
+}
+
+function getAssetUrl(
+  assets: SeriesAsset[] | undefined,
+  purpose: string,
+): string | null {
+  const asset = assets?.find((a) => a.purpose === purpose);
+  if (!asset) return null;
+  return getMediaImageUrl(asset.media.purpose, asset.media.key);
 }
 
 export function SeriesCreateUpdateForm({
@@ -110,11 +120,11 @@ export function SeriesCreateUpdateForm({
   const genresQuery = useGenresList();
   const classificationsQuery = useContentClassificationsList();
 
-  const defaultPhotoUrl = initialValues?.banner
-    ? getMediaImageUrl(initialValues.banner.purpose, initialValues.banner.key)
-    : null;
-  const [photoValue, setPhotoValue] = useState<PhotoUploadValue>(
-    createDefaultPhotoValue(defaultPhotoUrl),
+  const [bannerPhotoValue, setBannerPhotoValue] = useState<PhotoUploadValue>(
+    createDefaultPhotoValue(getAssetUrl(initialValues?.assets, "banner")),
+  );
+  const [logoPhotoValue, setLogoPhotoValue] = useState<PhotoUploadValue>(
+    createDefaultPhotoValue(getAssetUrl(initialValues?.assets, "logo")),
   );
 
   const form = useForm<SeriesFormValues>({
@@ -124,7 +134,7 @@ export function SeriesCreateUpdateForm({
       synopsis: initialValues?.synopsis ?? "",
       contentClassificationId: initialValues?.contentClassificationId ?? "",
       genreIds: initialValues?.genreIds ?? [],
-      active: initialValues?.active ?? true,
+      active: initialValues?.active ?? false,
     },
   });
   const genreIdsDependency = initialValues?.genreIds?.join(",") ?? "";
@@ -136,7 +146,7 @@ export function SeriesCreateUpdateForm({
       synopsis: initialValues?.synopsis ?? "",
       contentClassificationId: initialValues?.contentClassificationId ?? "",
       genreIds: initialValues?.genreIds ?? [],
-      active: initialValues?.active ?? true,
+      active: initialValues?.active ?? false,
     });
   }, [
     form,
@@ -161,7 +171,8 @@ export function SeriesCreateUpdateForm({
     try {
       await onSubmit({
         ...values,
-        photo: photoValue,
+        bannerPhoto: bannerPhotoValue,
+        logoPhoto: logoPhotoValue,
       });
     } catch (error) {
       setLocalError(
@@ -211,13 +222,20 @@ export function SeriesCreateUpdateForm({
             </Field>
           </FieldGroup>
         </FormSection>
-        <FormSection title="Banner" className="min-w-min" separator={false}>
+        <FormSection title="Assets" className="min-w-min" separator={false}>
           <FieldGroup>
             <PhotoUploadField
-              value={photoValue}
-              onChange={setPhotoValue}
-              label="Series banner"
+              value={bannerPhotoValue}
+              onChange={setBannerPhotoValue}
+              label="Banner"
               description="Upload a banner image for this series."
+              disabled={isBusy}
+            />
+            <PhotoUploadField
+              value={logoPhotoValue}
+              onChange={setLogoPhotoValue}
+              label="Logo"
+              description="Upload a logo image for this series."
               disabled={isBusy}
             />
           </FieldGroup>
@@ -385,30 +403,32 @@ export function SeriesCreateUpdateForm({
             </FieldGroup>
           </Grid>
         </FormSection>
-        <FormSection title="Visibility" separator={false}>
-          <Grid>
-            <div className="flex gap-8 items-center">
-              <div className="space-y-0.5">
-                <FieldLabel htmlFor={activeId}>Active</FieldLabel>
-                <FieldDescription>
-                  Controls whether this series is visible to users.
-                </FieldDescription>
+        {mode === "update" && (
+          <FormSection title="Visibility" separator={false}>
+            <Grid>
+              <div className="flex gap-8 items-center">
+                <div className="space-y-0.5">
+                  <FieldLabel htmlFor={activeId}>Active</FieldLabel>
+                  <FieldDescription>
+                    Controls whether this series is visible to users.
+                  </FieldDescription>
+                </div>
+                <Controller
+                  control={form.control}
+                  name="active"
+                  render={({ field }) => (
+                    <Switch
+                      id={activeId}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      disabled={isBusy}
+                    />
+                  )}
+                />
               </div>
-              <Controller
-                control={form.control}
-                name="active"
-                render={({ field }) => (
-                  <Switch
-                    id={activeId}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    disabled={isBusy}
-                  />
-                )}
-              />
-            </div>
-          </Grid>
-        </FormSection>
+            </Grid>
+          </FormSection>
+        )}
       </FormSectionGroup>
       <div className="mt-8 flex gap-4 ">
         <Button type="submit" size="sm" disabled={isBusy}>

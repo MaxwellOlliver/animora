@@ -15,7 +15,7 @@ import {
 
 interface VideoPlayerProps {
   src: string;
-  title?: string;
+  title?: string | null;
 }
 
 function onProviderChange(provider: MediaProviderAdapter | null) {

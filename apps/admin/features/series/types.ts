@@ -13,17 +13,28 @@ export interface Genre {
   createdAt: string;
 }
 
+export type SeriesAssetPurpose = "banner" | "logo" | "trailer";
+
+export interface SeriesAsset {
+  id: string;
+  seriesId: string;
+  mediaId: string;
+  purpose: SeriesAssetPurpose;
+  media: Media;
+  createdAt: string;
+}
+
 export interface Series {
   id: string;
   name: string;
   synopsis: string;
   bannerId: string | null;
-  banner: Media | null;
   contentClassificationId: string;
   active: boolean;
   createdAt: string;
   updatedAt: string;
   genres: Genre[];
+  assets: SeriesAsset[];
 }
 
 export interface CursorPaginatedResponse<T> {
