@@ -1,5 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Pen, ArrowLeft } from "lucide-react";
+import { Pen, ArrowLeft, Check } from "lucide-react";
 import { ProfileCard } from "@/features/profiles/components/profile-card";
 import { NewProfileCard } from "@/features/profiles/components/new-profile-card";
 
@@ -10,6 +13,8 @@ const profiles = [
 ];
 
 export default function ProfileSelectionPage() {
+  const [editing, setEditing] = useState(false);
+
   return (
     <main className="relative flex h-screen items-center justify-center overflow-hidden bg-background p-6">
       {/* Decorative gradient */}
@@ -31,27 +36,35 @@ export default function ProfileSelectionPage() {
           {profiles.map((profile) => (
             <ProfileCard
               key={profile.id}
+              id={profile.id}
               name={profile.name}
               avatar={profile.avatar}
+              editing={editing}
             />
           ))}
           <NewProfileCard />
         </div>
 
         <nav className="mt-16 flex flex-col items-center gap-5">
-          <Link
-            href="/manage-profiles"
-            className="flex items-center gap-2 text-sm leading-5 text-foreground-muted transition-colors hover:text-foreground"
+          <button
+            onClick={() => setEditing(!editing)}
+            className="flex items-center gap-2 text-foreground-muted transition-colors hover:text-foreground"
           >
-            <Pen className="size-6" />
-            <span className=" text-xl font-medium">manage profiles</span>
-          </Link>
+            {editing ? (
+              <Check className="size-6" />
+            ) : (
+              <Pen className="size-6" />
+            )}
+            <span className="text-xl font-medium">
+              {editing ? "done" : "manage profiles"}
+            </span>
+          </button>
           <Link
             href="/sign-in"
-            className="flex items-center gap-2 text-sm leading-5 text-foreground-muted transition-colors hover:text-foreground"
+            className="flex items-center gap-2 text-foreground-muted transition-colors hover:text-foreground"
           >
             <ArrowLeft className="size-6" />
-            <span className=" text-xl font-medium">go back</span>
+            <span className="text-xl font-medium">go back</span>
           </Link>
         </nav>
       </div>

@@ -50,7 +50,7 @@ export default function SignUpPage() {
           className="mt-6 flex flex-col gap-4"
         >
           <Field
-            label="Name"
+            label="name"
             type="text"
             placeholder="Your name"
             icon={<User />}
@@ -58,7 +58,7 @@ export default function SignUpPage() {
           />
 
           <Field
-            label="Email"
+            label="email"
             type="email"
             placeholder="mail@mail.com"
             icon={<Mail />}
@@ -66,7 +66,7 @@ export default function SignUpPage() {
           />
 
           <Field
-            label="Password"
+            label="password"
             type="password"
             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             icon={<Lock />}
@@ -74,7 +74,7 @@ export default function SignUpPage() {
           />
 
           <Field
-            label="Confirm Password"
+            label="confirm password"
             type="password"
             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             icon={<LockKeyhole />}

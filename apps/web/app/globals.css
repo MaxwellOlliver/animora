@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @theme inline {
   /* Colors */
@@ -16,6 +17,7 @@
   --color-placeholder: #616161;
   --color-card: #1a1a1a;
   --color-elevated: #202020;
+  --color-ring: #383838;
 
   --color-success: #45aa60;
   --color-danger: #e03a3a;

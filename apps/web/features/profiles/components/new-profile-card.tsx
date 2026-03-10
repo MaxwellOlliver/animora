@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export function NewProfileCard() {
   return (
-    <button
+    <Link
+      href="/profile-create"
       className="group flex flex-col items-center gap-3"
       aria-label="Add new profile"
     >
@@ -18,6 +20,6 @@ export function NewProfileCard() {
       <span className="text-base leading-5 text-foreground-muted transition-colors group-hover:text-foreground">
         new profile
       </span>
-    </button>
+    </Link>
   );
 }
