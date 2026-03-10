@@ -3,7 +3,7 @@ import { Button as BaseButton } from "@base-ui-components/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-md font-normal transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-50",
+  "[&_svg]:size-4 [&_svg]:shrink-0 inline-flex items-center justify-center gap-2 rounded-md font-normal transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {

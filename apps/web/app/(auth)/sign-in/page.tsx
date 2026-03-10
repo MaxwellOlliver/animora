@@ -4,17 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod/v4";
 import { Mail, Lock, ArrowRight, ImageOff } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
-
-const signInSchema = z.object({
-  email: z.email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type SignInForm = z.infer<typeof signInSchema>;
+import { signInSchema, type SignInForm } from "@/features/auth/schemas/sign-in";
 
 export default function SignInPage() {
   const { register, handleSubmit } = useForm<SignInForm>({
@@ -28,7 +21,8 @@ export default function SignInPage() {
   return (
     <main className="relative flex h-screen items-center justify-center overflow-hidden bg-background p-6">
       {/* Decorative gradients */}
-      <div className="pointer-events-none absolute -right-32 -top-32 size-175 rounded-full bg-primary/[0.07] blur-[120px]" />
+
+      <div className="pointer-events-none absolute -right-32 -top-32 size-175 rounded-full bg-primary/5 blur-[100px]" />
       <div className="pointer-events-none absolute -bottom-48 -left-32 size-125 rounded-full bg-primary/6 blur-[100px]" />
       <div className="pointer-events-none absolute right-1/3 top-1/2 size-75 rounded-full bg-secondary/3 blur-[80px]" />
 
@@ -42,18 +36,15 @@ export default function SignInPage() {
             width={164}
             height={37}
             priority
+            className="mb-8"
           />
-
-          <div className="h-8" />
 
           <h1 className="font-heading text-2xl font-semibold leading-8 text-foreground">
             Sign In
           </h1>
-          <p className="text-base leading-6 text-foreground-muted">
+          <p className="mb-6 text-base leading-6 text-foreground-muted">
             Log in to your account
           </p>
-
-          <div className="h-6" />
 
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -73,11 +64,9 @@ export default function SignInPage() {
               {...register("password")}
             />
 
-            <div className="h-6" />
-
-            <Button type="submit">
+            <Button type="submit" className="mt-6">
               sign in
-              <ArrowRight className="size-4" />
+              <ArrowRight />
             </Button>
           </form>
 
@@ -107,9 +96,7 @@ export default function SignInPage() {
             </button>
           </div>
 
-          <div className="h-8" />
-
-          <p className="text-center text-xs leading-4 text-foreground">
+          <p className="mt-8 text-center text-xs leading-4 text-foreground">
             Don&apos;t have an account?{" "}
             <Link href="/sign-up" className="text-primary underline">
               Sign up
