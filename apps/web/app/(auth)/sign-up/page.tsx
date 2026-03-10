@@ -3,16 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { ArrowRight, User, Mail, Lock, LockKeyhole } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Field } from "@/app/components/ui/field";
 import { signUpSchema, type SignUpForm } from "@/features/auth/schemas/sign-up";
 
 export default function SignUpPage() {
-  const { register, handleSubmit } = useForm<SignUpForm>({
-    resolver: zodResolver(signUpSchema),
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpForm>({
+    resolver: standardSchemaResolver(signUpSchema),
+    mode: "onTouched",
   });
+
+  console.log(errors);
 
   function onSubmit(data: SignUpForm) {
     console.log(data);
@@ -54,6 +61,7 @@ export default function SignUpPage() {
             type="text"
             placeholder="Your name"
             icon={<User />}
+            error={errors.name?.message}
             {...register("name")}
           />
 
@@ -62,6 +70,7 @@ export default function SignUpPage() {
             type="email"
             placeholder="mail@mail.com"
             icon={<Mail />}
+            error={errors.email?.message}
             {...register("email")}
           />
 
@@ -70,6 +79,7 @@ export default function SignUpPage() {
             type="password"
             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             icon={<Lock />}
+            error={errors.password?.message}
             {...register("password")}
           />
 
@@ -78,6 +88,7 @@ export default function SignUpPage() {
             type="password"
             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             icon={<LockKeyhole />}
+            error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
           />
 

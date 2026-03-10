@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Pen, ArrowLeft, Check } from "lucide-react";
 import { ProfileCard } from "@/features/profiles/components/profile-card";
 import { NewProfileCard } from "@/features/profiles/components/new-profile-card";
@@ -13,6 +14,8 @@ const profiles = [
 ];
 
 export default function ProfileSelectionPage() {
+  const searchParams = useSearchParams();
+  const fromAuth = searchParams.get("from") === "auth";
   const [editing, setEditing] = useState(false);
 
   return (
@@ -59,13 +62,15 @@ export default function ProfileSelectionPage() {
               {editing ? "done" : "manage profiles"}
             </span>
           </button>
-          <Link
-            href="/sign-in"
-            className="flex items-center gap-2 text-foreground-muted transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="size-6" />
-            <span className="text-xl font-medium">go back</span>
-          </Link>
+          {!fromAuth && (
+            <Link
+              href="/sign-in"
+              className="flex items-center gap-2 text-foreground-muted transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="size-6" />
+              <span className="text-xl font-medium">go back</span>
+            </Link>
+          )}
         </nav>
       </div>
     </main>

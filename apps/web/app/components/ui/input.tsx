@@ -8,7 +8,7 @@ type InputProps = React.ComponentProps<typeof BaseInput> & {
 const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, icon, ...props }, ref) => {
     return (
-      <div className="flex h-10 items-center gap-2.5 overflow-hidden rounded-md border border-border bg-input px-2.5 transition-shadow focus-within:ring-2 focus-within:ring-primary">
+      <div className="flex h-10 items-center gap-2.5 overflow-hidden rounded-md border border-border bg-input px-2.5 transition-shadow focus-within:ring-2 focus-within:ring-primary has-aria-invalid:border-danger has-aria-invalid:focus-within:ring-1 has-aria-invalid:focus-within:ring-danger">
         {icon && (
           <span className="shrink-0 text-foreground-muted [&>svg]:size-4">
             {icon}
