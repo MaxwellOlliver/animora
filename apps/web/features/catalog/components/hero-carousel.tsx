@@ -64,7 +64,7 @@ export function HeroCarousel({
   if (!slide) return null;
 
   return (
-    <section className="relative z-0 h-[80vh] w-full grid grid-cols-12 overflow-visible">
+    <section className="relative z-0 h-[85vh] w-full grid grid-cols-12 overflow-visible">
       <div className="absolute -z-10 inset-x-0 top-0 h-[calc(100%+14rem)]">
         {slides.map((s, i) => (
           <div
@@ -80,6 +80,7 @@ export function HeroCarousel({
               fill
               className="object-cover object-top"
               priority={i === 0}
+              unoptimized
             />
           </div>
         ))}

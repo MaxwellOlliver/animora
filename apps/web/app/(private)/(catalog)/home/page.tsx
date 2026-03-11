@@ -1,5 +1,6 @@
-import { CatalogSection } from "@/features/catalog/components/catalog-section";
+import { ContinueWatchingSection } from "@/features/catalog/components/continue-watching-section";
 import { HeroCarousel } from "@/features/catalog/components/hero-carousel";
+import { RecommendedSection } from "@/features/catalog/components/recommended-section";
 
 const heroSlides = [
   {
@@ -32,18 +33,8 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-background">
       <HeroCarousel slides={heroSlides} />
-      <CatalogSection title="Continue Watching">
-        {/* Placeholder for catalog items */}
-        <div className="p-4 text-center text-gray-500">
-          Catalog items will be displayed here.
-        </div>
-      </CatalogSection>
-      <CatalogSection title="Recommended for you">
-        {/* Placeholder for catalog items */}
-        <div className="p-4 text-center text-gray-500">
-          Catalog items will be displayed here.
-        </div>
-      </CatalogSection>
+      <ContinueWatchingSection />
+      <RecommendedSection />
     </main>
   );
 }

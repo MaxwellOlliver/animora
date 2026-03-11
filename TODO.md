@@ -5,6 +5,6 @@ There is a possible gap for profile related endpoints. Those endpoints must be p
 So, every endpoint from the profile selection flow on must be protected by the profile guard.
 Like watch history, watchlist, ratings, recommendations, etc.
 
-## Form errors
+## Public catalog
 
-SignUp is not showing field errors.
+Catalog pages can be public. Initially, there is no problem building it as private. But if we want to make it public, then we need to make sure that the profile guard is not applied to those endpoints. Otherwise, it will not be possible to access the catalog without a profile.
