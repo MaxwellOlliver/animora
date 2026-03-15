@@ -54,7 +54,7 @@ export function CatalogSection({
   };
 
   return (
-    <div className="catalog-section relative z-10 flex flex-col gap-4 px-12 py-12 rounded-lg overflow-hidden">
+    <div className="catalog-section relative z-10 flex flex-col gap-4 px-12 py-12 rounded-lg">
       <div className="flex w-full items-center">
         <h3 className="font-heading text-2xl leading-8 font-semibold">
           {title}
@@ -72,7 +72,7 @@ export function CatalogSection({
       {subtitle && (
         <p className="text-base text-foreground-muted">{subtitle}</p>
       )}
-      <div className="relative  overflow-hidden">
+      <div className="relative overflow-hidden">
         {canScrollLeft && (
           <button
             aria-label="previous"
@@ -94,7 +94,7 @@ export function CatalogSection({
         <div
           ref={scrollableRef}
           onScroll={updateScrollState}
-          className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none"
+          className="flex overflow-x-auto scroll-smooth scrollbar-none"
         >
           {children}
         </div>
