@@ -1,7 +1,6 @@
 "use client";
 
 import Hls from "hls.js";
-import { Volume2Icon, VolumeOffIcon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
@@ -9,12 +8,20 @@ interface TrailerPlayerProps {
   src?: string | null;
   poster: string;
   alt: string;
+  muted?: boolean;
+  onMutedChange?: (muted: boolean) => void;
 }
 
-export function TrailerPlayer({ src, poster, alt }: TrailerPlayerProps) {
+export function TrailerPlayer({
+  src,
+  poster,
+  alt,
+  muted: mutedProp,
+}: TrailerPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
-  const [muted, setMuted] = useState(true);
+
+  const muted = mutedProp ?? false;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -74,19 +81,6 @@ export function TrailerPlayer({ src, poster, alt }: TrailerPlayerProps) {
         loop
         className="size-full object-cover"
       />
-      {ready && (
-        <button
-          type="button"
-          onClick={() => setMuted((m) => !m)}
-          className="absolute right-2 bottom-2 rounded-full bg-black/60 p-1.5 text-white transition-opacity hover:bg-black/80"
-        >
-          {muted ? (
-            <VolumeOffIcon className="size-4" />
-          ) : (
-            <Volume2Icon className="size-4" />
-          )}
-        </button>
-      )}
     </div>
   );
 }

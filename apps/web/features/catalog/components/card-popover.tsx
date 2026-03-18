@@ -47,7 +47,6 @@ export function CardPopover({ children, content }: CardPopoverProps) {
     <Popover.Root
       open={open}
       onOpenChange={(nextOpen, { reason }) => {
-        console.log(reason);
         if (reason === "trigger-press") return;
         setOpen(nextOpen);
       }}

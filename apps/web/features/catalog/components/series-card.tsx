@@ -1,20 +1,47 @@
+"use client";
+
 import Image from "next/image";
-import { BookmarkIcon, InfoIcon, PlayIcon } from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { BookmarkIcon, InfoIcon, PlayIcon, Volume2Icon, VolumeOffIcon } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { CardPopover } from "./card-popover";
 import { TrailerPlayer } from "./trailer-player";
 
 export function SeriesCard() {
+  const searchParams = useSearchParams();
+  const [muted, setMuted] = useState(true);
+
+  function buildSeriesHref(id: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("s", id);
+    return `?${params.toString()}`;
+  }
+
   return (
     <CardPopover
       content={
         <div className="flex w-[clamp(280px,23vw,350px)] flex-col">
-          <div className="aspect-video w-full overflow-clip">
+          <div className="relative aspect-video w-full overflow-clip">
             <TrailerPlayer
               src="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
               poster="/images/catalog/aot-banner.jpg"
               alt="Attack on Titan"
+              muted={muted}
+              onMutedChange={setMuted}
             />
+            <button
+              type="button"
+              onClick={() => setMuted(!muted)}
+              className="absolute right-2 bottom-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80"
+            >
+              {muted ? (
+                <VolumeOffIcon className="size-3.5" />
+              ) : (
+                <Volume2Icon className="size-3.5" />
+              )}
+            </button>
           </div>
           <div className="flex flex-col gap-2 p-4">
             <div className="flex flex-col gap-2">
@@ -47,7 +74,7 @@ export function SeriesCard() {
                 <PlayIcon />
                 watch
               </Button>
-              <Button variant="pale" size="icon-md">
+              <Button variant="pale" size="icon-md" render={<Link href={buildSeriesHref("aot")} scroll={false} />}>
                 <InfoIcon />
               </Button>
               <Button variant="pale" size="icon-md">

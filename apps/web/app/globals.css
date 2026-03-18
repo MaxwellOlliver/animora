@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
 @theme inline {
   /* Colors */
   --color-background: #121212;
@@ -43,5 +42,32 @@ body {
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+:root {
+  --scrollbar-width: 6px;
+}
+
+*:not(.scrollbar-none) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    background: var(--color-background);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 9999px;
+
+    &:hover {
+      background: var(--color-ring);
+    }
   }
 }
