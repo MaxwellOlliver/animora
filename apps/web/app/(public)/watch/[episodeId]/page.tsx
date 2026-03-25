@@ -1,5 +1,5 @@
 import { EpisodeInfo } from "@/features/watch/components/episode-info";
-import { WatchRoomTabs } from "@/features/watch/components/watch-room-tabs";
+import { CommentsSection } from "@/features/watch/components/comments-section";
 import { SidebarEpisodeCard } from "@/features/watch/components/sidebar-episode-card";
 
 export default function WatchRoomPage() {
@@ -14,7 +14,7 @@ export default function WatchRoomPage() {
         <div className="col-span-8 flex flex-col gap-4 p-2.5">
           <EpisodeInfo />
           <div className="h-4" />
-          <WatchRoomTabs />
+          <CommentsSection />
         </div>
 
         {/* Sidebar — right 4 columns */}

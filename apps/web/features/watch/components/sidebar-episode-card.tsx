@@ -12,7 +12,7 @@ export function SidebarEpisodeCard({ progress }: SidebarEpisodeCardProps) {
         alt="Episode thumbnail"
         duration="24m 32s"
         progress={progress}
-        className="z-10 w-44"
+        className="z-10 w-36"
       />
 
       <div className="z-10 flex min-w-0 flex-1 flex-col gap-1">

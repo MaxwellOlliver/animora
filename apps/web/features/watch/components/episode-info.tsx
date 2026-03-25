@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Heart, ChevronDown } from "lucide-react";
+import { WatchPartyButton } from "./watch-party-button";
 
 export function EpisodeInfo() {
   return (
@@ -25,6 +26,10 @@ export function EpisodeInfo() {
             <ChevronDown className="size-6" />
             <span className="text-base">246</span>
           </button>
+
+          <div className="h-5 w-px bg-border" />
+
+          <WatchPartyButton />
         </div>
 
         <p className="line-clamp-2 text-base leading-6 text-foreground">
