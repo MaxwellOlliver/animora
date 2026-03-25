@@ -1,0 +1,35 @@
+import Image from "next/image";
+
+export function ForYouCard() {
+  return (
+    <div className="flex items-center gap-4 rounded-xl">
+      <div className="relative w-44 shrink-0 overflow-hidden rounded-lg">
+        <div className="relative aspect-video">
+          <Image
+            src="/images/episode-thumbnail.png"
+            alt="Recommendation thumbnail"
+            fill
+            className="object-cover"
+            unoptimized
+          />
+          <div className="absolute bottom-2 left-2 rounded bg-background/80 px-1 py-1">
+            <span className="text-xs text-white">24m 32s</span>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 h-1 w-3/4 rounded-full bg-secondary" />
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="truncate text-sm leading-5 text-foreground-muted">
+          S1 E2
+        </span>
+        <h4 className="line-clamp-2 font-heading text-base font-semibold leading-6">
+          To you, 2000 years from now
+        </h4>
+        <span className="truncate text-sm leading-5 text-foreground-muted">
+          Attack on Titan
+        </span>
+      </div>
+    </div>
+  );
+}
