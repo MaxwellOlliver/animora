@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { EllipsisVerticalIcon } from "lucide-react";
+import { EpisodeThumbnail } from "@/app/components/ui/episode-thumbnail";
 
 interface EpisodeRowProps {
   number: number;
@@ -18,18 +18,12 @@ export function EpisodeRow({
 }: EpisodeRowProps) {
   return (
     <div className="relative flex gap-3 rounded-lg py-2 after:pointer-events-none after:absolute after:inset-y-0 after:-inset-x-2 after:rounded-lg after:bg-elevated after:opacity-0 after:transition-opacity hover:after:opacity-100">
-      <div className="relative z-10 aspect-video w-40 shrink-0 overflow-clip rounded-md">
-        <Image
-          src={thumbnail}
-          alt={title}
-          fill
-          className="object-cover"
-          unoptimized
-        />
-        <span className="absolute bottom-1.5 left-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-medium">
-          {duration}
-        </span>
-      </div>
+      <EpisodeThumbnail
+        src={thumbnail}
+        alt={title}
+        duration={duration}
+        className="z-10 w-40"
+      />
       <div className="relative z-10 flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex items-start justify-between gap-2">
           <h4 className="font-heading text-sm font-semibold">

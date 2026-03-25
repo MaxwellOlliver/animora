@@ -1,6 +1,6 @@
 import { EpisodeInfo } from "@/features/watch/components/episode-info";
-import { NextEpisodeCard } from "@/features/watch/components/next-episode-card";
-import { ForYouCard } from "@/features/watch/components/for-you-card";
+import { WatchRoomTabs } from "@/features/watch/components/watch-room-tabs";
+import { SidebarEpisodeCard } from "@/features/watch/components/sidebar-episode-card";
 
 export default function WatchRoomPage() {
   return (
@@ -13,6 +13,8 @@ export default function WatchRoomPage() {
         {/* Episode Info — left 8 columns */}
         <div className="col-span-8 flex flex-col gap-4 p-2.5">
           <EpisodeInfo />
+          <div className="h-4" />
+          <WatchRoomTabs />
         </div>
 
         {/* Sidebar — right 4 columns */}
@@ -20,7 +22,7 @@ export default function WatchRoomPage() {
           <h3 className="font-heading text-xl font-medium leading-7">
             Next episode
           </h3>
-          <NextEpisodeCard />
+          <SidebarEpisodeCard />
 
           <div className="h-4" />
 
@@ -28,9 +30,9 @@ export default function WatchRoomPage() {
             For you
           </h3>
           <div className="flex flex-col gap-4">
-            <ForYouCard />
-            <ForYouCard />
-            <ForYouCard />
+            <SidebarEpisodeCard progress={75} />
+            <SidebarEpisodeCard progress={75} />
+            <SidebarEpisodeCard progress={75} />
           </div>
         </div>
       </div>
