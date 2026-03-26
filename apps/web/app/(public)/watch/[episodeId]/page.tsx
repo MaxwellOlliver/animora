@@ -1,6 +1,7 @@
 import { EpisodeInfo } from "@/features/watch/components/episode-info";
 import { CommentsSection } from "@/features/watch/components/comments-section";
 import { SidebarEpisodeCard } from "@/features/watch/components/sidebar-episode-card";
+import { WatchPartyChat } from "@/features/watch/components/watch-party-chat";
 
 export default function WatchRoomPage() {
   return (
@@ -19,6 +20,10 @@ export default function WatchRoomPage() {
 
         {/* Sidebar — right 4 columns */}
         <div className="col-span-4 flex flex-col gap-4">
+          <WatchPartyChat />
+
+          <div className="h-4" />
+
           <h3 className="font-heading text-xl font-medium leading-7">
             Next episode
           </h3>

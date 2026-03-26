@@ -15,7 +15,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
       <BaseAvatar.Root
         ref={ref}
         className={cn(
-          "flex size-8 items-center justify-center overflow-hidden rounded-full bg-elevated",
+          "flex size-8 items-center justify-center overflow-hidden rounded-lg bg-elevated",
           className,
         )}
       >
