@@ -16,7 +16,7 @@ export default function WatchLayout({
         } as React.CSSProperties
       }
     >
-      <Navbar />
+      <Navbar hideOnTop />
       {children}
     </div>
   );

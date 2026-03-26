@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Copy, Check, Smile, SendHorizonal, Circle } from "lucide-react";
 import { Avatar } from "@/app/components/ui/avatar";
 import { WatchPartyMembers } from "./watch-party-members";
@@ -47,13 +47,8 @@ const MOCK_MESSAGES = [
 ];
 
 export function WatchPartyChat() {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
   const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
 
   function handleCopy() {
     navigator.clipboard.writeText(MOCK_ROOM_CODE);
@@ -67,7 +62,7 @@ export function WatchPartyChat() {
   }
 
   return (
-    <div className="flex h-[480px] flex-col overflow-hidden rounded-lg border border-border bg-card">
+    <div className="flex h-120 flex-col overflow-hidden rounded-lg border border-border bg-card">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div className="flex items-center gap-2">
@@ -114,13 +109,12 @@ export function WatchPartyChat() {
                   {msg.timestamp}
                 </span>
               </div>
-              <p className="text-sm leading-snug text-foreground/90 break-words">
+              <p className="text-sm leading-snug text-foreground/90 wrap-break-word">
                 {msg.text}
               </p>
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}

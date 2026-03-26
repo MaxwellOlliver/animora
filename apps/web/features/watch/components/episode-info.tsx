@@ -12,7 +12,7 @@ export function EpisodeInfo() {
       <div className="flex flex-col gap-4">
         <Link
           href="/series/attack-on-titan"
-          className="font-heading text-base font-semibold text-primary hover:underline"
+          className="font-heading text-base w-fit font-semibold text-primary hover:underline"
         >
           Attack on Titan
         </Link>

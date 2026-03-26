@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowUpDown } from "lucide-react";
 import {
   Select,
   SelectTrigger,

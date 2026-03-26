@@ -16,7 +16,7 @@ const navbarLinks = [
   { name: "calendar", href: "/season" },
 ];
 
-export function Navbar() {
+export function Navbar({ hideOnTop = false }: { hideOnTop?: boolean }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
@@ -32,10 +32,12 @@ export function Navbar() {
   return (
     <nav
       className={cn(
-        "navbar fixed top-0 z-20 w-full h-(--navbar-height) flex items-center justify-between px-12",
-        scrolled
-          ? "bg-background/95"
-          : "bg-linear-to-b from-background via-background/85 via-55% to-transparent",
+        "navbar fixed top-0 z-20 w-full h-(--navbar-height) flex items-center justify-between px-12 transition-all duration-300",
+        hideOnTop && !scrolled
+          ? "-translate-y-full opacity-0"
+          : scrolled
+            ? "bg-background/95"
+            : "bg-linear-to-b from-background via-background/85 via-55% to-transparent",
       )}
     >
       <div className="flex items-center gap-8">

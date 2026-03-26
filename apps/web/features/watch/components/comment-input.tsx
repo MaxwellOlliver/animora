@@ -69,7 +69,7 @@ export function CommentInput() {
         <Button
           type="submit"
           disabled={!text.trim()}
-          className="mt-0.5 disabled:opacity-50"
+          className="disabled:opacity-50"
         >
           comment
         </Button>
