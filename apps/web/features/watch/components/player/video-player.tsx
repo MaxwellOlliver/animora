@@ -1,10 +1,12 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
+  isHLSProvider,
   MediaPlayer,
   MediaProvider,
   type MediaPlayerInstance,
+  type MediaProviderAdapter,
 } from "@vidstack/react";
 import "@vidstack/react/player/styles/base.css";
 import { PlayerControls } from "./controls";
@@ -36,12 +38,28 @@ export function VideoPlayer({
 }: VideoPlayerProps) {
   const playerRef = useRef<MediaPlayerInstance>(null);
 
+  function onProviderChange(provider: MediaProviderAdapter | null) {
+    if (isHLSProvider(provider)) {
+      provider.config = {
+        maxBufferLength: 30,
+        maxMaxBufferLength: 60,
+      };
+    }
+  }
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    player.qualities.switch = "next";
+  }, []);
+
   return (
     <MediaPlayer
       ref={playerRef}
       src={src}
       crossOrigin
       playsInline
+      onProviderChange={onProviderChange}
       className="group relative aspect-video w-full h-[calc(100dvh-6rem)] overflow-hidden bg-black [&_video]:h-full!"
     >
       <MediaProvider />
