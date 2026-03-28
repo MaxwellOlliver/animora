@@ -13,6 +13,8 @@ import { PlayerControlsVisibility } from "./controls-visibility";
 import { PlayerSkipButton, type TimestampAction } from "./skip-button";
 import { PlayerOverlayMessages, type OverlayMessage } from "./overlay-messages";
 import { PlayerLoader } from "./loader";
+import { SettingsPopover } from "./settings-popover";
+import { PlayerProvider } from "./player-context";
 
 type VideoPlayerProps = {
   src: string;
@@ -37,28 +39,30 @@ export function VideoPlayer({
     <MediaPlayer
       ref={playerRef}
       src={src}
-      autoPlay
       crossOrigin
       playsInline
       className="group relative aspect-video w-full h-[calc(100dvh-6rem)] overflow-hidden bg-black [&_video]:h-full!"
     >
       <MediaProvider />
-      <PlayerLoader />
-      {overlayMessages.length > 0 && (
-        <PlayerOverlayMessages
-          messages={overlayMessages}
-          displayDuration={5000}
-        />
-      )}
-      <PlayerSkipButton actions={timestampActions} />
-      <PlayerControlsVisibility>
-        <PlayerProgressBar />
-        <PlayerControls
-          title={title}
-          onPrevEpisode={onPrevEpisode}
-          onNextEpisode={onNextEpisode}
-        />
-      </PlayerControlsVisibility>
+      <PlayerProvider>
+        <PlayerLoader />
+        {overlayMessages.length > 0 && (
+          <PlayerOverlayMessages
+            messages={overlayMessages}
+            displayDuration={5000}
+          />
+        )}
+        <PlayerSkipButton actions={timestampActions} />
+        <PlayerControlsVisibility>
+          <PlayerProgressBar />
+          <PlayerControls
+            title={title}
+            onPrevEpisode={onPrevEpisode}
+            onNextEpisode={onNextEpisode}
+          />
+        </PlayerControlsVisibility>
+        <SettingsPopover />
+      </PlayerProvider>
     </MediaPlayer>
   );
 }

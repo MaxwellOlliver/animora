@@ -17,6 +17,8 @@ import {
   Subtitles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePlayerContext } from "./player-context";
+import { updateSettings } from "./player-store";
 
 type PlayerControlsProps = {
   title?: string;
@@ -75,6 +77,7 @@ function VolumeControl() {
       const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
       remote.changeVolume(pct);
       if (muted && pct > 0) remote.unmute();
+      updateSettings({ volume: pct });
     },
     [remote, muted],
   );
@@ -88,11 +91,21 @@ function VolumeControl() {
         setDragging(false);
       }}
     >
-      <ControlButton label={muted ? "Unmute" : "Mute"}>
-        <VolumeIcon
-          className="size-5"
-          onClick={() => (muted ? remote.unmute() : remote.mute())}
-        />
+      <ControlButton
+        label={muted ? "Unmute" : "Mute"}
+        onClick={() => {
+          if (muted) {
+            const restored = volume > 0 ? volume : 0.5;
+            remote.changeVolume(restored);
+            remote.unmute();
+            updateSettings({ volume: restored });
+          } else {
+            remote.mute();
+            updateSettings({ volume: 0 });
+          }
+        }}
+      >
+        <VolumeIcon className="size-5" />
 
         <div
           className={cn(
@@ -152,6 +165,7 @@ export function PlayerControls({
   const pip = useMediaState("pictureInPicture");
   const remote = useMediaRemote();
   const player = useMediaPlayer();
+  const { toggleSettings } = usePlayerContext();
 
   const togglePlay = useCallback(() => {
     paused ? remote.play() : remote.pause();
@@ -201,9 +215,11 @@ export function PlayerControls({
           <Subtitles className="size-5" />
         </ControlButton>
 
-        <ControlButton label="Settings" onClick={() => {}}>
-          <Settings className="size-5" />
-        </ControlButton>
+        <div data-settings-trigger>
+          <ControlButton label="Settings" onClick={toggleSettings}>
+            <Settings className="size-5" />
+          </ControlButton>
+        </div>
 
         <ControlButton label="Picture in picture" onClick={togglePip}>
           <PictureInPicture2 className="size-5" />

@@ -1,0 +1,80 @@
+"use client";
+
+import { SettingsRoute } from "./settings-route";
+import { SettingsRouter } from "./settings-router";
+import { SettingsRouterReset } from "./settings-router-reset";
+import { SettingsHomeRoute } from "./settings-home-route";
+import { cn } from "@/lib/utils";
+import { SettingsQualitiesRoute } from "./settings-qualities-route";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { usePlayerContext } from "../player-context";
+
+export function SettingsPopover() {
+  const { settingsOpen, closeSettings } = usePlayerContext();
+  const innerRef = useRef<HTMLDivElement>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
+
+  const updateSize = useCallback(() => {
+    if (innerRef.current && outerRef.current) {
+      const { height, width } = innerRef.current.getBoundingClientRect();
+      outerRef.current.style.height = `${height}px`;
+      outerRef.current.style.width = `${width}px`;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (settingsOpen) {
+      updateSize();
+    }
+  }, [settingsOpen, updateSize]);
+
+  useEffect(() => {
+    if (!settingsOpen) return;
+
+    function handlePointerDown(e: PointerEvent) {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-settings-trigger]")) return;
+      if (outerRef.current && !outerRef.current.contains(target)) {
+        closeSettings();
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [settingsOpen, closeSettings]);
+
+  useLayoutEffect(() => {
+    if (!innerRef.current || !outerRef.current) return;
+
+    const observer = new ResizeObserver(() => {
+      const rect = innerRef.current!.getBoundingClientRect();
+      outerRef.current!.style.height = `${rect.height}px`;
+      outerRef.current!.style.width = `${rect.width}px`;
+    });
+
+    observer.observe(innerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={outerRef}
+      className={cn(
+        "absolute fill-mode-forwards transition-all slide-in-from-bottom-5 slide-out-to-bottom-5 fade-out fade-in bottom-20 right-4 z-20 origin-bottom-right overflow-hidden rounded-lg bg-background/90 ",
+        settingsOpen ? "animate-in" : "pointer-events-none animate-out",
+      )}
+    >
+      <div className="w-fit p-1" ref={innerRef}>
+        <SettingsRouter initialRoute="home">
+          <SettingsRouterReset />
+          <SettingsRoute path="home">
+            <SettingsHomeRoute />
+          </SettingsRoute>
+          <SettingsRoute path="qualities">
+            <SettingsQualitiesRoute />
+          </SettingsRoute>
+        </SettingsRouter>
+      </div>
+    </div>
+  );
+}

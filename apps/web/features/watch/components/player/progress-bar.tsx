@@ -1,7 +1,12 @@
 "use client";
 
 import { useRef, useCallback, useState } from "react";
-import { useMediaState, useMediaRemote, useMediaPlayer } from "@vidstack/react";
+import {
+  useMediaState,
+  useMediaRemote,
+  useMediaPlayer,
+  HLSProvider,
+} from "@vidstack/react";
 
 export function PlayerProgressBar() {
   const currentTime = useMediaState("currentTime");
@@ -33,7 +38,8 @@ export function PlayerProgressBar() {
       if (duration > 0) {
         const targetTime = (percent / 100) * duration;
         if (ended && player?.provider) {
-          const media = (player.provider as any).media as HTMLMediaElement;
+          const media = (player.provider as HLSProvider).media;
+
           media.currentTime = targetTime;
           void media.play().then(() => {
             media.currentTime = targetTime;
