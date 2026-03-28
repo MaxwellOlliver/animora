@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface TrailerPlayerProps {
   src?: string | null;
-  poster: string;
+  poster?: string;
   alt: string;
   muted?: boolean;
   onMutedChange?: (muted: boolean) => void;
@@ -53,6 +53,8 @@ export function TrailerPlayer({
   }, [src]);
 
   if (!src) {
+    if (!poster) return null;
+
     return (
       <Image
         src={poster}
@@ -66,14 +68,16 @@ export function TrailerPlayer({
 
   return (
     <div className="relative size-full">
-      <Image
-        src={poster}
-        alt={alt}
-        width={480}
-        height={270}
-        className={`absolute inset-0 size-full object-cover transition-opacity duration-500 ${ready ? "opacity-0" : "opacity-100"}`}
-        unoptimized
-      />
+      {poster && (
+        <Image
+          src={poster}
+          alt={alt}
+          width={480}
+          height={270}
+          className={`absolute inset-0 size-full object-cover transition-opacity duration-500 ${ready ? "opacity-0" : "opacity-100"}`}
+          unoptimized
+        />
+      )}
       <video
         ref={videoRef}
         muted={muted}
