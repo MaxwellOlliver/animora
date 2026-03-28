@@ -15,6 +15,7 @@ import { PlayerOverlayMessages, type OverlayMessage } from "./overlay-messages";
 import { PlayerLoader } from "./loader";
 import { SettingsPopover } from "./settings-popover";
 import { PlayerProvider } from "./player-context";
+import { TapPanels } from "./tap-panels";
 
 type VideoPlayerProps = {
   src: string;
@@ -45,6 +46,7 @@ export function VideoPlayer({
     >
       <MediaProvider />
       <PlayerProvider>
+        <TapPanels />
         <PlayerLoader />
         {overlayMessages.length > 0 && (
           <PlayerOverlayMessages
