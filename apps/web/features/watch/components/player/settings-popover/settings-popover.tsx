@@ -25,6 +25,15 @@ export function SettingsPopover() {
   useEffect(() => {
     if (settingsOpen) {
       updateSize();
+      const first = outerRef.current?.querySelector<HTMLElement>(
+        "button, [tabindex]:not([tabindex='-1'])",
+      );
+      first?.focus();
+    } else {
+      const trigger = document.querySelector<HTMLElement>(
+        "[data-settings-trigger] button",
+      );
+      trigger?.focus();
     }
   }, [settingsOpen, updateSize]);
 
@@ -39,8 +48,19 @@ export function SettingsPopover() {
       }
     }
 
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        closeSettings();
+      }
+    }
+
     document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [settingsOpen, closeSettings]);
 
   useLayoutEffect(() => {

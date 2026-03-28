@@ -7,10 +7,12 @@ import { SettingsItemsGroup } from "./settings-items-group";
 import { Switch } from "@/app/components/ui/switch";
 import { SettingsGroupHeader } from "./settings-group-header";
 import { updateSettings, usePlayerSettings } from "../player-store";
+import { useMediaState } from "@vidstack/react";
 
 export function SettingsHomeRoute() {
   const { push } = useSettingsRouter();
   const { autoSkip } = usePlayerSettings();
+  const quality = useMediaState("quality");
 
   return (
     <SettingsItemsGroup className="w-72">
@@ -21,7 +23,9 @@ export function SettingsHomeRoute() {
         onClick={() => push("qualities")}
         subComponent={
           <div className="flex items-center gap-1">
-            <span className="text-sm text-foreground-muted">1080p</span>
+            <span className="text-sm text-foreground-muted">
+              {quality ? `${quality.height}p` : "Auto"}
+            </span>
             <ChevronRight className="size-4" />
           </div>
         }

@@ -18,7 +18,7 @@ export function SettingsGroupHeader({
     return (
       <button
         type="button"
-        className="inline-flex items-center gap-1 rounded-md px-2 py-2 text-foreground-muted transition-colors duration-200 hover:text-foreground"
+        className="inline-flex items-center gap-1 rounded-md px-2 py-2 text-foreground-muted transition-colors duration-200 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring outline-none"
         onClick={pop}
         aria-label={`Back to previous settings`}
       >

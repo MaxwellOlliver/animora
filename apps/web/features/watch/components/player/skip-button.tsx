@@ -1,6 +1,7 @@
 "use client";
 
 import { useMediaState, useMediaRemote } from "@vidstack/react";
+import { usePlayerContext } from "./player-context";
 
 export type TimestampAction = {
   /** Label shown on the button, e.g. "skip opening" */
@@ -20,12 +21,13 @@ type PlayerSkipButtonProps = {
 export function PlayerSkipButton({ actions }: PlayerSkipButtonProps) {
   const currentTime = useMediaState("currentTime");
   const remote = useMediaRemote();
+  const { settingsOpen } = usePlayerContext();
 
   const active = actions.find(
     (a) => currentTime >= a.startTime && currentTime < a.endTime,
   );
 
-  if (!active) return null;
+  if (!active || settingsOpen) return null;
 
   return (
     <button
