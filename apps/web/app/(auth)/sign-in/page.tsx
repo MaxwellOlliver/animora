@@ -1,27 +1,24 @@
 "use client";
 
+import { useActionState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Lock, ArrowRight, ImageOff } from "lucide-react";
+import { Mail, Lock, ArrowRight, ImageOff, Loader2 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
-import { signInSchema, type SignInForm } from "@/features/auth/schemas/sign-in";
+import { signIn } from "@/features/auth/actions/sign-in";
+import type { ActionResult } from "@/lib/action";
+import { env } from "@/lib/env";
 
 export default function SignInPage() {
-  const { register, handleSubmit } = useForm<SignInForm>({
-    resolver: zodResolver(signInSchema),
-  });
-
-  function onSubmit(data: SignInForm) {
-    console.log(data);
-  }
+  const [state, action, pending] = useActionState<ActionResult, FormData>(
+    signIn,
+    {},
+  );
 
   return (
     <main className="relative flex h-screen items-center justify-center overflow-hidden bg-background p-6">
       {/* Decorative gradients */}
-
       <div className="pointer-events-none absolute -right-32 -top-32 size-175 rounded-full bg-primary/5 blur-[100px]" />
       <div className="pointer-events-none absolute -bottom-48 -left-32 size-125 rounded-full bg-primary/6 blur-[100px]" />
       <div className="pointer-events-none absolute right-1/3 top-1/2 size-75 rounded-full bg-secondary/3 blur-[80px]" />
@@ -46,27 +43,32 @@ export default function SignInPage() {
             Log in to your account
           </p>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
+          <form action={action} className="flex flex-col gap-4">
             <Input
               type="email"
+              name="email"
               placeholder="mail@mail.com"
               icon={<Mail />}
-              {...register("email")}
+              required
             />
 
             <Input
               type="password"
+              name="password"
               placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
               icon={<Lock />}
-              {...register("password")}
+              required
             />
 
-            <Button type="submit" className="mt-6">
-              sign in
-              <ArrowRight />
+            {state.error && (
+              <p role="alert" className="text-xs text-danger">
+                {state.error}
+              </p>
+            )}
+
+            <Button type="submit" className="mt-6" disabled={pending}>
+              {pending ? <Loader2 className="animate-spin" /> : "sign in"}
+              {!pending && <ArrowRight />}
             </Button>
           </form>
 
@@ -80,8 +82,8 @@ export default function SignInPage() {
 
           {/* Google sign in */}
           <div className="flex justify-center">
-            <button
-              type="button"
+            <a
+              href={`${env.NEXT_PUBLIC_API_URL}/auth/google`}
               className="flex h-10 items-center gap-2 rounded-md border border-[#3a3a3a] bg-[#131314] px-3 py-2 transition-opacity hover:opacity-90"
             >
               <Image
@@ -93,7 +95,7 @@ export default function SignInPage() {
               <span className="text-sm font-semibold leading-5 text-[#e3e3e3]">
                 Sign in with Google
               </span>
-            </button>
+            </a>
           </div>
 
           <p className="mt-8 text-center text-xs leading-4 text-foreground">

@@ -6,9 +6,12 @@ import {
   HttpStatus,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import type { FastifyReply } from 'fastify';
 
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
@@ -39,6 +42,7 @@ export class AuthController {
     private readonly logoutUseCase: LogoutUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly createProfileUseCase: CreateProfileUseCase,
+    private readonly configService: ConfigService,
   ) {}
 
   @Public()
@@ -76,8 +80,20 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   @ApiOperation({ summary: 'Google OAuth callback' })
-  async googleAuthCallback(@Req() req: { user: GoogleProfile }) {
-    return this.googleAuthUseCase.execute(req.user);
+  async googleAuthCallback(
+    @Req() req: { user: GoogleProfile },
+    @Res() res: FastifyReply,
+  ) {
+    const { accessToken, refreshToken } = await this.googleAuthUseCase.execute(
+      req.user,
+    );
+
+    const webUrl = this.configService.getOrThrow<string>('WEB_URL');
+    const callback = new URL('/api/auth/google/callback', webUrl);
+    callback.searchParams.set('accessToken', accessToken);
+    callback.searchParams.set('refreshToken', refreshToken);
+
+    res.status(302).redirect(callback.toString());
   }
 
   @Public()

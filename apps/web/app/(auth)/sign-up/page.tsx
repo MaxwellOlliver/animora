@@ -1,29 +1,21 @@
 "use client";
 
+import { useActionState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { ArrowRight, User, Mail, Lock, LockKeyhole } from "lucide-react";
+import { ArrowRight, User, Mail, Lock, LockKeyhole, Loader2 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
-import { Field } from "@/app/components/ui/field";
-import { signUpSchema, type SignUpForm } from "@/features/auth/schemas/sign-up";
+import { Input } from "@/app/components/ui/input";
+import { signUp } from "@/features/auth/actions/sign-up";
+import type { ActionResult } from "@/lib/action";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api";
 
 export default function SignUpPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignUpForm>({
-    resolver: standardSchemaResolver(signUpSchema),
-    mode: "onTouched",
-  });
-
-  console.log(errors);
-
-  function onSubmit(data: SignUpForm) {
-    console.log(data);
-  }
+  const [state, action, pending] = useActionState<ActionResult, FormData>(
+    signUp,
+    {},
+  );
 
   return (
     <main className="relative flex h-screen items-center justify-center overflow-hidden bg-background p-6">
@@ -52,49 +44,50 @@ export default function SignUpPage() {
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="mt-6 flex flex-col gap-4"
-        >
-          <Field
-            label="name"
+        <form action={action} className="mt-6 flex flex-col gap-4">
+          <Input
             type="text"
+            name="name"
             placeholder="Your name"
             icon={<User />}
-            error={errors.name?.message}
-            {...register("name")}
+            required
           />
 
-          <Field
-            label="email"
+          <Input
             type="email"
+            name="email"
             placeholder="mail@mail.com"
             icon={<Mail />}
-            error={errors.email?.message}
-            {...register("email")}
+            required
           />
 
-          <Field
-            label="password"
+          <Input
             type="password"
+            name="password"
             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             icon={<Lock />}
-            error={errors.password?.message}
-            {...register("password")}
+            required
+            minLength={8}
           />
 
-          <Field
-            label="confirm password"
+          <Input
             type="password"
+            name="confirmPassword"
             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             icon={<LockKeyhole />}
-            error={errors.confirmPassword?.message}
-            {...register("confirmPassword")}
+            required
+            minLength={8}
           />
 
-          <Button type="submit" className="mt-6">
-            sign up
-            <ArrowRight />
+          {state.error && (
+            <p role="alert" className="text-xs text-danger">
+              {state.error}
+            </p>
+          )}
+
+          <Button type="submit" className="mt-6" disabled={pending}>
+            {pending ? <Loader2 className="animate-spin" /> : "sign up"}
+            {!pending && <ArrowRight />}
           </Button>
         </form>
 
@@ -108,8 +101,8 @@ export default function SignUpPage() {
 
         {/* Google sign up */}
         <div className="flex justify-center">
-          <button
-            type="button"
+          <a
+            href={`${API_URL}/auth/google`}
             className="flex h-10 items-center gap-2 rounded-md border border-[#3a3a3a] bg-[#131314] px-3 py-2 transition-opacity hover:opacity-90"
           >
             <Image
@@ -121,7 +114,7 @@ export default function SignUpPage() {
             <span className="text-sm font-semibold leading-5 text-[#e3e3e3]">
               Register with Google
             </span>
-          </button>
+          </a>
         </div>
 
         <p className="mt-8 text-center text-xs leading-4 text-foreground">
