@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectPopup,
   SelectItem,
-} from "@/app/components/ui/select";
+} from "@/components/ui/select";
 import { CommentInput } from "./comment-input";
 import { CommentCard } from "./comment-card";
 

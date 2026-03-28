@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Avatar } from "@/app/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 
 export type OverlayMessage = {
   id: string | number;

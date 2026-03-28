@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Bookmark, Search } from "lucide-react";
-import { Avatar } from "@/app/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 
 const navbarLinks = [
   { name: "home", href: "/home" },

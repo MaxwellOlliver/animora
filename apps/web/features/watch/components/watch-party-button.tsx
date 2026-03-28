@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Popover } from "@base-ui-components/react/popover";
 import { UsersRound, X } from "lucide-react";
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export function WatchPartyButton() {
   const [open, setOpen] = useState(false);

@@ -4,8 +4,8 @@ import { useActionState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, User, Mail, Lock, LockKeyhole, Loader2 } from "lucide-react";
-import { Button } from "@/app/components/ui/button";
-import { Input } from "@/app/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { signUp } from "@/features/auth/actions/sign-up";
 import type { ActionResult } from "@/lib/action";
 

@@ -1,5 +1,5 @@
 import { Heart, ChevronDown } from "lucide-react";
-import { Avatar } from "@/app/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 interface CommentCardProps {

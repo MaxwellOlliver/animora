@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
-import { QueryProvider } from "@/app/components/query-provider";
-import { ToastProvider } from "@/app/components/ui/toast";
+import { QueryProvider } from "@/components/query-provider";
+import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
 const inter = Inter({

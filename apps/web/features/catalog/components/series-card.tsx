@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { BookmarkIcon, InfoIcon, PlayIcon, Volume2Icon, VolumeOffIcon } from "lucide-react";
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CardPopover } from "./card-popover";
 import { TrailerPlayer } from "./trailer-player";
 

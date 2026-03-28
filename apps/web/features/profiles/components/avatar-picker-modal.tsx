@@ -3,14 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import { SquareUserRound, Check, X } from "lucide-react";
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogFooter,
   DialogTitle,
-} from "@/app/components/ui/dialog";
+} from "@/components/ui/dialog";
 
 const avatars = [
   "/images/avatar-placeholder.svg",

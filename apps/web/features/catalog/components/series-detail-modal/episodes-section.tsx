@@ -3,7 +3,7 @@ import {
   SelectTrigger,
   SelectPopup,
   SelectItem,
-} from "@/app/components/ui/select";
+} from "@/components/ui/select";
 import { EpisodeRow } from "./episode-row";
 
 const SEASONS = [

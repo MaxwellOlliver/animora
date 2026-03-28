@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pen } from "lucide-react";
-import { Field } from "@/app/components/ui/field";
+import { Field } from "@/components/ui/field";
 import {
   profileSchema,
   type ProfileForm as ProfileFormValues,

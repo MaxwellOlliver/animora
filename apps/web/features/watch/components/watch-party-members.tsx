@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { Users, Crown, LogOut } from "lucide-react";
-import { Avatar } from "@/app/components/ui/avatar";
-import { Button } from "@/app/components/ui/button";
+import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/app/components/ui/dialog";
+} from "@/components/ui/dialog";
 
 type Member = {
   id: string;

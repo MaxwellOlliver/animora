@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { PlayIcon } from "lucide-react";
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CardPopover } from "./card-popover";
 import { TrailerPlayer } from "./trailer-player";
 

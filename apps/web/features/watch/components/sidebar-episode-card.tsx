@@ -1,4 +1,4 @@
-import { EpisodeThumbnail } from "@/app/components/ui/episode-thumbnail";
+import { EpisodeThumbnail } from "@/components/ui/episode-thumbnail";
 
 interface SidebarEpisodeCardProps {
   progress?: number;

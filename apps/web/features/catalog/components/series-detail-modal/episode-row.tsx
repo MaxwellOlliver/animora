@@ -1,5 +1,5 @@
 import { EllipsisVerticalIcon } from "lucide-react";
-import { EpisodeThumbnail } from "@/app/components/ui/episode-thumbnail";
+import { EpisodeThumbnail } from "@/components/ui/episode-thumbnail";
 
 interface EpisodeRowProps {
   number: number;

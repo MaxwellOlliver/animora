@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { buildFetchSeriesQueryOptions } from "../../queries/fetch-series";
 import { TrailerPlayer } from "../trailer-player";
 import { StarRating } from "./star-rating";
