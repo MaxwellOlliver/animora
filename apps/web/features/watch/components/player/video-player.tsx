@@ -15,7 +15,7 @@ import { PlayerControlsVisibility } from "./controls-visibility";
 import { PlayerSkipButton, type TimestampAction } from "./skip-button";
 import { PlayerOverlayMessages, type OverlayMessage } from "./overlay-messages";
 import { PlayerLoader } from "./loader";
-import { SettingsPopover } from "./settings-popover";
+import { SettingsPopover } from "./settings";
 import { PlayerProvider } from "./player-context";
 import { TapPanels } from "./tap-panels";
 

@@ -1,11 +1,11 @@
 "use client";
 
-import { SettingsItem } from "./settings-item";
+import { SettingsItem } from "./item";
 import { ChevronRight, SkipForward, Video } from "lucide-react";
-import { useSettingsRouter } from "./settings-router";
-import { SettingsItemsGroup } from "./settings-items-group";
+import { useSettingsRouter } from "./router";
+import { SettingsItemsGroup } from "./items-group";
 import { Switch } from "@/app/components/ui/switch";
-import { SettingsGroupHeader } from "./settings-group-header";
+import { SettingsGroupHeader } from "./group-header";
 import { updateSettings, usePlayerSettings } from "../player-store";
 import { useMediaState } from "@vidstack/react";
 

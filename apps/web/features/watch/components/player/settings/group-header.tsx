@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft } from "lucide-react";
-import { useSettingsRouter } from "./settings-router";
+import { useSettingsRouter } from "./router";
 
 interface SettingsGroupHeaderProps {
   title: string;

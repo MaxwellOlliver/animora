@@ -30,6 +30,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     initialized.current = true;
     const stored = getSnapshot();
     remote.changeVolume(stored.volume);
+    if (stored.muted) remote.mute();
   }, [remote]);
 
   const toggleSettings = useCallback(() => {

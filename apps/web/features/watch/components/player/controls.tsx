@@ -16,7 +16,6 @@ import {
   Settings,
   Subtitles,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { usePlayerContext } from "./player-context";
 import { updateSettings } from "./player-store";
 
@@ -77,7 +76,7 @@ function VolumeControl() {
       const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
       remote.changeVolume(pct);
       if (muted && pct > 0) remote.unmute();
-      updateSettings({ volume: pct });
+      updateSettings({ volume: pct, muted: false });
     },
     [remote, muted],
   );
@@ -95,60 +94,56 @@ function VolumeControl() {
         label={muted ? "Unmute" : "Mute"}
         onClick={() => {
           if (muted) {
-            const restored = volume > 0 ? volume : 0.5;
-            remote.changeVolume(restored);
             remote.unmute();
-            updateSettings({ volume: restored });
+            updateSettings({ muted: false });
           } else {
             remote.mute();
-            updateSettings({ volume: 0 });
+            updateSettings({ muted: true });
           }
         }}
       >
         <VolumeIcon className="size-5" />
+      </ControlButton>
 
+      <div
+        className="overflow-hidden transition-[width,opacity] duration-200"
+        style={{
+          width: hovering || dragging ? 80 : 0,
+          opacity: hovering || dragging ? 1 : 0,
+        }}
+      >
         <div
-          className={cn(
-            "overflow-hidden transition-[width,opacity] duration-200",
-          )}
-          style={{
-            width: hovering || dragging ? 80 : 0,
-            opacity: hovering || dragging ? 1 : 0,
+          ref={sliderRef}
+          role="slider"
+          aria-label="Volume"
+          aria-valuemin={0}
+          aria-valuemax={1}
+          aria-valuenow={effectiveVolume}
+          tabIndex={0}
+          className="flex h-5 cursor-pointer items-center px-2"
+          onPointerDown={(e) => {
+            e.preventDefault();
+            (e.target as HTMLElement).setPointerCapture(e.pointerId);
+            setDragging(true);
+            setVolume(e.clientX);
           }}
+          onPointerMove={(e) => {
+            if (dragging) setVolume(e.clientX);
+          }}
+          onPointerUp={() => setDragging(false)}
         >
-          <div
-            ref={sliderRef}
-            role="slider"
-            aria-label="Volume"
-            aria-valuemin={0}
-            aria-valuemax={1}
-            aria-valuenow={effectiveVolume}
-            tabIndex={0}
-            className="flex h-5 cursor-pointer items-center px-2"
-            onPointerDown={(e) => {
-              e.preventDefault();
-              (e.target as HTMLElement).setPointerCapture(e.pointerId);
-              setDragging(true);
-              setVolume(e.clientX);
-            }}
-            onPointerMove={(e) => {
-              if (dragging) setVolume(e.clientX);
-            }}
-            onPointerUp={() => setDragging(false)}
-          >
-            <div className="relative h-1 w-full rounded-full bg-white/20">
-              <div
-                className="absolute inset-y-0 left-0 rounded-full bg-white"
-                style={{ width: `${effectiveVolume * 100}%` }}
-              />
-              <div
-                className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-md"
-                style={{ left: `${effectiveVolume * 100}%` }}
-              />
-            </div>
+          <div className="relative h-1 w-full rounded-full bg-white/20">
+            <div
+              className="absolute inset-y-0 left-0 rounded-full bg-white"
+              style={{ width: `${effectiveVolume * 100}%` }}
+            />
+            <div
+              className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-md"
+              style={{ left: `${effectiveVolume * 100}%` }}
+            />
           </div>
         </div>
-      </ControlButton>
+      </div>
     </div>
   );
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import { SettingsRoute } from "./settings-route";
-import { SettingsRouter } from "./settings-router";
-import { SettingsRouterReset } from "./settings-router-reset";
-import { SettingsHomeRoute } from "./settings-home-route";
+import { SettingsRoute } from "./route";
+import { SettingsRouter } from "./router";
+import { SettingsRouterReset } from "./router-reset";
+import { SettingsHomeRoute } from "./home-route";
 import { cn } from "@/lib/utils";
-import { SettingsQualitiesRoute } from "./settings-qualities-route";
+import { SettingsQualitiesRoute } from "./qualities-route";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { usePlayerContext } from "../player-context";
 

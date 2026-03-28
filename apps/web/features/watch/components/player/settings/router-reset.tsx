@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePlayerContext } from "../player-context";
-import { useSettingsRouter } from "./settings-router";
+import { useSettingsRouter } from "./router";
 
 export function SettingsRouterReset() {
   const { settingsOpen } = usePlayerContext();

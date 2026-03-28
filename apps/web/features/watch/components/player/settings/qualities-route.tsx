@@ -1,13 +1,15 @@
 "use client";
 
-import { SettingsItem } from "./settings-item";
+import { SettingsItem } from "./item";
 import { Check } from "lucide-react";
-import { SettingsItemsGroup } from "./settings-items-group";
-import { SettingsGroupHeader } from "./settings-group-header";
+import { SettingsItemsGroup } from "./items-group";
+import { SettingsGroupHeader } from "./group-header";
 import { useVideoQualityOptions } from "@vidstack/react";
+import { usePlayerContext } from "../player-context";
 
 export function SettingsQualitiesRoute() {
   const options = useVideoQualityOptions({ auto: true, sort: "descending" });
+  const { closeSettings } = usePlayerContext();
 
   return (
     <SettingsItemsGroup className="w-56">
@@ -29,7 +31,7 @@ export function SettingsQualitiesRoute() {
                 ? `Auto${options.selectedQuality ? ` (${options.selectedQuality.height}p)` : ""}`
                 : `${option.quality.height}p`
             }
-            onClick={() => option.select()}
+            onClick={() => { option.select(); closeSettings(); }}
           />
         );
       })}

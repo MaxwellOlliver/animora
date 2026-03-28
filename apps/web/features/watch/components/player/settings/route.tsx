@@ -1,6 +1,6 @@
 "use client";
 
-import { useSettingsRouter } from "./settings-router";
+import { useSettingsRouter } from "./router";
 
 interface SettingsRoute {
   path: string;
