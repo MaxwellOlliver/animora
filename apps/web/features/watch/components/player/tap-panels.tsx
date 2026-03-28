@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useMediaState, useMediaRemote } from "@vidstack/react";
 import { Pause, Play, RotateCcw, RotateCw } from "lucide-react";
+import { usePlayerContext } from "./player-context";
 
 const SEEK_SECONDS = 10;
 const DOUBLE_TAP_MS = 300;
@@ -40,6 +41,7 @@ export function TapPanels() {
   const currentTime = useMediaState("currentTime");
   const duration = useMediaState("duration");
   const remote = useMediaRemote();
+  const { settingsOpen } = usePlayerContext();
 
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tapSideRef = useRef<"left" | "right" | null>(null);
@@ -86,7 +88,7 @@ export function TapPanels() {
   );
 
   return (
-    <div className="absolute inset-0 z-0 flex">
+    <div className={`absolute inset-0 z-0 flex ${settingsOpen ? "pointer-events-none" : ""}`}>
       <button
         type="button"
         aria-label="Tap to play/pause, double tap to rewind"

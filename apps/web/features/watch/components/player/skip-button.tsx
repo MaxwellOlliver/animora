@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useMediaState, useMediaRemote } from "@vidstack/react";
 import { usePlayerContext } from "./player-context";
+import { usePlayerSettings } from "./player-store";
 
 export type TimestampAction = {
   /** Label shown on the button, e.g. "skip opening" */
@@ -22,12 +24,24 @@ export function PlayerSkipButton({ actions }: PlayerSkipButtonProps) {
   const currentTime = useMediaState("currentTime");
   const remote = useMediaRemote();
   const { settingsOpen } = usePlayerContext();
+  const { autoSkip } = usePlayerSettings();
+  const lastAutoSkippedRef = useRef<TimestampAction | null>(null);
 
   const active = actions.find(
     (a) => currentTime >= a.startTime && currentTime < a.endTime,
   );
 
-  if (!active || settingsOpen) return null;
+  useEffect(() => {
+    if (autoSkip && active && active !== lastAutoSkippedRef.current) {
+      lastAutoSkippedRef.current = active;
+      remote.seek(active.skipTo);
+    }
+    if (!active) {
+      lastAutoSkippedRef.current = null;
+    }
+  }, [autoSkip, active, remote]);
+
+  if (!active || settingsOpen || autoSkip) return null;
 
   return (
     <button
