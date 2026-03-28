@@ -9,6 +9,7 @@ export const seriesAssetPurposeEnum = pgEnum('series_asset_purpose', [
   'banner',
   'logo',
   'trailer',
+  'poster',
 ]);
 
 export const seriesAssets = pgTable(

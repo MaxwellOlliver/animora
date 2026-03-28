@@ -13,7 +13,7 @@ export interface Genre {
   createdAt: string;
 }
 
-export type SeriesAssetPurpose = "banner" | "logo" | "trailer";
+export type SeriesAssetPurpose = "banner" | "logo" | "trailer" | "poster";
 
 export interface SeriesAsset {
   id: string;

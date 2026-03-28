@@ -1,0 +1,1 @@
+ALTER TYPE "public"."series_asset_purpose" ADD VALUE 'poster';

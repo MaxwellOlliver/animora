@@ -27,6 +27,6 @@ import { UpsertSeriesAssetUseCase } from './use-cases/upsert-series-asset.use-ca
     DeleteSeriesUseCase,
     UpsertSeriesAssetUseCase,
   ],
-  exports: [SeriesRepository],
+  exports: [SeriesRepository, GetSeriesUseCase],
 })
 export class SeriesModule {}

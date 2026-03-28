@@ -34,6 +34,9 @@ export default function CreateSeriesPage() {
     if (values.bannerPhoto.kind === "new") {
       await uploadSeriesAsset(created.id, "banner", values.bannerPhoto.file);
     }
+    if (values.posterPhoto.kind === "new") {
+      await uploadSeriesAsset(created.id, "poster", values.posterPhoto.file);
+    }
     if (values.logoPhoto.kind === "new") {
       await uploadSeriesAsset(created.id, "logo", values.logoPhoto.file);
     }

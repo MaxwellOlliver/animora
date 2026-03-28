@@ -47,6 +47,12 @@ export default function EditSeriesPage() {
         file: values.bannerPhoto.file,
       });
     }
+    if (values.posterPhoto.kind === "new") {
+      await uploadAssetMutation.mutateAsync({
+        purpose: "poster",
+        file: values.posterPhoto.file,
+      });
+    }
     if (values.logoPhoto.kind === "new") {
       await uploadAssetMutation.mutateAsync({
         purpose: "logo",

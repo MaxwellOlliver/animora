@@ -74,6 +74,7 @@ export interface SeriesCreateUpdateValues {
   genreIds: string[];
   active: boolean;
   bannerPhoto: PhotoUploadValue;
+  posterPhoto: PhotoUploadValue;
   logoPhoto: PhotoUploadValue;
 }
 
@@ -122,6 +123,9 @@ export function SeriesCreateUpdateForm({
 
   const [bannerPhotoValue, setBannerPhotoValue] = useState<PhotoUploadValue>(
     createDefaultPhotoValue(getAssetUrl(initialValues?.assets, "banner")),
+  );
+  const [posterPhotoValue, setPosterPhotoValue] = useState<PhotoUploadValue>(
+    createDefaultPhotoValue(getAssetUrl(initialValues?.assets, "poster")),
   );
   const [logoPhotoValue, setLogoPhotoValue] = useState<PhotoUploadValue>(
     createDefaultPhotoValue(getAssetUrl(initialValues?.assets, "logo")),
@@ -172,6 +176,7 @@ export function SeriesCreateUpdateForm({
       await onSubmit({
         ...values,
         bannerPhoto: bannerPhotoValue,
+        posterPhoto: posterPhotoValue,
         logoPhoto: logoPhotoValue,
       });
     } catch (error) {
@@ -229,6 +234,13 @@ export function SeriesCreateUpdateForm({
               onChange={setBannerPhotoValue}
               label="Banner"
               description="Upload a banner image for this series."
+              disabled={isBusy}
+            />
+            <PhotoUploadField
+              value={posterPhotoValue}
+              onChange={setPosterPhotoValue}
+              label="Poster"
+              description="Upload a poster image for this series."
               disabled={isBusy}
             />
             <PhotoUploadField

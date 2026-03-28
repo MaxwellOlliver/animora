@@ -15,6 +15,7 @@ const PURPOSE_TO_MEDIA: Record<SeriesAssetPurpose, MediaPurpose> = {
   banner: MEDIA_PURPOSE.seriesBanner,
   logo: MEDIA_PURPOSE.seriesLogo,
   trailer: MEDIA_PURPOSE.seriesTrailer,
+  poster: MEDIA_PURPOSE.seriesPoster,
 };
 
 @Injectable()
