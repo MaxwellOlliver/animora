@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   HttpCode,
   HttpStatus,
@@ -20,10 +19,8 @@ import type { FastifyRequest } from 'fastify';
 
 import { Roles } from '@/common/decorators/roles.decorator';
 
-import { InitUploadDto } from './dto/init-upload.dto';
-import { CompleteUploadUseCase } from './use-cases/complete-upload.use-case';
-import { InitUploadUseCase } from './use-cases/init-upload.use-case';
-import { UploadChunkUseCase } from './use-cases/upload-chunk.use-case';
+import { CompleteUploadUseCase } from '../use-cases/complete-upload.use-case';
+import { UploadChunkUseCase } from '../use-cases/upload-chunk.use-case';
 
 @ApiTags('Admin / Uploads')
 @ApiBearerAuth()
@@ -31,16 +28,9 @@ import { UploadChunkUseCase } from './use-cases/upload-chunk.use-case';
 @Controller('admin/uploads')
 export class UploadsAdminController {
   constructor(
-    private readonly initUploadUseCase: InitUploadUseCase,
     private readonly uploadChunkUseCase: UploadChunkUseCase,
     private readonly completeUploadUseCase: CompleteUploadUseCase,
   ) {}
-
-  @Post('init')
-  @ApiOperation({ summary: 'Initialize a chunked video upload' })
-  init(@Body() dto: InitUploadDto) {
-    return this.initUploadUseCase.execute(dto);
-  }
 
   @Post(':uploadId/chunk/:index')
   @HttpCode(HttpStatus.OK)

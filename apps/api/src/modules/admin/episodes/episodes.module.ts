@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { MediaModule } from '@/modules/media/media.module';
 
 import { PlaylistsModule } from '../playlists/playlists.module';
+import { VideosModule } from '../videos/videos.module';
 import { EpisodesRepository } from './episodes.repository';
 import { EpisodesAdminController } from './episodes-admin.controller';
 import { CreateEpisodeUseCase } from './use-cases/create-episode.use-case';
@@ -13,7 +14,7 @@ import { UpdateEpisodeUseCase } from './use-cases/update-episode.use-case';
 import { UploadEpisodeThumbnailUseCase } from './use-cases/upload-episode-thumbnail.use-case';
 
 @Module({
-  imports: [PlaylistsModule, MediaModule],
+  imports: [PlaylistsModule, MediaModule, forwardRef(() => VideosModule)],
   controllers: [EpisodesAdminController],
   providers: [
     EpisodesRepository,

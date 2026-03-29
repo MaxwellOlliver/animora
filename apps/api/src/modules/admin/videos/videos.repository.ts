@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
 
-import { NewVideo, Video, videos } from './video.entity';
+import { NewVideo, Video, VideoOwnerType, videos } from './video.entity';
 
 @Injectable()
 export class VideosRepository {
@@ -15,11 +15,14 @@ export class VideosRepository {
     return result[0];
   }
 
-  async findByEpisodeId(episodeId: string): Promise<Video | undefined> {
+  async findByOwner(
+    ownerType: VideoOwnerType,
+    ownerId: string,
+  ): Promise<Video | undefined> {
     const result = await this.db
       .select()
       .from(videos)
-      .where(eq(videos.episodeId, episodeId));
+      .where(and(eq(videos.ownerType, ownerType), eq(videos.ownerId, ownerId)));
     return result[0];
   }
 

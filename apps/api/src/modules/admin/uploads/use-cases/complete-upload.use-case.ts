@@ -39,6 +39,9 @@ export class CompleteUploadUseCase {
       );
     }
 
+    const video = await this.videosRepository.findById(upload.videoId);
+    if (!video) throw new NotFoundException('Video not found');
+
     const sourceKeys = Array.from(
       { length: upload.totalChunks },
       (_, i) => `temp/${uploadId}/chunk-${i}`,
@@ -55,7 +58,8 @@ export class CompleteUploadUseCase {
 
     await this.rabbitMQService.emit<VideoUploadedEvent>(EVENTS.VIDEO_UPLOADED, {
       videoId: upload.videoId,
-      episodeId: upload.episodeId,
+      ownerType: video.ownerType,
+      ownerId: video.ownerId,
       rawObjectKey,
       qualities: ['360p', '720p', '1080p'],
     });

@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { EpisodesModule } from '../episodes/episodes.module';
+import { TrailersModule } from '../trailers/trailers.module';
 import { CreateVideoUseCase } from './use-cases/create-video.use-case';
 import { DeleteVideoUseCase } from './use-cases/delete-video.use-case';
+import { GetVideoByOwnerUseCase } from './use-cases/get-video-by-owner.use-case';
 import { GetVideoUseCase } from './use-cases/get-video.use-case';
 import { HandleVideoProcessedUseCase } from './use-cases/handle-video-processed.use-case';
 import { VideoEventsService } from './video-events.service';
@@ -11,16 +13,22 @@ import { VideosRepository } from './videos.repository';
 import { VideosAdminController } from './videos-admin.controller';
 
 @Module({
-  imports: [EpisodesModule],
+  imports: [forwardRef(() => EpisodesModule), TrailersModule],
   controllers: [VideosAdminController, VideoProcessedConsumer],
   providers: [
     VideosRepository,
     VideoEventsService,
     CreateVideoUseCase,
     DeleteVideoUseCase,
+    GetVideoByOwnerUseCase,
     GetVideoUseCase,
     HandleVideoProcessedUseCase,
   ],
-  exports: [VideosRepository, CreateVideoUseCase, VideoEventsService],
+  exports: [
+    VideosRepository,
+    CreateVideoUseCase,
+    GetVideoByOwnerUseCase,
+    VideoEventsService,
+  ],
 })
 export class VideosModule {}

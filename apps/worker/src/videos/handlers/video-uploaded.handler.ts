@@ -14,9 +14,12 @@ import { updateVideoStatus } from '../use-cases/update-video-status.use-case';
 
 const VideoQualitySchema = Schema.Literal('360p', '720p', '1080p');
 
+const VideoOwnerTypeSchema = Schema.Literal('episode', 'trailer');
+
 const VideoUploadedEventSchema = Schema.Struct({
   videoId: Schema.String,
-  episodeId: Schema.String,
+  ownerType: VideoOwnerTypeSchema,
+  ownerId: Schema.String,
   rawObjectKey: Schema.NonEmptyString,
   qualities: Schema.Array(VideoQualitySchema),
 });
@@ -80,7 +83,8 @@ export const handleVideoUploaded = (data: unknown) =>
 
     const result: VideoProcessedEvent = {
       videoId: event.videoId,
-      episodeId: event.episodeId,
+      ownerType: event.ownerType,
+      ownerId: event.ownerId,
       ...transcodeResult,
     };
 

@@ -1,7 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { integer, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core';
 
-import { episodes } from '../../episodes/episode.entity';
 import { videos } from '../../videos/video.entity';
 
 export const uploads = pgTable('uploads', {
@@ -11,9 +10,6 @@ export const uploads = pgTable('uploads', {
   videoId: uuid('video_id')
     .notNull()
     .references(() => videos.id, { onDelete: 'cascade' }),
-  episodeId: uuid('episode_id')
-    .notNull()
-    .references(() => episodes.id),
   totalChunks: integer('total_chunks').notNull(),
   receivedChunks: integer('received_chunks').notNull().default(0),
   expiresAt: timestamp('expires_at').notNull(),

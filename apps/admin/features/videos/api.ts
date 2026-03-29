@@ -1,10 +1,11 @@
 import { apiClient } from "@/lib/api-client";
-import type { InitUploadResult, Video } from "./types";
+import type { InitUploadResult, Video, VideoOwnerType } from "./types";
 
-export async function fetchVideoByEpisodeId(
-  episodeId: string,
+export async function fetchVideoByOwner(
+  ownerType: VideoOwnerType,
+  ownerId: string,
 ): Promise<Video> {
-  return apiClient<Video>(`/admin/videos/episode/${episodeId}`);
+  return apiClient<Video>(`/admin/${ownerType}s/${ownerId}/video`);
 }
 
 export async function deleteVideo(id: string): Promise<void> {
@@ -12,13 +13,17 @@ export async function deleteVideo(id: string): Promise<void> {
 }
 
 export async function initUpload(
-  episodeId: string,
+  ownerType: VideoOwnerType,
+  ownerId: string,
   totalChunks: number,
 ): Promise<InitUploadResult> {
-  return apiClient<InitUploadResult>("/admin/uploads/init", {
-    method: "POST",
-    body: JSON.stringify({ episodeId, totalChunks }),
-  });
+  return apiClient<InitUploadResult>(
+    `/admin/${ownerType}s/${ownerId}/uploads/init`,
+    {
+      method: "POST",
+      body: JSON.stringify({ totalChunks }),
+    },
+  );
 }
 
 export async function uploadChunk(

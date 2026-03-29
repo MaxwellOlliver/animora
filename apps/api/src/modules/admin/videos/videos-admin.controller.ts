@@ -1,11 +1,9 @@
 import {
   Controller,
   Delete,
-  Get,
   HttpCode,
   HttpStatus,
   MessageEvent,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Sse,
@@ -18,7 +16,6 @@ import { Roles } from '@/common/decorators/roles.decorator';
 import { DeleteVideoUseCase } from './use-cases/delete-video.use-case';
 import { GetVideoUseCase } from './use-cases/get-video.use-case';
 import { VideoEventsService } from './video-events.service';
-import { VideosRepository } from './videos.repository';
 
 const TERMINAL = new Set(['ready', 'failed']);
 
@@ -31,16 +28,7 @@ export class VideosAdminController {
     private readonly deleteVideoUseCase: DeleteVideoUseCase,
     private readonly getVideoUseCase: GetVideoUseCase,
     private readonly videoEventsService: VideoEventsService,
-    private readonly videosRepository: VideosRepository,
   ) {}
-
-  @Get('episode/:episodeId')
-  @ApiOperation({ summary: 'Get video by episode ID' })
-  async getByEpisode(@Param('episodeId', ParseUUIDPipe) episodeId: string) {
-    const video = await this.videosRepository.findByEpisodeId(episodeId);
-    if (!video) throw new NotFoundException('Video not found');
-    return video;
-  }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

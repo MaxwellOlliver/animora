@@ -29,8 +29,8 @@ export function UploadProgressPopover() {
   if (progress.phase === "idle") return null;
 
   const isOnVideoPage =
-    progress.episodeId &&
-    pathname === `/episodes/${progress.episodeId}/video`;
+    progress.ownerId &&
+    pathname === `/${progress.ownerType}s/${progress.ownerId}/video`;
   if (isOnVideoPage) return null;
 
   const percentage =
@@ -77,9 +77,9 @@ export function UploadProgressPopover() {
                       ? "Video ready"
                       : "Upload failed"}
             </p>
-            {progress.episodeTitle && (
+            {progress.ownerTitle && (
               <p className="text-xs text-muted-foreground truncate">
-                {progress.episodeTitle}
+                {progress.ownerTitle}
               </p>
             )}
           </div>

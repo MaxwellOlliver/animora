@@ -14,7 +14,8 @@ import { TranscodeError } from '../src/errors/transcode.error';
 
 const testEvent: VideoUploadedEvent = {
   videoId: 'video-123',
-  episodeId: 'ep-123',
+  ownerType: 'episode',
+  ownerId: 'ep-123',
   rawObjectKey: 'uploads/test.mp4',
   qualities: ['720p'],
 };

@@ -19,6 +19,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { MediaModule } from './modules/media/media.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
 import { UsersModule } from './modules/users/users.module';
+import { TrailersModule } from './modules/admin/trailers/trailers.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { WatchHistoryModule } from './modules/watch-history/watch-history.module';
 
@@ -40,6 +41,7 @@ import { WatchHistoryModule } from './modules/watch-history/watch-history.module
     EpisodesModule,
     VideosModule,
     UploadsModule,
+    TrailersModule,
     CatalogModule,
     WatchHistoryModule,
   ],

@@ -25,7 +25,7 @@ import { useParams } from "next/navigation";
 import { useEpisodeById } from "@/features/episodes/hooks";
 import { getHlsUrl } from "@/features/videos/api";
 import { VideoPlayer } from "@/features/videos/components/video-player";
-import { useVideoByEpisodeId, useDeleteVideo } from "@/features/videos/hooks";
+import { useVideoByOwner, useDeleteVideo } from "@/features/videos/hooks";
 import { useVideoUpload } from "@/features/videos/video-upload-context";
 import { ApiError } from "@/lib/api-client";
 
@@ -81,7 +81,7 @@ export default function EpisodeVideoPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const episodeQuery = useEpisodeById(episodeId);
-  const videoQuery = useVideoByEpisodeId(episodeId);
+  const videoQuery = useVideoByOwner("episode", episodeId);
   const deleteMutation = useDeleteVideo();
   const { progress, startUpload, isUploading } = useVideoUpload();
 
@@ -92,7 +92,7 @@ export default function EpisodeVideoPage() {
     !(videoQuery.error instanceof ApiError && videoQuery.error.status === 404);
 
   // Is this episode currently being uploaded?
-  const isCurrentUpload = progress.episodeId === episodeId;
+  const isCurrentUpload = progress.ownerType === "episode" && progress.ownerId === episodeId;
   const showUploadProgress = isCurrentUpload && progress.phase !== "idle";
 
   const percentage =
@@ -103,7 +103,7 @@ export default function EpisodeVideoPage() {
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file || !episodeQuery.data) return;
-    startUpload(episodeId, episodeQuery.data.title, file);
+    startUpload("episode", episodeId, episodeQuery.data.title, file);
     e.target.value = "";
   }
 

@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getAccessToken } from "@/features/auth/lib/tokens";
-import type { UploadProgress } from "./types";
+import type { UploadProgress, VideoOwnerType } from "./types";
 import {
   completeUpload,
   getVideoStatusStreamUrl,
@@ -21,8 +21,9 @@ import {
 interface VideoUploadContextValue {
   progress: UploadProgress;
   startUpload: (
-    episodeId: string,
-    episodeTitle: string,
+    ownerType: VideoOwnerType,
+    ownerId: string,
+    ownerTitle: string,
     file: File,
   ) => Promise<void>;
   isUploading: boolean;
@@ -31,8 +32,9 @@ interface VideoUploadContextValue {
 
 const initialProgress: UploadProgress = {
   phase: "idle",
-  episodeId: null,
-  episodeTitle: null,
+  ownerType: null,
+  ownerId: null,
+  ownerTitle: null,
   videoId: null,
   uploadId: null,
   totalChunks: 0,
@@ -80,7 +82,12 @@ export function VideoUploadProvider({
   }, [isUploading]);
 
   const startUpload = useCallback(
-    async (episodeId: string, episodeTitle: string, file: File) => {
+    async (
+      ownerType: VideoOwnerType,
+      ownerId: string,
+      ownerTitle: string,
+      file: File,
+    ) => {
       if (isUploading) return;
       abortRef.current = false;
 
@@ -88,8 +95,9 @@ export function VideoUploadProvider({
 
       setProgress({
         phase: "uploading",
-        episodeId,
-        episodeTitle,
+        ownerType,
+        ownerId,
+        ownerTitle,
         videoId: null,
         uploadId: null,
         totalChunks,
@@ -99,7 +107,7 @@ export function VideoUploadProvider({
 
       try {
         // 1. Init upload
-        const { uploadId } = await initUpload(episodeId, totalChunks);
+        const { uploadId } = await initUpload(ownerType, ownerId, totalChunks);
         setProgress((p) => ({ ...p, uploadId }));
 
         // 2. Upload chunks with concurrency
@@ -150,10 +158,7 @@ export function VideoUploadProvider({
             eventSource.close();
             eventSourceRef.current = null;
             setProgress((p) => ({ ...p, phase: "ready" }));
-            queryClient.invalidateQueries({ queryKey: ["episodes"] });
-            queryClient.invalidateQueries({
-              queryKey: ["video", episodeId],
-            });
+            queryClient.invalidateQueries({ queryKey: ["video", ownerType, ownerId] });
           } else if (data.status === "failed") {
             eventSource.close();
             eventSourceRef.current = null;

@@ -71,7 +71,8 @@ function publish(event: VideoUploadedEvent): Promise<VideoProcessedEvent> {
 function makeEvent(): VideoUploadedEvent {
   return {
     videoId: 'bd30772f-b674-4d3b-838c-26e024ac203b',
-    episodeId: crypto.randomUUID(),
+    ownerType: 'episode',
+    ownerId: crypto.randomUUID(),
     rawObjectKey: `/temp/bd30772f-b674-4d3b-838c-26e024ac203b/original.mp4`,
     qualities: ['720p'],
   };
@@ -83,7 +84,7 @@ describe('worker e2e', () => {
     const result = await publish(event);
 
     expect(result.videoId).toBe(event.videoId);
-    expect(result.episodeId).toBe(event.episodeId);
+    expect(result.ownerId).toBe(event.ownerId);
     expect(result.status).toBe('ready');
   });
 

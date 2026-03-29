@@ -23,6 +23,7 @@ import type { FastifyRequest } from 'fastify';
 
 import { Roles } from '@/common/decorators/roles.decorator';
 
+import { GetVideoByOwnerUseCase } from '../videos/use-cases/get-video-by-owner.use-case';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { CreateEpisodeUseCase } from './use-cases/create-episode.use-case';
@@ -44,6 +45,7 @@ export class EpisodesAdminController {
     private readonly updateEpisodeUseCase: UpdateEpisodeUseCase,
     private readonly deleteEpisodeUseCase: DeleteEpisodeUseCase,
     private readonly uploadEpisodeThumbnailUseCase: UploadEpisodeThumbnailUseCase,
+    private readonly getVideoByOwnerUseCase: GetVideoByOwnerUseCase,
   ) {}
 
   @Get()
@@ -79,6 +81,12 @@ export class EpisodesAdminController {
   @ApiOperation({ summary: 'Delete an episode' })
   async delete(@Param('id', ParseUUIDPipe) id: string) {
     await this.deleteEpisodeUseCase.execute(id);
+  }
+
+  @Get(':id/video')
+  @ApiOperation({ summary: 'Get video for an episode' })
+  async getVideo(@Param('id', ParseUUIDPipe) id: string) {
+    return this.getVideoByOwnerUseCase.execute('episode', id);
   }
 
   @Post(':id/thumbnail')

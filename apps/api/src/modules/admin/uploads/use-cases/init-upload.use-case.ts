@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import type { VideoOwnerType } from '../../videos/video.entity';
 import { CreateVideoUseCase } from '../../videos/use-cases/create-video.use-case';
 import type { InitUploadDto } from '../dto/init-upload.dto';
 import { UploadsRepository } from '../repositories/uploads.repository';
@@ -19,17 +20,18 @@ export class InitUploadUseCase {
     private readonly uploadsRepository: UploadsRepository,
   ) {}
 
-  async execute(dto: InitUploadDto): Promise<InitUploadResult> {
-    const video = await this.createVideoUseCase.execute({
-      episodeId: dto.episodeId,
-    });
+  async execute(
+    ownerType: VideoOwnerType,
+    ownerId: string,
+    dto: InitUploadDto,
+  ): Promise<InitUploadResult> {
+    const video = await this.createVideoUseCase.execute({ ownerType, ownerId });
 
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + UPLOAD_TTL_HOURS);
 
     const upload = await this.uploadsRepository.create({
       videoId: video.id,
-      episodeId: dto.episodeId,
       totalChunks: dto.totalChunks,
       expiresAt,
     });

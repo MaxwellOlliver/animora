@@ -1,8 +1,11 @@
+export type VideoOwnerType = "episode" | "trailer";
+
 export type VideoStatus = "pending" | "processing" | "ready" | "failed";
 
 export interface Video {
   id: string;
-  episodeId: string;
+  ownerType: VideoOwnerType;
+  ownerId: string;
   status: VideoStatus;
   rawObjectKey: string | null;
   masterPlaylistKey: string | null;
@@ -17,8 +20,9 @@ export interface InitUploadResult {
 
 export interface UploadProgress {
   phase: "idle" | "uploading" | "completing" | "processing" | "ready" | "failed";
-  episodeId: string | null;
-  episodeTitle: string | null;
+  ownerType: VideoOwnerType | null;
+  ownerId: string | null;
+  ownerTitle: string | null;
   videoId: string | null;
   uploadId: string | null;
   totalChunks: number;
