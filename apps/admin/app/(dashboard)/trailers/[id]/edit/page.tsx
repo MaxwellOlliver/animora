@@ -34,6 +34,7 @@ export default function EditTrailerPage() {
 
   async function handleSubmit(values: TrailerCreateUpdateValues) {
     await updateMutation.mutateAsync({
+      playlistId: values.playlistId,
       number: values.number,
       title: values.title,
       durationSeconds: values.durationSeconds,
@@ -138,6 +139,7 @@ export default function EditTrailerPage() {
             mode="update"
             initialValues={{
               seriesId: trailerQuery.data.seriesId,
+              playlistId: trailerQuery.data.playlistId,
               number: trailerQuery.data.number,
               title: trailerQuery.data.title,
               durationSeconds: trailerQuery.data.durationSeconds,

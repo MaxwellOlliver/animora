@@ -32,10 +32,12 @@ import { FormSectionGroup } from "@/components/form-section-group";
 import { Grid } from "@/components/grid";
 import { getMediaImageUrl } from "@/lib/s3";
 import { useSeriesList } from "@/features/series/hooks";
+import { usePlaylistsList } from "@/features/playlists/hooks";
 import type { Media } from "../types";
 
 const trailerSchema = z.object({
   seriesId: z.string().min(1, "Series is required."),
+  playlistId: z.string().optional(),
   number: z
     .number()
     .int("Number must be an integer.")
@@ -55,6 +57,7 @@ type TrailerFormValues = z.infer<typeof trailerSchema>;
 
 export interface TrailerCreateUpdateValues {
   seriesId: string;
+  playlistId?: string;
   number: number;
   title: string;
   durationSeconds: number;
@@ -65,6 +68,7 @@ interface TrailerCreateUpdateFormProps {
   mode: "create" | "update";
   initialValues?: {
     seriesId?: string;
+    playlistId?: string | null;
     number?: number;
     title?: string;
     durationSeconds?: number;
@@ -85,6 +89,7 @@ export function TrailerCreateUpdateForm({
   cancelHref = "/trailers",
 }: TrailerCreateUpdateFormProps) {
   const seriesFieldId = useId();
+  const playlistFieldId = useId();
   const numberId = useId();
   const titleId = useId();
   const durationId = useId();
@@ -108,15 +113,21 @@ export function TrailerCreateUpdateForm({
     resolver: zodResolver(trailerSchema),
     defaultValues: {
       seriesId: initialValues?.seriesId ?? "",
+      playlistId: initialValues?.playlistId ?? undefined,
       number: initialValues?.number ?? 1,
       title: initialValues?.title ?? "",
       durationSeconds: initialValues?.durationSeconds ?? 0,
     },
   });
 
+  const watchedSeriesId = form.watch("seriesId");
+  const playlistsQuery = usePlaylistsList(watchedSeriesId || undefined);
+  const allPlaylists = playlistsQuery.data ?? [];
+
   useEffect(() => {
     form.reset({
       seriesId: initialValues?.seriesId ?? "",
+      playlistId: initialValues?.playlistId ?? undefined,
       number: initialValues?.number ?? 1,
       title: initialValues?.title ?? "",
       durationSeconds: initialValues?.durationSeconds ?? 0,
@@ -124,6 +135,7 @@ export function TrailerCreateUpdateForm({
   }, [
     form,
     initialValues?.seriesId,
+    initialValues?.playlistId,
     initialValues?.number,
     initialValues?.title,
     initialValues?.durationSeconds,
@@ -139,6 +151,7 @@ export function TrailerCreateUpdateForm({
     try {
       await onSubmit({
         seriesId: values.seriesId,
+        playlistId: values.playlistId || undefined,
         number: values.number,
         title: values.title,
         durationSeconds: values.durationSeconds,
@@ -204,6 +217,50 @@ export function TrailerCreateUpdateForm({
                 <FieldError errors={[form.formState.errors.seriesId]} />
               </Field>
             )}
+
+            <Field>
+              <FieldLabel htmlFor={playlistFieldId}>
+                Playlist (optional)
+              </FieldLabel>
+              <Controller
+                control={form.control}
+                name="playlistId"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={(v) => field.onChange(v || undefined)}
+                    disabled={isBusy || !watchedSeriesId || playlistsQuery.isLoading}
+                  >
+                    <SelectTrigger
+                      id={playlistFieldId}
+                      className="w-full"
+                    >
+                      <SelectValue
+                        placeholder={
+                          !watchedSeriesId
+                            ? "Select a series first"
+                            : playlistsQuery.isLoading
+                              ? "Loading..."
+                              : "None"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allPlaylists.map((p) => {
+                        const label =
+                          p.title ??
+                          `${p.type === "season" ? "Season" : p.type === "movie" ? "Movie" : "Special"} ${p.number}`;
+                        return (
+                          <SelectItem key={p.id} value={p.id}>
+                            {label}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </Field>
 
             <Grid>
               <Field>

@@ -26,6 +26,7 @@ export default function CreateTrailerPage() {
   async function handleSubmit(values: TrailerCreateUpdateValues) {
     const created = await createMutation.mutateAsync({
       seriesId: values.seriesId,
+      playlistId: values.playlistId,
       number: values.number,
       title: values.title,
       durationSeconds: values.durationSeconds,
