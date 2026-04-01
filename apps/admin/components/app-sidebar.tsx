@@ -1,6 +1,6 @@
 "use client";
 
-import { Film, ListVideo } from "lucide-react";
+import { Film, ListVideo, Users } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -35,6 +35,15 @@ const navItems = [
     items: [
       { title: "Playlists", url: "/playlists" },
       { title: "Episodes", url: "/episodes" },
+      { title: "Trailers", url: "/trailers" },
+    ],
+  },
+  {
+    title: "Users",
+    url: "#",
+    icon: Users,
+    items: [
+      { title: "Avatars", url: "/avatars" },
     ],
   },
 ];
