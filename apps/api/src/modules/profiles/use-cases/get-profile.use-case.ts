@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import type { Profile } from '../profile.entity';
+import type { ProfileWithAvatar } from '../profiles.repository';
 import { ProfilesRepository } from '../profiles.repository';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class GetProfileUseCase {
   async execute(input: {
     userId: string;
     profileId: string;
-  }): Promise<Profile> {
+  }): Promise<ProfileWithAvatar> {
     const profile = await this.profilesRepository.findById(input.profileId);
 
     if (!profile || profile.userId !== input.userId) {

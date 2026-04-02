@@ -1,20 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Pen } from "lucide-react";
 import { Field } from "@/components/ui/field";
-import {
-  profileSchema,
-  type ProfileForm as ProfileFormValues,
-} from "@/features/profiles/schemas/profile";
+import type { ProfileForm as ProfileFormValues } from "@/features/profiles/schemas/profile";
 
 type ProfileFormProps = {
   id?: string;
   defaultValues?: Partial<ProfileFormValues>;
-  action: (data: ProfileFormValues) => void;
+  action: (formData: FormData) => void;
   avatar?: string;
+  avatarId?: string;
+  error?: string;
   onAvatarClickAction?: () => void;
 };
 
@@ -23,19 +20,12 @@ export function ProfileForm({
   defaultValues,
   action,
   avatar = "/images/avatar-placeholder.svg",
+  avatarId,
+  error,
   onAvatarClickAction,
 }: ProfileFormProps) {
-  const { register, handleSubmit } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
-    defaultValues,
-  });
-
   return (
-    <form
-      id={id}
-      onSubmit={handleSubmit(action)}
-      className="flex flex-col items-center gap-4"
-    >
+    <form id={id} action={action} className="flex flex-col items-center gap-4">
       <button
         type="button"
         onClick={onAvatarClickAction}
@@ -53,12 +43,18 @@ export function ProfileForm({
         </div>
       </button>
 
+      <input type="hidden" name="avatarId" value={avatarId ?? ""} />
+
       <div className="w-76">
         <Field
           label="name"
+          name="name"
           type="text"
           placeholder="Profile name"
-          {...register("name")}
+          defaultValue={defaultValues?.name}
+          maxLength={30}
+          required
+          error={error}
         />
       </div>
     </form>

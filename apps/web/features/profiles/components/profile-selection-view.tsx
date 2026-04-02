@@ -7,6 +7,8 @@ import { Pen, ArrowLeft, Check } from "lucide-react";
 import { ProfileCard } from "@/features/profiles/components/profile-card";
 import { NewProfileCard } from "@/features/profiles/components/new-profile-card";
 import type { Profile } from "@/features/profiles/queries/fetch-profiles";
+import { buildMediaUrl } from "@/utils/media-utils";
+import type { MediaPurpose } from "@animora/contracts";
 
 export function ProfileSelectionView({ profiles }: { profiles: Profile[] }) {
   const searchParams = useSearchParams();
@@ -31,15 +33,25 @@ export function ProfileSelectionView({ profiles }: { profiles: Profile[] }) {
         </h1>
 
         <div className="mt-11 flex gap-6">
-          {profiles.map((profile) => (
-            <ProfileCard
-              key={profile.id}
-              id={profile.id}
-              name={profile.name}
-              avatar="/images/avatar-placeholder.svg"
-              editing={editing}
-            />
-          ))}
+          {profiles.map((profile) => {
+            const avatarUrl =
+              profile.avatar?.picture
+                ? buildMediaUrl(
+                    profile.avatar.picture.purpose as MediaPurpose,
+                    profile.avatar.picture.key,
+                  )
+                : "/images/avatar-placeholder.svg";
+
+            return (
+              <ProfileCard
+                key={profile.id}
+                id={profile.id}
+                name={profile.name}
+                avatar={avatarUrl}
+                editing={editing}
+              />
+            );
+          })}
           <NewProfileCard />
         </div>
 

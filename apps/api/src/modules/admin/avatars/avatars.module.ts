@@ -4,6 +4,7 @@ import { MediaModule } from '@/modules/media/media.module';
 
 import { AvatarsRepository } from './avatars.repository';
 import { AvatarsAdminController } from './avatars-admin.controller';
+import { AvatarsController } from './avatars.controller';
 import { CreateAvatarUseCase } from './use-cases/create-avatar.use-case';
 import { DeleteAvatarUseCase } from './use-cases/delete-avatar.use-case';
 import { GetAvatarUseCase } from './use-cases/get-avatar.use-case';
@@ -13,7 +14,7 @@ import { UpdateAvatarBannerUseCase } from './use-cases/update-avatar-banner.use-
 
 @Module({
   imports: [MediaModule],
-  controllers: [AvatarsAdminController],
+  controllers: [AvatarsAdminController, AvatarsController],
   providers: [
     AvatarsRepository,
     CreateAvatarUseCase,
