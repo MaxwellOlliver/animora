@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { MediaModule } from '@/modules/media/media.module';
 
@@ -14,7 +14,7 @@ import { UpdateTrailerUseCase } from './use-cases/update-trailer.use-case';
 import { UploadTrailerThumbnailUseCase } from './use-cases/upload-trailer-thumbnail.use-case';
 
 @Module({
-  imports: [SeriesModule, MediaModule, forwardRef(() => VideosModule)],
+  imports: [SeriesModule, MediaModule, VideosModule],
   controllers: [TrailersAdminController],
   providers: [
     TrailersRepository,

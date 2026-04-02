@@ -4,12 +4,17 @@ import { and, asc, desc, eq } from 'drizzle-orm';
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
 import { media } from '@/modules/media/media.entity';
+import { type Video, videos } from '@/modules/admin/videos/video.entity';
 
 import { series } from '../series/entities/series.entity';
 import { type Trailer, trailers, type NewTrailer } from './trailer.entity';
 
 export type TrailerWithMedia = Trailer & {
   thumbnail: typeof media.$inferSelect | null;
+};
+
+export type TrailerWithVideo = TrailerWithMedia & {
+  video: Video | null;
 };
 
 export type TrailerWithContext = TrailerWithMedia & {
@@ -56,6 +61,19 @@ export class TrailersRepository {
       .where(eq(trailers.id, id));
     if (!rows[0]) return undefined;
     return { ...rows[0].trailer, thumbnail: rows[0].thumbnail };
+  }
+
+  async findNewestBySeriesId(seriesId: string): Promise<TrailerWithVideo | undefined> {
+    const rows = await this.db
+      .select({ trailer: trailers, thumbnail: media, video: videos })
+      .from(trailers)
+      .leftJoin(media, eq(trailers.thumbnailId, media.id))
+      .leftJoin(videos, and(eq(videos.ownerId, trailers.id), eq(videos.ownerType, 'trailer')))
+      .where(eq(trailers.seriesId, seriesId))
+      .orderBy(desc(trailers.createdAt))
+      .limit(1);
+    if (!rows[0]) return undefined;
+    return { ...rows[0].trailer, thumbnail: rows[0].thumbnail, video: rows[0].video };
   }
 
   async findBySeriesIdAndNumber(

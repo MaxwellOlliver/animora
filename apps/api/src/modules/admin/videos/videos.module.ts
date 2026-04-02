@@ -1,7 +1,5 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
-import { EpisodesModule } from '../episodes/episodes.module';
-import { TrailersModule } from '../trailers/trailers.module';
 import { CreateVideoUseCase } from './use-cases/create-video.use-case';
 import { DeleteVideoUseCase } from './use-cases/delete-video.use-case';
 import { GetVideoByOwnerUseCase } from './use-cases/get-video-by-owner.use-case';
@@ -13,7 +11,6 @@ import { VideosRepository } from './videos.repository';
 import { VideosAdminController } from './videos-admin.controller';
 
 @Module({
-  imports: [forwardRef(() => EpisodesModule), TrailersModule],
   controllers: [VideosAdminController, VideoProcessedConsumer],
   providers: [
     VideosRepository,

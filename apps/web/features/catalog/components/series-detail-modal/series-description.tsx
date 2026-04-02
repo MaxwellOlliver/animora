@@ -1,12 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
+
+import { buildMediaUrl } from "@/utils/media-utils";
+import type { ContentClassificationSummary } from "../../queries/fetch-series";
 
 interface SeriesDescriptionProps {
   description: string;
   studios: string[];
   genres: string[];
-  contentClassification: string[];
+  contentClassification: ContentClassificationSummary | null;
 }
 
 export function SeriesDescription({
@@ -33,19 +37,40 @@ export function SeriesDescription({
           <div className="flex w-48 shrink-0 flex-col gap-2 text-sm">
             <div>
               <span className="text-foreground-muted">Studios: </span>
-              <span>{studios.join(", ")}</span>
+              <span>{studios.length > 0 ? studios.join(", ") : "No info"}</span>
             </div>
             <div>
               <span className="text-foreground-muted">Genres: </span>
               <span>{genres.join(", ")}</span>
             </div>
-            <div>
-              <span className="text-foreground-muted">
-                Content Classification:
-              </span>
-              <br />
-              <span>{contentClassification.join(", ")}</span>
-            </div>
+            {contentClassification && (
+              <div>
+                <span className="text-foreground-muted">
+                  Content Classification:{" "}
+                </span>
+                {contentClassification.icon && (
+                  <Image
+                    src={buildMediaUrl(
+                      contentClassification.icon.purpose,
+                      contentClassification.icon.key,
+                    )}
+                    alt={contentClassification.name}
+                    width={16}
+                    height={16}
+                    className="inline size-4 align-text-bottom"
+                    unoptimized
+                  />
+                )}{" "}
+                <span className="font-medium">
+                  {contentClassification.name}
+                </span>
+                {contentClassification.description && (
+                  <span className="text-foreground-muted">
+                    {" - "}{contentClassification.description}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

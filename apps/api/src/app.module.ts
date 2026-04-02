@@ -13,14 +13,14 @@ import { EpisodesModule } from './modules/admin/episodes/episodes.module';
 import { GenresModule } from './modules/admin/genres/genres.module';
 import { PlaylistsModule } from './modules/admin/playlists/playlists.module';
 import { SeriesModule } from './modules/admin/series/series.module';
+import { TrailersModule } from './modules/admin/trailers/trailers.module';
 import { UploadsModule } from './modules/admin/uploads/uploads.module';
 import { VideosModule } from './modules/admin/videos/videos.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CatalogModule } from './modules/catalog/catalog.module';
 import { MediaModule } from './modules/media/media.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
 import { UsersModule } from './modules/users/users.module';
-import { TrailersModule } from './modules/admin/trailers/trailers.module';
-import { CatalogModule } from './modules/catalog/catalog.module';
 import { WatchHistoryModule } from './modules/watch-history/watch-history.module';
 
 @Module({
