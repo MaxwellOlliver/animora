@@ -107,7 +107,7 @@ async function main() {
   try {
     await db.execute(sql`CREATE EXTENSION IF NOT EXISTS pg_uuidv7`);
     await seedAdmin(db);
-    await seedAvatars(db);
+    //await seedAvatars(db);
     console.log('Seed completed');
   } finally {
     await pool.end();

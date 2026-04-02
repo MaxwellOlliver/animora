@@ -1,6 +1,6 @@
 {
-  "id": "31233bad-aad7-4034-a572-2d0453a4ec44",
-  "prevId": "5d411034-39cd-4094-9b79-734038ebac72",
+  "id": "609214d1-3617-45a6-9ee7-d0e1e20f9b18",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -660,6 +660,125 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.trailers": {
+      "name": "trailers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v7()"
+        },
+        "series_id": {
+          "name": "series_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "playlist_id": {
+          "name": "playlist_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "number": {
+          "name": "number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "thumbnail_id": {
+          "name": "thumbnail_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "duration_seconds": {
+          "name": "duration_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "trailers_series_id_series_id_fk": {
+          "name": "trailers_series_id_series_id_fk",
+          "tableFrom": "trailers",
+          "tableTo": "series",
+          "columnsFrom": [
+            "series_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "trailers_playlist_id_playlists_id_fk": {
+          "name": "trailers_playlist_id_playlists_id_fk",
+          "tableFrom": "trailers",
+          "tableTo": "playlists",
+          "columnsFrom": [
+            "playlist_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "trailers_thumbnail_id_media_id_fk": {
+          "name": "trailers_thumbnail_id_media_id_fk",
+          "tableFrom": "trailers",
+          "tableTo": "media",
+          "columnsFrom": [
+            "thumbnail_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "trailers_series_number_unique": {
+          "name": "trailers_series_number_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "series_id",
+            "number"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.upload_chunks": {
       "name": "upload_chunks",
       "schema": "",
@@ -731,12 +850,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "episode_id": {
-          "name": "episode_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
         "total_chunks": {
           "name": "total_chunks",
           "type": "integer",
@@ -785,19 +898,6 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
-        },
-        "uploads_episode_id_episodes_id_fk": {
-          "name": "uploads_episode_id_episodes_id_fk",
-          "tableFrom": "uploads",
-          "tableTo": "episodes",
-          "columnsFrom": [
-            "episode_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -817,8 +917,15 @@
           "notNull": true,
           "default": "uuid_generate_v7()"
         },
-        "episode_id": {
-          "name": "episode_id",
+        "owner_type": {
+          "name": "owner_type",
+          "type": "video_owner_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner_id": {
+          "name": "owner_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -859,28 +966,15 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "videos_episode_id_episodes_id_fk": {
-          "name": "videos_episode_id_episodes_id_fk",
-          "tableFrom": "videos",
-          "tableTo": "episodes",
-          "columnsFrom": [
-            "episode_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "videos_episode_id_unique": {
-          "name": "videos_episode_id_unique",
+        "videos_owner_unique": {
+          "name": "videos_owner_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "episode_id"
+            "owner_type",
+            "owner_id"
           ]
         }
       },
@@ -1161,6 +1255,125 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.watch_history": {
+      "name": "watch_history",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v7()"
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "episode_id": {
+          "name": "episode_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "position_seconds": {
+          "name": "position_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "status": {
+          "name": "status",
+          "type": "watch_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'watching'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "watch_history_profile_updated_at_idx": {
+          "name": "watch_history_profile_updated_at_idx",
+          "columns": [
+            {
+              "expression": "profile_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "watch_history_profile_id_profiles_id_fk": {
+          "name": "watch_history_profile_id_profiles_id_fk",
+          "tableFrom": "watch_history",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "watch_history_episode_id_episodes_id_fk": {
+          "name": "watch_history_episode_id_episodes_id_fk",
+          "tableFrom": "watch_history",
+          "tableTo": "episodes",
+          "columnsFrom": [
+            "episode_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "watch_history_profile_episode_unique": {
+          "name": "watch_history_profile_episode_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "profile_id",
+            "episode_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -1188,6 +1401,15 @@
       "values": [
         "banner",
         "logo",
+        "trailer",
+        "poster"
+      ]
+    },
+    "public.video_owner_type": {
+      "name": "video_owner_type",
+      "schema": "public",
+      "values": [
+        "episode",
         "trailer"
       ]
     },
@@ -1215,6 +1437,14 @@
       "values": [
         "USER",
         "ADMIN"
+      ]
+    },
+    "public.watch_status": {
+      "name": "watch_status",
+      "schema": "public",
+      "values": [
+        "watching",
+        "finished"
       ]
     }
   },
