@@ -38,7 +38,9 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
-  await fastify.register(fastifyMultipart, { limits: { fileSize: 10_485_760 } }); // 10 MB
+  await fastify.register(fastifyMultipart, {
+    limits: { fileSize: 10_485_760 },
+  }); // 10 MB
 
   app.setGlobalPrefix('api');
 

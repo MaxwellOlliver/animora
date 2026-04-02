@@ -18,6 +18,7 @@ export class GoogleAuthUseCase {
 
     if (!user) {
       user = await this.usersRepository.findByEmail(profile.email);
+
       if (user) {
         user = await this.usersRepository.update(user.id, {
           googleId: profile.googleId,
