@@ -59,9 +59,9 @@ export function SeriesCard({ series }: SeriesCardProps) {
           <div className="relative aspect-video w-full overflow-clip">
             <TrailerPlayer
               src={featuredTrailerSrc}
-              poster={
-                poster
-                  ? buildMediaUrl(poster.media.purpose, poster.media.key)
+              banner={
+                banner
+                  ? buildMediaUrl(banner.media.purpose, banner.media.key)
                   : undefined
               }
               alt={series.name}

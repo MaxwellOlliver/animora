@@ -28,7 +28,8 @@ import { ReviewsSection } from "./reviews-section";
 import { SeriesDetailSkeleton } from "./series-detail-skeleton";
 
 function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}m`;
+  if (n >= 1_000_000)
+    return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}m`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, "")}k`;
   return String(n);
 }
@@ -81,7 +82,11 @@ export function SeriesDetailModal() {
     : undefined;
 
   const studios = playlists
-    ? [...new Set(playlists.map((p) => p.studio).filter((s): s is string => !!s))]
+    ? [
+        ...new Set(
+          playlists.map((p) => p.studio).filter((s): s is string => !!s),
+        ),
+      ]
     : [];
 
   function handleClose() {
@@ -117,7 +122,7 @@ export function SeriesDetailModal() {
                 <div className="aspect-video w-full overflow-clip rounded-t-xl">
                   <TrailerPlayer
                     src={featuredTrailerSrc}
-                    poster={bannerUrl ?? "/images/catalog/aot-banner.jpg"}
+                    banner={bannerUrl}
                     alt={series?.name ?? ""}
                     muted={muted}
                     onMutedChange={setMuted}

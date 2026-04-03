@@ -38,7 +38,7 @@ export function ReviewCard({
           alt={review.profile.name}
           width={36}
           height={36}
-          className="size-9 rounded-full object-cover"
+          className="size-9 rounded-lg object-cover"
           unoptimized
         />
         <div className="flex flex-1 flex-col gap-0.5">

@@ -15,7 +15,42 @@ export function CardPopover({
   onOpenChange,
 }: CardPopoverProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
+  const openTimeoutRef = useRef<number | null>(null);
+  const closeTimeoutRef = useRef<number | null>(null);
+  const suppressHoverRef = useRef(false);
   const [open, setOpen] = useState(false);
+
+  const clearOpenTimeout = useCallback(() => {
+    if (openTimeoutRef.current !== null) {
+      window.clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
+  }, []);
+
+  const clearCloseTimeout = useCallback(() => {
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  }, []);
+
+  const scheduleOpen = useCallback(() => {
+    clearCloseTimeout();
+    clearOpenTimeout();
+    openTimeoutRef.current = window.setTimeout(() => {
+      setOpen(true);
+      openTimeoutRef.current = null;
+    }, 500);
+  }, [clearCloseTimeout, clearOpenTimeout]);
+
+  const scheduleClose = useCallback(() => {
+    clearOpenTimeout();
+    clearCloseTimeout();
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setOpen(false);
+      closeTimeoutRef.current = null;
+    }, 200);
+  }, [clearCloseTimeout, clearOpenTimeout]);
 
   useEffect(() => {
     if (onOpenChange) {
@@ -30,6 +65,13 @@ export function CardPopover({
     return () =>
       window.removeEventListener("scroll", handleScroll, { capture: true });
   }, [open, onOpenChange]);
+
+  useEffect(() => {
+    return () => {
+      clearOpenTimeout();
+      clearCloseTimeout();
+    };
+  }, [clearCloseTimeout, clearOpenTimeout]);
 
   const centerAnchor = useCallback(() => {
     const el = triggerRef.current;
@@ -52,23 +94,41 @@ export function CardPopover({
     };
   }, []);
 
+  const handleTriggerPointerEnter = useCallback<
+    React.PointerEventHandler<HTMLDivElement>
+  >(
+    (event) => {
+      if (event.pointerType !== "mouse" || suppressHoverRef.current) return;
+      scheduleOpen();
+    },
+    [scheduleOpen],
+  );
+
+  const handleTriggerPointerLeave = useCallback<
+    React.PointerEventHandler<HTMLDivElement>
+  >(() => {
+    suppressHoverRef.current = false;
+    scheduleClose();
+  }, [scheduleClose]);
+
+  const handleTriggerPointerDown = useCallback<
+    React.PointerEventHandler<HTMLDivElement>
+  >(() => {
+    suppressHoverRef.current = true;
+    clearOpenTimeout();
+    setOpen(false);
+  }, [clearOpenTimeout]);
+
   return (
-    <Popover.Root
-      open={open}
-      onOpenChange={(nextOpen, { reason }) => {
-        if (reason === "trigger-press") return;
-        setOpen(nextOpen);
-      }}
-    >
-      <Popover.Trigger
+    <Popover.Root open={open} onOpenChange={(nextOpen) => setOpen(nextOpen)}>
+      <div
         ref={triggerRef}
-        openOnHover
-        nativeButton={false}
-        delay={500}
-        closeDelay={200}
+        onPointerEnter={handleTriggerPointerEnter}
+        onPointerLeave={handleTriggerPointerLeave}
+        onPointerDown={handleTriggerPointerDown}
       >
         {children}
-      </Popover.Trigger>
+      </div>
       <Popover.Portal>
         <Popover.Positioner
           className="z-50"
@@ -76,7 +136,8 @@ export function CardPopover({
           sideOffset={({ positioner }) => -positioner.height / 2}
           collisionPadding={16}
           positionMethod="fixed"
-          onMouseLeave={() => setOpen(false)}
+          onMouseEnter={clearCloseTimeout}
+          onMouseLeave={scheduleClose}
         >
           <Popover.Popup
             initialFocus={false}

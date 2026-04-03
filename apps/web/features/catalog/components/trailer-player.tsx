@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface TrailerPlayerProps {
   src?: string | null;
-  poster?: string;
+  banner?: string;
   alt: string;
   muted?: boolean;
   onMutedChange?: (muted: boolean) => void;
@@ -14,7 +14,7 @@ interface TrailerPlayerProps {
 
 export function TrailerPlayer({
   src,
-  poster,
+  banner,
   alt,
   muted: mutedProp,
 }: TrailerPlayerProps) {
@@ -53,11 +53,11 @@ export function TrailerPlayer({
   }, [src]);
 
   if (!src) {
-    if (!poster) return null;
+    if (!banner) return null;
 
     return (
       <Image
-        src={poster}
+        src={banner}
         alt={alt}
         width={480}
         height={270}
@@ -68,9 +68,9 @@ export function TrailerPlayer({
 
   return (
     <div className="relative size-full">
-      {poster && (
+      {banner && (
         <Image
-          src={poster}
+          src={banner}
           alt={alt}
           width={480}
           height={270}
