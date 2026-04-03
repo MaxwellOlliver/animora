@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { setTokens } from "@/lib/session";
+import { getSession, decodeTokenExpiry } from "@/lib/session";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -12,7 +12,11 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  await setTokens(accessToken, refreshToken);
+  const session = await getSession();
+  session.accessToken = accessToken;
+  session.refreshToken = refreshToken;
+  session.expiresAt = decodeTokenExpiry(accessToken);
+  await session.save();
 
   return NextResponse.redirect(
     new URL("/profile-selection?from=auth", request.url),

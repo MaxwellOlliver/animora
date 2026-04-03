@@ -1,7 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { env } from "@/lib/env";
-
 import type { Media } from "./fetch-recommended";
 
 export type TrailerSummary = {
@@ -21,7 +19,7 @@ async function fetchSeriesTrailers(
   seriesId: string,
 ): Promise<TrailerSummary[]> {
   const response = await fetch(
-    `${env.NEXT_PUBLIC_API_URL}/catalog/series/${seriesId}/trailers`,
+    `/api/proxy/catalog/series/${seriesId}/trailers`,
   );
 
   if (!response.ok) {

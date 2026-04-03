@@ -30,4 +30,10 @@ export class CreateEpisodeDto {
   @IsString()
   @IsNotEmpty()
   description?: string;
+
+  @ApiPropertyOptional({ example: 1440, description: 'Duration in seconds' })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  durationSeconds?: number;
 }

@@ -1,15 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { api, ApiError } from "@/lib/api";
-import { setTokens } from "@/lib/session";
 import { signInSchema } from "@/features/auth/schemas/sign-in";
 import type { ActionResult } from "@/lib/action";
+import { getSession, decodeTokenExpiry } from "@/lib/session";
+import { apiInternal, ApiError } from "@/lib/api-internal";
 
-type AuthResponse = {
-  accessToken: string;
-  refreshToken: string;
-};
+type AuthResponse = { accessToken: string; refreshToken: string };
 
 export async function signIn(
   _prev: ActionResult,
@@ -26,16 +23,16 @@ export async function signIn(
   }
 
   try {
-    const { accessToken, refreshToken } = await api<AuthResponse>(
-      "/auth/login",
-      {
-        method: "POST",
-        body: parsed.data,
-        auth: false,
-      },
-    );
+    const data = await apiInternal<AuthResponse>("/auth/login", {
+      method: "POST",
+      body: parsed.data,
+    });
 
-    await setTokens(accessToken, refreshToken);
+    const session = await getSession();
+    session.accessToken = data.accessToken;
+    session.refreshToken = data.refreshToken;
+    session.expiresAt = decodeTokenExpiry(data.accessToken);
+    await session.save();
   } catch (err) {
     if (err instanceof ApiError && err.status === 401) {
       return { error: "Invalid email or password" };

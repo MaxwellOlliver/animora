@@ -35,6 +35,7 @@ export class CreateEpisodeUseCase {
       number: dto.number,
       title: dto.title,
       description: dto.description,
+      durationSeconds: dto.durationSeconds,
     });
   }
 }

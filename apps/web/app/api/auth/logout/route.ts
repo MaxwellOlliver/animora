@@ -1,10 +1,8 @@
-"use server";
-
-import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
 import { apiInternal } from "@/lib/api-internal";
 import { getSession } from "@/lib/session";
 
-export async function signOut() {
+export async function POST() {
   const session = await getSession();
 
   if (session.accessToken) {
@@ -19,5 +17,6 @@ export async function signOut() {
   }
 
   session.destroy();
-  redirect("/sign-in");
+
+  return new NextResponse(null, { status: 204 });
 }

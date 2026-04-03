@@ -1,55 +1,31 @@
+import { getIronSession, type IronSession } from "iron-session";
 import { cookies } from "next/headers";
 
-const ACCESS_TOKEN = "access_token";
-const REFRESH_TOKEN = "refresh_token";
-const PROFILE_ID = "profile_id";
-
-const COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
-  path: "/",
+export type SessionData = {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
+  profileId?: string;
 };
 
-export async function getSession() {
+export const SESSION_OPTIONS = {
+  password: process.env.SESSION_SECRET!,
+  cookieName: "animora_session",
+  cookieOptions: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+  },
+};
+
+export async function getSession(): Promise<IronSession<SessionData>> {
   const store = await cookies();
-  const accessToken = store.get(ACCESS_TOKEN)?.value;
-  const refreshToken = store.get(REFRESH_TOKEN)?.value;
-
-  if (!accessToken) return null;
-
-  return { accessToken, refreshToken };
+  return getIronSession<SessionData>(store, SESSION_OPTIONS);
 }
 
-export async function setTokens(accessToken: string, refreshToken: string) {
-  const store = await cookies();
-
-  store.set(ACCESS_TOKEN, accessToken, COOKIE_OPTIONS);
-  store.set(REFRESH_TOKEN, refreshToken, { ...COOKIE_OPTIONS, path: "/" });
-}
-
-export async function clearTokens() {
-  const store = await cookies();
-
-  store.delete(ACCESS_TOKEN);
-  store.delete(REFRESH_TOKEN);
-  store.delete(PROFILE_ID);
-}
-
-export async function getProfileId() {
-  const store = await cookies();
-  return store.get(PROFILE_ID)?.value ?? null;
-}
-
-export async function setProfileId(profileId: string) {
-  const store = await cookies();
-  store.set(PROFILE_ID, profileId, {
-    ...COOKIE_OPTIONS,
-    httpOnly: false,
-  });
-}
-
-export async function clearProfileId() {
-  const store = await cookies();
-  store.delete(PROFILE_ID);
+export function decodeTokenExpiry(jwt: string): number {
+  const payload = jwt.split(".")[1];
+  const decoded = JSON.parse(Buffer.from(payload, "base64url").toString());
+  return decoded.exp as number;
 }

@@ -1,9 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { setProfileId } from "@/lib/session";
+import { getSession } from "@/lib/session";
 
 export async function selectProfile(profileId: string) {
-  await setProfileId(profileId);
+  const session = await getSession();
+  session.profileId = profileId;
+  await session.save();
   redirect("/home");
 }

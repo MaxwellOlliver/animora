@@ -1,7 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { env } from "@/lib/env";
-
 import type { Media } from "./fetch-recommended";
 
 export type PlaylistSummary = {
@@ -24,7 +22,7 @@ async function fetchSeriesPlaylists(
   seriesId: string,
 ): Promise<PlaylistSummary[]> {
   const response = await fetch(
-    `${env.NEXT_PUBLIC_API_URL}/catalog/series/${seriesId}/playlists`,
+    `/api/proxy/catalog/series/${seriesId}/playlists`,
   );
 
   if (!response.ok) {

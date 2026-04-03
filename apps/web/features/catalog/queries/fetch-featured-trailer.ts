@@ -1,7 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { env } from "@/lib/env";
-
 import type { Media } from "./fetch-recommended";
 
 type Video = {
@@ -33,7 +31,7 @@ async function fetchFeaturedTrailer(
   seriesId: string,
 ): Promise<FeaturedTrailer | null> {
   const response = await fetch(
-    `${env.NEXT_PUBLIC_API_URL}/catalog/series/${seriesId}/featured-trailer`,
+    `/api/proxy/catalog/series/${seriesId}/featured-trailer`,
   );
 
   if (!response.ok) {

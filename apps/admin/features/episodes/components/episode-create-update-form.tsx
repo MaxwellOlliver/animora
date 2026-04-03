@@ -47,6 +47,11 @@ const episodeSchema = z.object({
     .min(1, "Title is required.")
     .max(255, "Title must be at most 255 characters."),
   description: z.string(),
+  durationSeconds: z
+    .number()
+    .int("Duration must be an integer.")
+    .min(0, "Duration must be positive.")
+    .nullable(),
 });
 
 type EpisodeFormValues = z.infer<typeof episodeSchema>;
@@ -56,6 +61,7 @@ export interface EpisodeCreateUpdateValues {
   number: number;
   title: string;
   description?: string;
+  durationSeconds?: number;
   photo: PhotoUploadValue;
 }
 
@@ -66,6 +72,7 @@ interface EpisodeCreateUpdateFormProps {
     number?: number;
     title?: string;
     description?: string | null;
+    durationSeconds?: number | null;
     thumbnail?: Media | null;
   };
   onSubmit: (values: EpisodeCreateUpdateValues) => Promise<void> | void;
@@ -86,6 +93,7 @@ export function EpisodeCreateUpdateForm({
   const numberId = useId();
   const titleId = useId();
   const descriptionId = useId();
+  const durationId = useId();
   const [localError, setLocalError] = useState<string | null>(null);
 
   const playlistsQuery = usePlaylistsList();
@@ -108,6 +116,7 @@ export function EpisodeCreateUpdateForm({
       number: initialValues?.number ?? 1,
       title: initialValues?.title ?? "",
       description: initialValues?.description ?? "",
+      durationSeconds: initialValues?.durationSeconds ?? null,
     },
   });
 
@@ -117,6 +126,7 @@ export function EpisodeCreateUpdateForm({
       number: initialValues?.number ?? 1,
       title: initialValues?.title ?? "",
       description: initialValues?.description ?? "",
+      durationSeconds: initialValues?.durationSeconds ?? null,
     });
   }, [
     form,
@@ -124,6 +134,7 @@ export function EpisodeCreateUpdateForm({
     initialValues?.number,
     initialValues?.title,
     initialValues?.description,
+    initialValues?.durationSeconds,
   ]);
 
   const isBusy = isSubmitting || form.formState.isSubmitting;
@@ -140,6 +151,7 @@ export function EpisodeCreateUpdateForm({
         number: values.number,
         title: values.title,
         description: normalizedDescription || undefined,
+        durationSeconds: values.durationSeconds ?? undefined,
         photo: photoValue,
       });
     } catch (error) {
@@ -234,6 +246,27 @@ export function EpisodeCreateUpdateForm({
                   {...form.register("title")}
                 />
                 <FieldError errors={[form.formState.errors.title]} />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor={durationId}>
+                  Duration (seconds)
+                </FieldLabel>
+                <Input
+                  id={durationId}
+                  type="number"
+                  min={0}
+                  placeholder="e.g. 1440"
+                  disabled={isBusy}
+                  aria-invalid={!!form.formState.errors.durationSeconds}
+                  {...form.register("durationSeconds", {
+                    setValueAs: (v: string) =>
+                      v === "" ? null : Number(v),
+                  })}
+                />
+                <FieldError
+                  errors={[form.formState.errors.durationSeconds]}
+                />
               </Field>
             </Grid>
 

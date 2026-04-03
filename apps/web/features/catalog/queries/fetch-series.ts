@@ -1,7 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { env } from "@/lib/env";
-
 import type { Genre, Media, SeriesAsset } from "./fetch-recommended";
 
 export type ContentClassificationSummary = {
@@ -31,7 +29,7 @@ export type SeriesDetail = {
 
 async function fetchSeriesDetail(id: string): Promise<SeriesDetail> {
   const response = await fetch(
-    `${env.NEXT_PUBLIC_API_URL}/catalog/series/${id}`,
+    `/api/proxy/catalog/series/${id}`,
   );
 
   if (!response.ok) {

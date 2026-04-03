@@ -31,7 +31,7 @@ async function fetchSeriesReviews(
   qs.set("limit", "10");
   const query = qs.toString();
 
-  const response = await fetch(`/api/reviews/${seriesId}${query ? `?${query}` : ""}`);
+  const response = await fetch(`/api/proxy/catalog/series/${seriesId}/reviews${query ? `?${query}` : ""}`);
   if (!response.ok) {
     throw new Error(`Failed to fetch reviews: ${response.status}`);
   }

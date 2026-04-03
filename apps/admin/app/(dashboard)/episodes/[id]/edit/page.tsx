@@ -37,6 +37,7 @@ export default function EditEpisodePage() {
       number: values.number,
       title: values.title,
       description: values.description,
+      durationSeconds: values.durationSeconds,
     });
 
     if (values.photo.kind === "new") {
@@ -141,6 +142,7 @@ export default function EditEpisodePage() {
               number: episodeQuery.data.number,
               title: episodeQuery.data.title,
               description: episodeQuery.data.description,
+              durationSeconds: episodeQuery.data.durationSeconds,
               thumbnail: episodeQuery.data.thumbnail,
             }}
             onSubmit={handleSubmit}

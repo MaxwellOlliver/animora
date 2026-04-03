@@ -1,19 +1,23 @@
-import { getSession } from "./session";
-import { refreshIfNeeded } from "./refresh-mutex";
-import { ApiError } from "./api-internal";
-
-export { ApiError } from "./api-internal";
-
 const API_BASE_URL = process.env.API_URL ?? "http://localhost:8080/api";
+
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    public body: unknown,
+  ) {
+    super(`API error ${status}`);
+    this.name = "ApiError";
+  }
+}
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
-  auth?: boolean;
+  token?: string;
 };
 
-export async function api<T>(
+export async function apiInternal<T>(
   path: string,
-  { body, auth = true, headers: customHeaders, ...init }: RequestOptions = {},
+  { body, token, headers: customHeaders, ...init }: RequestOptions = {},
 ): Promise<T> {
   const headers = new Headers(customHeaders);
 
@@ -21,12 +25,8 @@ export async function api<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  if (auth) {
-    const session = await getSession();
-    if (session.accessToken) {
-      await refreshIfNeeded(session);
-      headers.set("Authorization", `Bearer ${session.accessToken}`);
-    }
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
   }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {

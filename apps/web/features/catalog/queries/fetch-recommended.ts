@@ -1,5 +1,4 @@
 import { infiniteQueryOptions } from "@tanstack/react-query";
-import { env } from "@/lib/env";
 import { MediaPurpose } from "@animora/contracts";
 
 export type Media = {
@@ -43,7 +42,7 @@ type CursorPaginatedResponse = {
 async function fetchRecommended(
   cursor?: string,
 ): Promise<CursorPaginatedResponse> {
-  const url = new URL(`${env.NEXT_PUBLIC_API_URL}/catalog/recommended`);
+  const url = new URL("/api/proxy/catalog/recommended", window.location.origin);
   if (cursor) url.searchParams.set("cursor", cursor);
 
   const response = await fetch(url);

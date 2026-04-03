@@ -29,6 +29,7 @@ export default function CreateEpisodePage() {
       number: values.number,
       title: values.title,
       description: values.description,
+      durationSeconds: values.durationSeconds,
     });
 
     if (values.photo.kind === "new") {

@@ -30,7 +30,7 @@ export function getAvatarImageUrl(avatar: Pick<ProfileAvatar, "picture">) {
 }
 
 async function fetchAvatars(): Promise<ProfileAvatar[]> {
-  const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/avatars`);
+  const response = await fetch("/api/proxy/avatars");
 
   if (!response.ok) {
     throw new Error(`Failed to fetch avatars: ${response.status}`);
