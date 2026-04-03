@@ -21,6 +21,7 @@ import { CatalogModule } from './modules/catalog/catalog.module';
 import { MediaModule } from './modules/media/media.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
 import { UsersModule } from './modules/users/users.module';
+import { SeriesReviewsModule } from './modules/series-reviews/series-reviews.module';
 import { WatchHistoryModule } from './modules/watch-history/watch-history.module';
 
 @Module({
@@ -43,6 +44,7 @@ import { WatchHistoryModule } from './modules/watch-history/watch-history.module
     UploadsModule,
     TrailersModule,
     CatalogModule,
+    SeriesReviewsModule,
     WatchHistoryModule,
   ],
   providers: [

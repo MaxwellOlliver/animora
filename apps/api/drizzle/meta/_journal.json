@@ -8,6 +8,13 @@
       "when": 1774770641402,
       "tag": "0000_baseline_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775197565645,
+      "tag": "0001_series_reviews",
+      "breakpoints": true
     }
   ]
 }

@@ -23,6 +23,10 @@ export type SeriesDetail = {
   genres: Genre[];
   assets: SeriesAsset[];
   contentClassification: ContentClassificationSummary | null;
+  rating: {
+    average: number;
+    count: number;
+  };
 };
 
 async function fetchSeriesDetail(id: string): Promise<SeriesDetail> {

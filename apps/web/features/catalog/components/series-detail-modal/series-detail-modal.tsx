@@ -27,6 +27,12 @@ import { TrailersSection } from "./trailers-section";
 import { ReviewsSection } from "./reviews-section";
 import { SeriesDetailSkeleton } from "./series-detail-skeleton";
 
+function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}m`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, "")}k`;
+  return String(n);
+}
+
 export function SeriesDetailModal() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -155,7 +161,10 @@ export function SeriesDetailModal() {
                     />
                   )}
 
-                  <StarRating rating={4.9} count="321k" />
+                  <StarRating
+                    rating={series?.rating.average ?? 0}
+                    count={formatCount(series?.rating.count ?? 0)}
+                  />
                   <div className="flex items-center gap-3">
                     <Button variant="primary" className="gap-2 px-6">
                       <PlayIcon className="size-4" />
