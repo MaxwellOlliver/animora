@@ -15,7 +15,9 @@ import { Button } from "@/components/ui/button";
 import { CardPopover } from "./card-popover";
 import { TrailerPlayer } from "./trailer-player";
 import type { RecommendedSeries } from "../queries/fetch-recommended";
-import { buildMediaUrl } from "@/utils/media-utils";
+import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
+import { useQuery } from "@tanstack/react-query";
+import { buildFetchFeaturedTrailerQueryOptions } from "../queries/fetch-featured-trailer";
 
 interface SeriesCardProps {
   series: RecommendedSeries;
@@ -24,11 +26,23 @@ interface SeriesCardProps {
 export function SeriesCard({ series }: SeriesCardProps) {
   const searchParams = useSearchParams();
   const [muted, setMuted] = useState(true);
+  const [shouldFetchTrailer, setShouldFetchTrailer] = useState(false);
+
+  const { data: featuredTrailer, isLoading: isFeaturedTrailerLoading } =
+    useQuery({
+      ...buildFetchFeaturedTrailerQueryOptions(series.id),
+      enabled: shouldFetchTrailer,
+    });
+
+  const featuredTrailerSrc =
+    featuredTrailer?.video?.status === "ready" &&
+    featuredTrailer.video.masterPlaylistKey
+      ? buildHlsUrl(featuredTrailer.video.masterPlaylistKey)
+      : null;
 
   const genres = series.genres.map((g) => g.name).join(" • ");
   const poster = series.assets.find((a) => a.purpose === "poster");
   const banner = series.assets.find((a) => a.purpose === "banner");
-  const trailer = series.assets.find((a) => a.purpose === "trailer");
   const cardImage = poster ?? banner;
 
   function buildSeriesHref(id: string) {
@@ -39,44 +53,32 @@ export function SeriesCard({ series }: SeriesCardProps) {
 
   return (
     <CardPopover
+      onOpenChange={setShouldFetchTrailer}
       content={
         <div className="flex w-[clamp(280px,23vw,350px)] flex-col">
           <div className="relative aspect-video w-full overflow-clip">
-            {trailer ? (
-              <>
-                <TrailerPlayer
-                  src={trailer.media.key}
-                  poster={
-                    poster
-                      ? buildMediaUrl(poster.media.purpose, poster.media.key)
-                      : undefined
-                  }
-                  alt={series.name}
-                  muted={muted}
-                  onMutedChange={setMuted}
-                />
-                <button
-                  type="button"
-                  onClick={() => setMuted(!muted)}
-                  className="absolute right-2 bottom-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80"
-                >
-                  {muted ? (
-                    <VolumeOffIcon className="size-3.5" />
-                  ) : (
-                    <Volume2Icon className="size-3.5" />
-                  )}
-                </button>
-              </>
-            ) : banner ? (
-              <Image
-                src={buildMediaUrl(banner.media.purpose, banner.media.key)}
-                alt={series.name}
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <div className="h-full w-full bg-white/10" />
-            )}
+            <TrailerPlayer
+              src={featuredTrailerSrc}
+              poster={
+                poster
+                  ? buildMediaUrl(poster.media.purpose, poster.media.key)
+                  : undefined
+              }
+              alt={series.name}
+              muted={muted}
+              onMutedChange={setMuted}
+            />
+            <button
+              type="button"
+              onClick={() => setMuted(!muted)}
+              className="absolute right-2 bottom-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80"
+            >
+              {muted ? (
+                <VolumeOffIcon className="size-3.5" />
+              ) : (
+                <Volume2Icon className="size-3.5" />
+              )}
+            </button>
           </div>
           <div className="flex flex-col gap-2 p-4">
             <div className="flex flex-col gap-2">
@@ -112,7 +114,11 @@ export function SeriesCard({ series }: SeriesCardProps) {
         </div>
       }
     >
-      <button className="series-card flex w-[clamp(150px,14vw,220px)] shrink-0 flex-col gap-2">
+      <Link
+        href={buildSeriesHref(series.id)}
+        scroll={false}
+        className="series-card outline-none flex w-[clamp(150px,14vw,220px)] shrink-0 flex-col gap-2 rounded-xl p-2 transition-[background-color] focus-visible:bg-white/5 hover:bg-white/5"
+      >
         {cardImage ? (
           <Image
             src={buildMediaUrl(cardImage.media.purpose, cardImage.media.key)}
@@ -132,7 +138,7 @@ export function SeriesCard({ series }: SeriesCardProps) {
             {series.name}
           </h5>
         </div>
-      </button>
+      </Link>
     </CardPopover>
   );
 }

@@ -6,13 +6,22 @@ import { useRef, useCallback, useState, useEffect } from "react";
 interface CardPopoverProps {
   children: React.ReactNode;
   content: React.ReactNode;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function CardPopover({ children, content }: CardPopoverProps) {
+export function CardPopover({
+  children,
+  content,
+  onOpenChange,
+}: CardPopoverProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    if (onOpenChange) {
+      onOpenChange(open);
+    }
+
     if (!open) return;
 
     const handleScroll = () => setOpen(false);
@@ -20,7 +29,7 @@ export function CardPopover({ children, content }: CardPopoverProps) {
 
     return () =>
       window.removeEventListener("scroll", handleScroll, { capture: true });
-  }, [open]);
+  }, [open, onOpenChange]);
 
   const centerAnchor = useCallback(() => {
     const el = triggerRef.current;
@@ -57,9 +66,6 @@ export function CardPopover({ children, content }: CardPopoverProps) {
         nativeButton={false}
         delay={500}
         closeDelay={200}
-        render={
-          <div className="rounded-xl p-2 transition-[background-color] hover:bg-white/5" />
-        }
       >
         {children}
       </Popover.Trigger>

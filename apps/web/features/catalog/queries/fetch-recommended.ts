@@ -12,7 +12,7 @@ export type SeriesAsset = {
   id: string;
   seriesId: string;
   mediaId: string;
-  purpose: "banner" | "logo" | "trailer" | "poster";
+  purpose: "banner" | "logo" | "poster";
   media: Media;
 };
 
