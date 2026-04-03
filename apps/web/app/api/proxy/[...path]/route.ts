@@ -1,8 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getLogger } from "@/lib/logger";
 import { getSession } from "@/lib/session";
 import { refreshIfNeeded } from "@/lib/refresh-mutex";
 
 const API_BASE_URL = process.env.API_URL ?? "http://localhost:8080/api";
+const logger = getLogger().child({ scope: "api-proxy" });
+
+function tokenSuffix(token?: string): string | null {
+  if (!token) return null;
+  return token.slice(-8);
+}
+
+function getSecondsLeft(expiresAt?: number): number | null {
+  if (!expiresAt) return null;
+  return expiresAt - Math.floor(Date.now() / 1000);
+}
+
+function logProxy(event: string, details: Record<string, unknown>): void {
+  logger.info(event, details);
+}
 
 async function proxyRequest(
   req: NextRequest,
@@ -16,6 +32,10 @@ async function proxyRequest(
   for (const segment of path) {
     if (segment === "@me") {
       if (!session.profileId) {
+        logger.warn("missing-profile", {
+          method: req.method,
+          path,
+        });
         return NextResponse.json(
           { message: "No profile selected" },
           { status: 401 },
@@ -28,6 +48,22 @@ async function proxyRequest(
   }
 
   const target = `${API_BASE_URL}/${resolved.join("/")}${req.nextUrl.search}`;
+  const secondsLeft = getSecondsLeft(session.expiresAt);
+
+  logProxy("request:start", {
+    method: req.method,
+    path,
+    resolvedPath: resolved,
+    search: req.nextUrl.search,
+    target,
+    hasAccessToken: Boolean(session.accessToken),
+    hasRefreshToken: Boolean(session.refreshToken),
+    accessTokenSuffix: tokenSuffix(session.accessToken),
+    refreshTokenSuffix: tokenSuffix(session.refreshToken),
+    expiresAt: session.expiresAt ?? null,
+    secondsLeft,
+    profileId: session.profileId ?? null,
+  });
 
   const headers = new Headers();
   const contentType = req.headers.get("content-type");
@@ -38,7 +74,24 @@ async function proxyRequest(
   if (session.accessToken) {
     try {
       await refreshIfNeeded(session);
-    } catch {
+      logProxy("request:auth-ready", {
+        method: req.method,
+        resolvedPath: resolved,
+        expiresAt: session.expiresAt ?? null,
+        secondsLeft: getSecondsLeft(session.expiresAt),
+        accessTokenSuffix: tokenSuffix(session.accessToken),
+        refreshTokenSuffix: tokenSuffix(session.refreshToken),
+      });
+    } catch (error) {
+      logger.warn("request:session-expired", {
+        method: req.method,
+        resolvedPath: resolved,
+        expiresAt: session.expiresAt ?? null,
+        secondsLeft: getSecondsLeft(session.expiresAt),
+        accessTokenSuffix: tokenSuffix(session.accessToken),
+        refreshTokenSuffix: tokenSuffix(session.refreshToken),
+        error,
+      });
       return NextResponse.json({ message: "Session expired" }, { status: 401 });
     }
     headers.set("Authorization", `Bearer ${session.accessToken}`);
@@ -49,10 +102,31 @@ async function proxyRequest(
       ? await req.arrayBuffer()
       : undefined;
 
-  const upstream = await fetch(target, {
+  let upstream: Response;
+
+  try {
+    upstream = await fetch(target, {
+      method: req.method,
+      headers,
+      body,
+    });
+  } catch (error) {
+    logger.error("request:upstream-error", {
+      method: req.method,
+      resolvedPath: resolved,
+      target,
+      error,
+    });
+    throw error;
+  }
+
+  logProxy("request:upstream-response", {
     method: req.method,
-    headers,
-    body,
+    resolvedPath: resolved,
+    status: upstream.status,
+    ok: upstream.ok,
+    expiresAt: session.expiresAt ?? null,
+    secondsLeft: getSecondsLeft(session.expiresAt),
   });
 
   const responseHeaders = new Headers();
