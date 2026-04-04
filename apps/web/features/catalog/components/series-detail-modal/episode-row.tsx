@@ -1,7 +1,9 @@
 import { EllipsisVerticalIcon } from "lucide-react";
 import { EpisodeThumbnail } from "@/components/ui/episode-thumbnail";
+import Link from "next/link";
 
 interface EpisodeRowProps {
+  id: string;
   number: number;
   title: string;
   description: string;
@@ -10,6 +12,7 @@ interface EpisodeRowProps {
 }
 
 export function EpisodeRow({
+  id,
   number,
   title,
   description,
@@ -17,7 +20,10 @@ export function EpisodeRow({
   duration,
 }: EpisodeRowProps) {
   return (
-    <div className="relative flex gap-3 rounded-lg py-2 after:pointer-events-none after:absolute after:inset-y-0 after:-inset-x-2 after:rounded-lg after:bg-elevated after:opacity-0 after:transition-opacity hover:after:opacity-100">
+    <Link
+      href={`/watch/${id}`}
+      className="relative flex gap-3 cursor-default rounded-lg py-2 after:pointer-events-none after:absolute after:inset-y-0 after:-inset-x-2 after:rounded-lg after:bg-elevated after:opacity-0 after:transition-opacity hover:after:opacity-100"
+    >
       <EpisodeThumbnail
         src={thumbnail}
         alt={title}
@@ -32,6 +38,7 @@ export function EpisodeRow({
           <button
             type="button"
             className="shrink-0 text-foreground-muted hover:text-foreground"
+            onClick={(e) => e.preventDefault()}
           >
             <EllipsisVerticalIcon className="size-4" />
           </button>
@@ -40,6 +47,6 @@ export function EpisodeRow({
           {description}
         </p>
       </div>
-    </div>
+    </Link>
   );
 }

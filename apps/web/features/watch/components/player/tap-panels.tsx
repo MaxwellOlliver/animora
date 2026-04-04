@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { useMediaState, useMediaRemote } from "@vidstack/react";
 import { Pause, Play, RotateCcw, RotateCw } from "lucide-react";
 import { usePlayerContext } from "./player-context";
+import { cn } from "@/lib/utils";
 
 const SEEK_SECONDS = 10;
 const DOUBLE_TAP_MS = 300;
@@ -40,6 +41,7 @@ export function TapPanels() {
   const paused = useMediaState("paused");
   const currentTime = useMediaState("currentTime");
   const duration = useMediaState("duration");
+  const controlsHidden = useMediaState("controlsHidden");
   const remote = useMediaRemote();
   const { settingsOpen } = usePlayerContext();
 
@@ -88,17 +90,25 @@ export function TapPanels() {
   );
 
   return (
-    <div className={`absolute inset-0 z-0 flex ${settingsOpen ? "pointer-events-none" : ""}`}>
+    <div
+      className={cn(
+        `absolute inset-0 z-0 flex`,
+        settingsOpen && "pointer-events-none",
+      )}
+      style={{ cursor: controlsHidden ? "none" : "auto" }}
+    >
       <button
         type="button"
         aria-label="Tap to play/pause, double tap to rewind"
-        className="h-full w-1/2 cursor-default focus:outline-none"
+        className="h-full w-1/2 focus:outline-none"
+        style={{ cursor: controlsHidden ? "none" : "default" }}
         onClick={() => handleTap("left")}
       />
       <button
         type="button"
         aria-label="Tap to play/pause, double tap to fast forward"
-        className="h-full w-1/2 cursor-default focus:outline-none"
+        className="h-full w-1/2 focus:outline-none"
+        style={{ cursor: controlsHidden ? "none" : "default" }}
         onClick={() => handleTap("right")}
       />
 

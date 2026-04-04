@@ -99,12 +99,30 @@ export function SeriesDetailModal() {
   }
 
   useEffect(() => {
-    if (open) document.body.classList.add("overflow-hidden");
-    if (!open) document.body.classList.remove("overflow-hidden");
+    if (!open) {
+      return;
+    }
+
+    const body = document.body;
+    const wasAlreadyLocked = body.classList.contains("overflow-hidden");
+
+    if (!wasAlreadyLocked) {
+      body.classList.add("overflow-hidden");
+    }
+
+    return () => {
+      if (!wasAlreadyLocked) {
+        body.classList.remove("overflow-hidden");
+      }
+    };
   }, [open]);
 
   return (
-    <DialogPrimitive.Root open={open} onOpenChange={(v) => !v && handleClose()}>
+    <DialogPrimitive.Root
+      open={open}
+      modal="trap-focus"
+      onOpenChange={(v) => !v && handleClose()}
+    >
       <DialogPrimitive.Portal>
         <DialogPrimitive.Backdrop className="data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 bg-black/70 backdrop-blur-sm duration-200" />
 

@@ -2,19 +2,35 @@ import Link from "next/link";
 import { Heart, ChevronDown } from "lucide-react";
 import { WatchPartyButton } from "./watch-party-button";
 
-export function EpisodeInfo() {
+type EpisodeInfoProps = {
+  episodeNumber: number;
+  title: string;
+  seriesId: string;
+  seriesName: string;
+  description?: string | null;
+  releasedAt: string;
+};
+
+export function EpisodeInfo({
+  episodeNumber,
+  title,
+  seriesId,
+  seriesName,
+  description,
+  releasedAt,
+}: EpisodeInfoProps) {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="font-heading text-2xl font-semibold leading-8">
-        E1 - To you, 2000 years from before
+        E{episodeNumber} - {title}
       </h1>
 
       <div className="flex flex-col gap-4">
         <Link
-          href="/series/attack-on-titan"
+          href={`/home?s=${seriesId}`}
           className="font-heading text-base w-fit font-semibold text-primary hover:underline"
         >
-          Attack on Titan
+          {seriesName}
         </Link>
 
         <div className="flex items-center gap-4">
@@ -32,14 +48,14 @@ export function EpisodeInfo() {
           <WatchPartyButton />
         </div>
 
-        <p className="line-clamp-2 text-base leading-6 text-foreground">
-          Attack on Titan is set in a world where humanity lives inside cities
-          surrounded by enormous Walls that protect them from Titans, oid
-          creatures who devour humans seemingly without reason.
-        </p>
+        {description ? (
+          <p className="line-clamp-2 text-base leading-6 text-foreground">
+            {description}
+          </p>
+        ) : null}
 
         <span className="text-sm leading-5 text-foreground-muted">
-          Released at 01/01/2022
+          Released at {releasedAt}
         </span>
       </div>
     </div>

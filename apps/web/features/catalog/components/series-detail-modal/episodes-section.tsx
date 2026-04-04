@@ -57,11 +57,7 @@ export function EpisodesSection({ playlists }: EpisodesSectionProps) {
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <h3 className="font-heading text-lg font-semibold">Episodes</h3>
-        <Select
-          value={activeItem}
-          onValueChange={setSelected}
-          items={items}
-        >
+        <Select value={activeItem} onValueChange={setSelected} items={items}>
           <SelectTrigger />
           <SelectPopup>
             {items.map((item) => (
@@ -77,6 +73,7 @@ export function EpisodesSection({ playlists }: EpisodesSectionProps) {
         {episodes?.map((episode) => (
           <EpisodeRow
             key={episode.id}
+            id={episode.id}
             number={episode.number}
             title={episode.title}
             description={episode.description ?? ""}

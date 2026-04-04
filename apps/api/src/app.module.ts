@@ -20,8 +20,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { MediaModule } from './modules/media/media.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
-import { UsersModule } from './modules/users/users.module';
 import { SeriesReviewsModule } from './modules/series-reviews/series-reviews.module';
+import { StreamingModule } from './modules/streaming/streaming.module';
+import { UsersModule } from './modules/users/users.module';
 import { WatchHistoryModule } from './modules/watch-history/watch-history.module';
 
 @Module({
@@ -45,6 +46,7 @@ import { WatchHistoryModule } from './modules/watch-history/watch-history.module
     TrailersModule,
     CatalogModule,
     SeriesReviewsModule,
+    StreamingModule,
     WatchHistoryModule,
   ],
   providers: [

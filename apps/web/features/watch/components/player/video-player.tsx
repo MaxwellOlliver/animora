@@ -22,6 +22,8 @@ import { TapPanels } from "./tap-panels";
 type VideoPlayerProps = {
   src: string;
   title?: string;
+  initialTimeSeconds?: number;
+  children?: React.ReactNode;
   onPrevEpisode?: () => void;
   onNextEpisode?: () => void;
   timestampActions?: TimestampAction[];
@@ -31,12 +33,15 @@ type VideoPlayerProps = {
 export function VideoPlayer({
   src,
   title,
+  initialTimeSeconds = 0,
+  children,
   onPrevEpisode,
   onNextEpisode,
   timestampActions = [],
   overlayMessages = [],
 }: VideoPlayerProps) {
   const playerRef = useRef<MediaPlayerInstance>(null);
+  const hasAppliedInitialTimeRef = useRef(false);
 
   function onProviderChange(provider: MediaProviderAdapter | null) {
     if (isHLSProvider(provider)) {
@@ -53,6 +58,17 @@ export function VideoPlayer({
     player.qualities.switch = "next";
   }, []);
 
+  useEffect(() => {
+    const player = playerRef.current;
+
+    if (!player || hasAppliedInitialTimeRef.current || initialTimeSeconds <= 0) {
+      return;
+    }
+
+    player.currentTime = initialTimeSeconds;
+    hasAppliedInitialTimeRef.current = true;
+  }, [initialTimeSeconds]);
+
   return (
     <MediaPlayer
       ref={playerRef}
@@ -60,7 +76,7 @@ export function VideoPlayer({
       crossOrigin
       playsInline
       onProviderChange={onProviderChange}
-      className="group relative aspect-video w-full h-[calc(100dvh-6rem)] overflow-hidden bg-black [&_video]:h-full!"
+      className="group relative aspect-video w-full h-[calc(100dvh-10rem)] overflow-hidden bg-black [&_video]:h-full!"
     >
       <MediaProvider />
       <PlayerProvider>
@@ -82,6 +98,7 @@ export function VideoPlayer({
           />
         </PlayerControlsVisibility>
         <SettingsPopover />
+        {children}
       </PlayerProvider>
     </MediaPlayer>
   );

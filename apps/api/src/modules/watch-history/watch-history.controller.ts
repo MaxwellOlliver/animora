@@ -15,6 +15,7 @@ import { CursorPaginationQueryDto } from '@/common/dto/cursor-pagination-query.d
 import type { JwtPayload } from '../auth/strategies/jwt.strategy';
 import { UpsertWatchProgressDto } from './dto/upsert-watch-progress.dto';
 import { GetContinueWatchingUseCase } from './use-cases/get-continue-watching.use-case';
+import { GetEpisodeWatchHistoryUseCase } from './use-cases/get-episode-watch-history.use-case';
 import { GetWatchHistoryUseCase } from './use-cases/get-watch-history.use-case';
 import { UpsertWatchProgressUseCase } from './use-cases/upsert-watch-progress.use-case';
 
@@ -26,6 +27,7 @@ export class WatchHistoryController {
     private readonly upsertWatchProgressUseCase: UpsertWatchProgressUseCase,
     private readonly getWatchHistoryUseCase: GetWatchHistoryUseCase,
     private readonly getContinueWatchingUseCase: GetContinueWatchingUseCase,
+    private readonly getEpisodeWatchHistoryUseCase: GetEpisodeWatchHistoryUseCase,
   ) {}
 
   @Put()
@@ -71,6 +73,20 @@ export class WatchHistoryController {
       userId: user.sub,
       profileId,
       pagination: { cursor: query.cursor, limit: query.limit },
+    });
+  }
+
+  @Get('episode/:episodeId')
+  @ApiOperation({ summary: 'Get watch history for a single episode' })
+  async getEpisodeWatchHistory(
+    @CurrentUser() user: JwtPayload,
+    @Param('profileId', ParseUUIDPipe) profileId: string,
+    @Param('episodeId', ParseUUIDPipe) episodeId: string,
+  ) {
+    return this.getEpisodeWatchHistoryUseCase.execute({
+      userId: user.sub,
+      profileId,
+      episodeId,
     });
   }
 }

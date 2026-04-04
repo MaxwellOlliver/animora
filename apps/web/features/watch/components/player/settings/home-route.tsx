@@ -1,7 +1,7 @@
 "use client";
 
 import { SettingsItem } from "./item";
-import { ChevronRight, SkipForward, Video } from "lucide-react";
+import { ChevronRight, Play, SkipForward, Video } from "lucide-react";
 import { useSettingsRouter } from "./router";
 import { SettingsItemsGroup } from "./items-group";
 import { Switch } from "@/components/ui/switch";
@@ -11,7 +11,7 @@ import { useMediaState } from "@vidstack/react";
 
 export function SettingsHomeRoute() {
   const { push } = useSettingsRouter();
-  const { autoSkip } = usePlayerSettings();
+  const { autoPlay, autoSkip } = usePlayerSettings();
   const quality = useMediaState("quality");
 
   return (
@@ -28,6 +28,18 @@ export function SettingsHomeRoute() {
             </span>
             <ChevronRight className="size-4" />
           </div>
+        }
+      />
+      <SettingsItem
+        icon={<Play />}
+        label="Auto play"
+        onClick={() => updateSettings({ autoPlay: !autoPlay })}
+        subComponent={
+          <Switch
+            checked={autoPlay}
+            onCheckedChange={(checked) => updateSettings({ autoPlay: checked })}
+            onClick={(e) => e.stopPropagation()}
+          />
         }
       />
       <SettingsItem

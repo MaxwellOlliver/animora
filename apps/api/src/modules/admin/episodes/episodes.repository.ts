@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, gt } from 'drizzle-orm';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
@@ -16,6 +16,19 @@ export type EpisodeWithMedia = Episode & {
 export type EpisodeWithContext = EpisodeWithMedia & {
   playlistName: string | null;
   seriesName: string;
+};
+
+export type EpisodeWithMediaAndContext = EpisodeWithMedia & {
+  playlist: {
+    id: string;
+    number: number;
+    title: string | null;
+    type: string;
+  };
+  series: {
+    id: string;
+    name: string;
+  };
 };
 
 @Injectable()
@@ -61,6 +74,62 @@ export class EpisodesRepository {
       .where(eq(episodes.id, id));
     if (!rows[0]) return undefined;
     return { ...rows[0].episode, thumbnail: rows[0].thumbnail };
+  }
+
+  async findByIdWithContext(
+    id: string,
+  ): Promise<EpisodeWithMediaAndContext | undefined> {
+    const rows = await this.db
+      .select({
+        episode: episodes,
+        thumbnail: media,
+        playlist: {
+          id: playlists.id,
+          number: playlists.number,
+          title: playlists.title,
+          type: playlists.type,
+        },
+        series: {
+          id: series.id,
+          name: series.name,
+        },
+      })
+      .from(episodes)
+      .leftJoin(media, eq(episodes.thumbnailId, media.id))
+      .innerJoin(playlists, eq(episodes.playlistId, playlists.id))
+      .innerJoin(series, eq(playlists.seriesId, series.id))
+      .where(eq(episodes.id, id));
+
+    if (!rows[0]) return undefined;
+
+    return {
+      ...rows[0].episode,
+      thumbnail: rows[0].thumbnail,
+      playlist: rows[0].playlist,
+      series: rows[0].series,
+    };
+  }
+
+  async findNextByPlaylistAndNumber(
+    playlistId: string,
+    number: number,
+  ): Promise<EpisodeWithMedia | undefined> {
+    const rows = await this.db
+      .select({ episode: episodes, thumbnail: media })
+      .from(episodes)
+      .leftJoin(media, eq(episodes.thumbnailId, media.id))
+      .where(
+        and(eq(episodes.playlistId, playlistId), gt(episodes.number, number)),
+      )
+      .orderBy(asc(episodes.number))
+      .limit(1);
+
+    if (!rows[0]) return undefined;
+
+    return {
+      ...rows[0].episode,
+      thumbnail: rows[0].thumbnail,
+    };
   }
 
   async create(data: NewEpisode): Promise<Episode> {
