@@ -15,6 +15,13 @@
       "when": 1775197565645,
       "tag": "0001_series_reviews",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775278674952,
+      "tag": "0002_episode_ratings",
+      "breakpoints": true
     }
   ]
 }
