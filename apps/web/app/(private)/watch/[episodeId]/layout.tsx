@@ -9,7 +9,7 @@ export default function WatchLayout({
 }) {
   return (
     <div
-      className="flex h-full w-full flex-col"
+      className="flex h-full w-full flex-col bg-background"
       style={
         {
           "--navbar-height": `${NAVBAR_HEIGHT}px`,

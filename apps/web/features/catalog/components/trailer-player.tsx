@@ -52,20 +52,6 @@ export function TrailerPlayer({
     };
   }, [src]);
 
-  if (!src) {
-    if (!banner) return null;
-
-    return (
-      <Image
-        src={banner}
-        alt={alt}
-        width={480}
-        height={270}
-        className="size-full object-cover"
-      />
-    );
-  }
-
   return (
     <div className="relative size-full">
       {banner && (

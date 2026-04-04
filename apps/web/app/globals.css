@@ -3,8 +3,8 @@
 
 @theme inline {
   /* Colors */
-  --color-background: #121212;
-  --color-background-muted: #1e1e1e;
+  --color-background: #080808;
+  --color-background-muted: #141414;
   --color-foreground: #ffffff;
   --color-foreground-muted: #b9b9b9;
 
@@ -12,12 +12,12 @@
   --color-secondary: #2e94c3;
   --color-tertiary: #f6d3cb;
 
-  --color-border: #272727;
-  --color-input: #161616;
-  --color-placeholder: #616161;
-  --color-card: #1a1a1a;
-  --color-elevated: #202020;
-  --color-ring: #383838;
+  --color-border: #1d1d1d;
+  --color-input: #0c0c0c;
+  --color-placeholder: #575757;
+  --color-card: #0c0c0c;
+  --color-elevated: #141414;
+  --color-ring: #2e2e2e;
 
   --color-success: #45aa60;
   --color-danger: #e03a3a;
