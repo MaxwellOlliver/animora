@@ -1,3 +1,4 @@
+import { getLogger } from '@animora/logger';
 import {
   Body,
   Controller,
@@ -35,6 +36,8 @@ import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
+  private readonly logger = getLogger().child({ scope: 'auth-refresh' });
+
   constructor(
     private readonly loginUseCase: LoginUseCase,
     private readonly googleAuthUseCase: GoogleAuthUseCase,
@@ -103,6 +106,11 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Refresh access token' })
   async refresh(@Req() req: { user: JwtRefreshPayload }) {
+    this.logger.info('request-accepted', {
+      jtiSuffix: this.getSuffix(req.user.jti),
+      userId: req.user.sub,
+    });
+
     return this.refreshTokenUseCase.execute(req.user.sub, req.user.jti);
   }
 
@@ -112,5 +120,9 @@ export class AuthController {
   @ApiOperation({ summary: 'Logout and invalidate refresh token' })
   async logout(@CurrentUser() user: JwtPayload) {
     await this.logoutUseCase.execute(user.sub);
+  }
+
+  private getSuffix(value: string): string {
+    return value.slice(-8);
   }
 }

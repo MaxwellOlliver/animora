@@ -24,6 +24,7 @@ export async function createProfile(
     await api("/profiles", {
       method: "POST",
       body: parsed.data,
+      persistSession: true,
     });
   } catch (error) {
     if (error instanceof ApiError) {

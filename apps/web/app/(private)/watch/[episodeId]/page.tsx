@@ -1,11 +1,11 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
 import { EpisodeInfo } from "@/features/watch/components/episode-info";
 import { CommentsSection } from "@/features/watch/components/comments-section";
 import { SidebarEpisodeCard } from "@/features/watch/components/sidebar-episode-card";
 import { WatchPartyChat } from "@/features/watch/components/watch-party-chat";
 import { WatchVideoPlayer } from "@/features/watch/components/watch-video-player";
-import { ApiError } from "@/lib/api";
+import { ApiError, SessionExpiredError } from "@/lib/api";
 import { fetchWatchEpisode } from "@/features/watch/queries/fetch-watch-episode";
 
 const MOCK_TIMESTAMP_ACTIONS = [
@@ -21,6 +21,10 @@ async function getWatchRoomPayload(episodeId: string) {
   try {
     return await fetchWatchEpisode(episodeId);
   } catch (error) {
+    if (error instanceof SessionExpiredError) {
+      redirect("/sign-in?error=session_expired");
+    }
+
     if (error instanceof ApiError && error.status === 404) {
       notFound();
     }

@@ -1,10 +1,10 @@
+import { getLogger } from '@animora/logger';
 import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
   HttpException,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
@@ -15,7 +15,7 @@ type HttpErrorResponse = {
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(GlobalExceptionFilter.name);
+  private readonly logger = getLogger().child({ scope: 'api-exception' });
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -40,9 +40,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     if (this.isPgError(exception)) {
       const mapped = this.mapPgError(exception.code);
-      this.logger.warn(
-        `Database error ${exception.code} on ${request.method} ${request.url}`,
-      );
+      this.logger.warn('database-error', {
+        code: exception.code,
+        detail: exception.detail ?? null,
+        method: request.method,
+        path: request.url,
+      });
 
       response.status(mapped.statusCode).send({
         statusCode: mapped.statusCode,
@@ -55,9 +58,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     if (this.isAwsError(exception)) {
-      this.logger.warn(
-        `S3 error ${exception.name} on ${request.method} ${request.url}`,
-      );
+      this.logger.warn('storage-error', {
+        method: request.method,
+        name: exception.name,
+        path: request.url,
+      });
 
       response.status(HttpStatus.BAD_GATEWAY).send({
         statusCode: HttpStatus.BAD_GATEWAY,
@@ -69,10 +74,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       return;
     }
 
-    this.logger.error(
-      `Unhandled exception on ${request.method} ${request.url}`,
-      exception instanceof Error ? exception.stack : String(exception),
-    );
+    this.logger.error('unhandled-exception', {
+      error: exception,
+      method: request.method,
+      path: request.url,
+    });
 
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

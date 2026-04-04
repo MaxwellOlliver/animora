@@ -15,7 +15,6 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ActiveProfile } from '@/common/decorators/active-profile.decorator';
-import { Public } from '@/common/decorators/public.decorator';
 import { CursorPaginationQueryDto } from '@/common/dto/cursor-pagination-query.dto';
 import { ActiveProfileGuard } from '@/common/guards/active-profile.guard';
 
@@ -40,7 +39,7 @@ export class SeriesReviewsController {
   ) {}
 
   @Get('catalog/series/:seriesId/reviews')
-  @Public()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'List paginated reviews for a series' })
   list(
     @Param('seriesId', ParseUUIDPipe) seriesId: string,

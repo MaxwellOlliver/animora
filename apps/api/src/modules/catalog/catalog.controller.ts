@@ -7,18 +7,22 @@ import {
   ParseUUIDPipe,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
-import { Public } from '@/common/decorators/public.decorator';
-
+import { GetPlaylistEpisodesUseCase } from './use-cases/get-playlist-episodes.use-case';
 import { GetRecommendedUseCase } from './use-cases/get-recommended.use-case';
 import { GetSeriesDetailUseCase } from './use-cases/get-series-detail.use-case';
-import { GetPlaylistEpisodesUseCase } from './use-cases/get-playlist-episodes.use-case';
+import { GetSeriesFeaturedTrailerUseCase } from './use-cases/get-series-featured-trailer.use-case';
 import { GetSeriesPlaylistsUseCase } from './use-cases/get-series-playlists.use-case';
 import { GetSeriesTrailersUseCase } from './use-cases/get-series-trailers.use-case';
-import { GetSeriesFeaturedTrailerUseCase } from './use-cases/get-series-featured-trailer.use-case';
 
 @ApiTags('Catalog')
+@ApiBearerAuth()
 @Controller('catalog')
 export class CatalogController {
   constructor(
@@ -31,7 +35,6 @@ export class CatalogController {
   ) {}
 
   @Get('recommended')
-  @Public()
   @ApiOperation({ summary: 'Get recommended series' })
   @ApiQuery({ name: 'cursor', required: false, type: String })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -43,35 +46,30 @@ export class CatalogController {
   }
 
   @Get('series/:id')
-  @Public()
   @ApiOperation({ summary: 'Get series detail for catalog page' })
   detail(@Param('id', ParseUUIDPipe) id: string) {
     return this.getSeriesDetailUseCase.execute(id);
   }
 
   @Get('series/:id/playlists')
-  @Public()
   @ApiOperation({ summary: 'Get playlists for a series' })
   playlists(@Param('id', ParseUUIDPipe) id: string) {
     return this.getSeriesPlaylistsUseCase.execute(id);
   }
 
   @Get('series/:id/trailers')
-  @Public()
   @ApiOperation({ summary: 'Get trailers for a series' })
   trailers(@Param('id', ParseUUIDPipe) id: string) {
     return this.getSeriesTrailersUseCase.execute(id);
   }
 
   @Get('series/:id/featured-trailer')
-  @Public()
   @ApiOperation({ summary: 'Get the newest trailer for a series with video' })
   featuredTrailer(@Param('id', ParseUUIDPipe) id: string) {
     return this.getSeriesFeaturedTrailerUseCase.execute(id);
   }
 
   @Get('playlists/:playlistId/episodes')
-  @Public()
   @ApiOperation({ summary: 'Get episodes for a playlist' })
   episodes(@Param('playlistId', ParseUUIDPipe) playlistId: string) {
     return this.getPlaylistEpisodesUseCase.execute(playlistId);

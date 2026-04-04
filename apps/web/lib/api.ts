@@ -4,16 +4,30 @@ import { ApiError } from "./api-internal";
 
 export { ApiError } from "./api-internal";
 
+export class SessionExpiredError extends Error {
+  constructor() {
+    super("Session expired");
+    this.name = "SessionExpiredError";
+  }
+}
+
 const API_BASE_URL = process.env.API_URL ?? "http://localhost:8080/api";
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
   auth?: boolean;
+  persistSession?: boolean;
 };
 
 export async function api<T>(
   path: string,
-  { body, auth = true, headers: customHeaders, ...init }: RequestOptions = {},
+  {
+    body,
+    auth = true,
+    persistSession = false,
+    headers: customHeaders,
+    ...init
+  }: RequestOptions = {},
 ): Promise<T> {
   const headers = new Headers(customHeaders);
 
@@ -27,7 +41,7 @@ export async function api<T>(
       headers.set("X-Profile-Id", session.profileId);
     }
     if (session.accessToken) {
-      await refreshIfNeeded(session);
+      await refreshIfNeeded(session, { persistSession });
       headers.set("Authorization", `Bearer ${session.accessToken}`);
     }
   }
@@ -40,6 +54,11 @@ export async function api<T>(
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => null);
+
+    if (auth && !persistSession && response.status === 401) {
+      throw new SessionExpiredError();
+    }
+
     throw new ApiError(response.status, errorBody);
   }
 

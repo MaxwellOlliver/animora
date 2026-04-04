@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getLogger } from "@/lib/logger";
+import { getLogger } from "@animora/logger";
 import { getSession } from "@/lib/session";
 import { refreshIfNeeded } from "@/lib/refresh-mutex";
 
@@ -52,7 +52,7 @@ async function proxyRequest(
 
   if (session.accessToken) {
     try {
-      await refreshIfNeeded(session);
+      await refreshIfNeeded(session, { persistSession: true });
       logProxy("request:auth-ready", {
         method: req.method,
         expiresAt: session.expiresAt ?? null,

@@ -1,3 +1,4 @@
+import { getLogger } from '@animora/logger';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
@@ -9,6 +10,10 @@ import { JwtPayload } from '../strategies/jwt.strategy';
 
 @Injectable()
 export class RefreshTokenUseCase {
+  private readonly logger = getLogger({ appName: 'animora@api' }).child({
+    scope: 'auth-refresh',
+  });
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
@@ -17,16 +22,55 @@ export class RefreshTokenUseCase {
   ) {}
 
   async execute(userId: string, jti: string) {
+    this.logger.info('rotation-started', {
+      jtiSuffix: this.getSuffix(jti),
+      userId,
+    });
+
     const stored = await this.refreshTokenRepository.findByJti(jti);
-    if (!stored || stored.userId !== userId || stored.expiresAt < new Date()) {
+
+    if (!stored) {
+      this.logger.warn('rotation-denied', {
+        jtiSuffix: this.getSuffix(jti),
+        reason: 'missing-token',
+        userId,
+      });
       throw new ForbiddenException('Access denied');
     }
 
-    // Rotate: delete old token
+    if (stored.userId !== userId) {
+      this.logger.warn('rotation-denied', {
+        jtiSuffix: this.getSuffix(jti),
+        reason: 'user-mismatch',
+        storedUserId: stored.userId,
+        userId,
+      });
+      throw new ForbiddenException('Access denied');
+    }
+
+    if (stored.expiresAt < new Date()) {
+      this.logger.warn('rotation-denied', {
+        expiresAt: stored.expiresAt.toISOString(),
+        jtiSuffix: this.getSuffix(jti),
+        reason: 'expired-token',
+        userId,
+      });
+      throw new ForbiddenException('Access denied');
+    }
+
     await this.refreshTokenRepository.deleteByJti(jti);
+    this.logger.info('rotation-revoked-old-token', {
+      jtiSuffix: this.getSuffix(jti),
+      userId,
+    });
 
     const user = await this.usersRepository.findById(userId);
     if (!user) {
+      this.logger.warn('rotation-denied', {
+        jtiSuffix: this.getSuffix(jti),
+        reason: 'missing-user',
+        userId,
+      });
       throw new ForbiddenException('Access denied');
     }
 
@@ -57,6 +101,12 @@ export class RefreshTokenUseCase {
       expiresAt: new Date(Date.now() + this.parseExpiration(refreshExpiration)),
     });
 
+    this.logger.info('rotation-succeeded', {
+      newJtiSuffix: this.getSuffix(newJti),
+      previousJtiSuffix: this.getSuffix(jti),
+      userId: user.id,
+    });
+
     return { accessToken, refreshToken };
   }
 
@@ -72,5 +122,9 @@ export class RefreshTokenUseCase {
       d: 24 * 60 * 60 * 1000,
     };
     return num * multipliers[unit];
+  }
+
+  private getSuffix(value: string): string {
+    return value.slice(-8);
   }
 }
