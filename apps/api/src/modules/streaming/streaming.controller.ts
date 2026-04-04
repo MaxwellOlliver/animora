@@ -1,25 +1,32 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { Public } from '@/common/decorators/public.decorator';
+import { ActiveProfile } from '@/common/decorators/active-profile.decorator';
+import { ActiveProfileGuard } from '@/common/guards/active-profile.guard';
 
+import type { ProfileWithAvatar } from '../profiles/profiles.repository';
 import { GetWatchEpisodeUseCase } from './use-cases/get-watch-episode.use-case';
 
 @ApiTags('Streaming')
-@Controller('streaming')
+@Controller()
 export class StreamingController {
   constructor(
     private readonly getWatchEpisodeUseCase: GetWatchEpisodeUseCase,
   ) {}
 
-  @Public()
-  @Get('watch/:episodeId')
+  @Get('streaming/watch/:episodeId')
+  @UseGuards(ActiveProfileGuard)
+  @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Get episode watch payload including media and video',
+    summary: 'Get episode watch payload including media, video, and rating data',
   })
   async getWatchEpisode(
+    @ActiveProfile() activeProfile: ProfileWithAvatar,
     @Param('episodeId', ParseUUIDPipe) episodeId: string,
   ) {
-    return this.getWatchEpisodeUseCase.execute(episodeId);
+    return this.getWatchEpisodeUseCase.execute({
+      episodeId,
+      profileId: activeProfile.id,
+    });
   }
 }

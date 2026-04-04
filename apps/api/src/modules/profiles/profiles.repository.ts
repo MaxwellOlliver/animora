@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { count } from 'drizzle-orm';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
@@ -51,6 +51,26 @@ export class ProfilesRepository {
       .where(eq(profiles.userId, userId));
 
     return rows.map((r) => this.mapRow(r));
+  }
+
+  async findOwnedByUser(
+    profileId: string,
+    userId: string,
+  ): Promise<ProfileWithAvatar | undefined> {
+    const rows = await this.db
+      .select({
+        profile: profiles,
+        avatarName: avatars.name,
+        pictureKey: media.key,
+        picturePurpose: media.purpose,
+      })
+      .from(profiles)
+      .leftJoin(avatars, eq(profiles.avatarId, avatars.id))
+      .leftJoin(media, eq(avatars.pictureId, media.id))
+      .where(and(eq(profiles.id, profileId), eq(profiles.userId, userId)));
+
+    if (!rows[0]) return undefined;
+    return this.mapRow(rows[0]);
   }
 
   private mapRow(row: {

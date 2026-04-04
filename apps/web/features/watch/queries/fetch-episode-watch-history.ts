@@ -14,7 +14,7 @@ async function fetchEpisodeWatchHistory(
   episodeId: string,
 ): Promise<EpisodeWatchHistory | null> {
   const response = await fetch(
-    `/api/proxy/profiles/@me/watch-history/episode/${episodeId}`,
+    `/api/proxy/watch-history/episode/${episodeId}`,
   );
 
   if (!response.ok) {

@@ -14,7 +14,7 @@ async function upsertWatchHistory(
   positionSeconds: number,
   status: WatchHistoryStatus,
 ) {
-  const response = await fetch("/api/proxy/profiles/@me/watch-history", {
+  const response = await fetch("/api/proxy/watch-history", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

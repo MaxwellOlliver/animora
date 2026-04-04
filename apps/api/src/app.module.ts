@@ -18,6 +18,7 @@ import { UploadsModule } from './modules/admin/uploads/uploads.module';
 import { VideosModule } from './modules/admin/videos/videos.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
+import { EpisodeRatingsModule } from './modules/episode-ratings/episode-ratings.module';
 import { MediaModule } from './modules/media/media.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
 import { SeriesReviewsModule } from './modules/series-reviews/series-reviews.module';
@@ -45,6 +46,7 @@ import { WatchHistoryModule } from './modules/watch-history/watch-history.module
     UploadsModule,
     TrailersModule,
     CatalogModule,
+    EpisodeRatingsModule,
     SeriesReviewsModule,
     StreamingModule,
     WatchHistoryModule,

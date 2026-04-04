@@ -56,7 +56,7 @@ export function ReviewsSection() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       const isUpdate = !!myReview;
-      const response = await fetch(`/api/proxy/profiles/@me/series/${seriesId}/review`, {
+      const response = await fetch(`/api/proxy/series/${seriesId}/review`, {
         method: isUpdate ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rating, text }),
@@ -72,7 +72,7 @@ export function ReviewsSection() {
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/proxy/profiles/@me/series/${seriesId}/review`, {
+      const response = await fetch(`/api/proxy/series/${seriesId}/review`, {
         method: "DELETE",
       });
       if (!response.ok && response.status !== 204)

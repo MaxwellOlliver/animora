@@ -1,10 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-
-import { ProfilesRepository } from '@/modules/profiles/profiles.repository';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { SeriesReviewsRepository } from '../series-reviews.repository';
 
@@ -12,19 +6,9 @@ import { SeriesReviewsRepository } from '../series-reviews.repository';
 export class DeleteReviewUseCase {
   constructor(
     private readonly seriesReviewsRepository: SeriesReviewsRepository,
-    private readonly profilesRepository: ProfilesRepository,
   ) {}
 
-  async execute(input: {
-    userId: string;
-    profileId: string;
-    seriesId: string;
-  }): Promise<void> {
-    const profile = await this.profilesRepository.findById(input.profileId);
-    if (!profile || profile.userId !== input.userId) {
-      throw new ForbiddenException('Profile does not belong to user');
-    }
-
+  async execute(input: { profileId: string; seriesId: string }): Promise<void> {
     const existing = await this.seriesReviewsRepository.findBySeriesAndProfile(
       input.seriesId,
       input.profileId,

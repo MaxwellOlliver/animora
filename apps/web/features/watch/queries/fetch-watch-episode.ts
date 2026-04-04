@@ -34,6 +34,12 @@ export type WatchEpisodePayload = {
     createdAt: string;
     updatedAt: string;
   } | null;
+  rating: {
+    likes: number;
+    dislikes: number;
+    myRating: "like" | "dislike" | null;
+    liked: boolean;
+  };
   nextEpisode: {
     id: string;
     playlistId: string;
@@ -52,6 +58,6 @@ export async function fetchWatchEpisode(
   episodeId: string,
 ): Promise<WatchEpisodePayload> {
   return api<WatchEpisodePayload>(`/streaming/watch/${episodeId}`, {
-    auth: false,
+    auth: true,
   });
 }

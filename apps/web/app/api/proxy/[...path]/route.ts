@@ -27,33 +27,12 @@ async function proxyRequest(
   const { path } = await params;
   const session = await getSession();
 
-  const resolved: string[] = [];
-
-  for (const segment of path) {
-    if (segment === "@me") {
-      if (!session.profileId) {
-        logger.warn("missing-profile", {
-          method: req.method,
-          path,
-        });
-        return NextResponse.json(
-          { message: "No profile selected" },
-          { status: 401 },
-        );
-      }
-      resolved.push(session.profileId);
-    } else {
-      resolved.push(segment);
-    }
-  }
-
-  const target = `${API_BASE_URL}/${resolved.join("/")}${req.nextUrl.search}`;
+  const target = `${API_BASE_URL}/${path.join("/")}${req.nextUrl.search}`;
   const secondsLeft = getSecondsLeft(session.expiresAt);
 
   logProxy("request:start", {
     method: req.method,
     path,
-    resolvedPath: resolved,
     search: req.nextUrl.search,
     target,
     hasAccessToken: Boolean(session.accessToken),
@@ -76,7 +55,6 @@ async function proxyRequest(
       await refreshIfNeeded(session);
       logProxy("request:auth-ready", {
         method: req.method,
-        resolvedPath: resolved,
         expiresAt: session.expiresAt ?? null,
         secondsLeft: getSecondsLeft(session.expiresAt),
         accessTokenSuffix: tokenSuffix(session.accessToken),
@@ -85,7 +63,6 @@ async function proxyRequest(
     } catch (error) {
       logger.warn("request:session-expired", {
         method: req.method,
-        resolvedPath: resolved,
         expiresAt: session.expiresAt ?? null,
         secondsLeft: getSecondsLeft(session.expiresAt),
         accessTokenSuffix: tokenSuffix(session.accessToken),
@@ -95,6 +72,10 @@ async function proxyRequest(
       return NextResponse.json({ message: "Session expired" }, { status: 401 });
     }
     headers.set("Authorization", `Bearer ${session.accessToken}`);
+  }
+
+  if (session.profileId) {
+    headers.set("X-Profile-Id", session.profileId);
   }
 
   const body =
@@ -113,7 +94,7 @@ async function proxyRequest(
   } catch (error) {
     logger.error("request:upstream-error", {
       method: req.method,
-      resolvedPath: resolved,
+
       target,
       error,
     });
@@ -122,7 +103,6 @@ async function proxyRequest(
 
   logProxy("request:upstream-response", {
     method: req.method,
-    resolvedPath: resolved,
     status: upstream.status,
     ok: upstream.ok,
     expiresAt: session.expiresAt ?? null,

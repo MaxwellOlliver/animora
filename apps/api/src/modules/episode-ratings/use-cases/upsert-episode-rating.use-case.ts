@@ -2,32 +2,30 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { EpisodesRepository } from '@/modules/admin/episodes/episodes.repository';
 
-import type { WatchHistory } from '../watch-history.entity';
-import { WatchHistoryRepository } from '../watch-history.repository';
+import type { EpisodeRating } from '../episode-rating.entity';
+import { EpisodeRatingsRepository } from '../episode-ratings.repository';
 
 @Injectable()
-export class UpsertWatchProgressUseCase {
+export class UpsertEpisodeRatingUseCase {
   constructor(
-    private readonly watchHistoryRepository: WatchHistoryRepository,
+    private readonly episodeRatingsRepository: EpisodeRatingsRepository,
     private readonly episodesRepository: EpisodesRepository,
   ) {}
 
   async execute(input: {
     profileId: string;
     episodeId: string;
-    positionSeconds: number;
-    status: 'watching' | 'finished';
-  }): Promise<WatchHistory> {
+    value: 'like' | 'dislike';
+  }): Promise<EpisodeRating> {
     const episode = await this.episodesRepository.findById(input.episodeId);
     if (!episode) {
       throw new NotFoundException('Episode not found');
     }
 
-    return this.watchHistoryRepository.upsert({
+    return this.episodeRatingsRepository.upsert({
       profileId: input.profileId,
       episodeId: input.episodeId,
-      positionSeconds: input.positionSeconds,
-      status: input.status,
+      value: input.value,
     });
   }
 }

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { ActiveProfileGuard } from '@/common/guards/active-profile.guard';
+
 import { AvatarsModule } from '../admin/avatars/avatars.module';
 import { ProfilesController } from './profiles.controller';
 import { ProfilesRepository } from './profiles.repository';
@@ -14,12 +16,13 @@ import { UpdateProfileUseCase } from './use-cases/update-profile.use-case';
   controllers: [ProfilesController],
   providers: [
     ProfilesRepository,
+    ActiveProfileGuard,
     CreateProfileUseCase,
     GetProfilesUseCase,
     GetProfileUseCase,
     UpdateProfileUseCase,
     DeleteProfileUseCase,
   ],
-  exports: [ProfilesRepository, CreateProfileUseCase],
+  exports: [ProfilesRepository, ActiveProfileGuard, CreateProfileUseCase],
 })
 export class ProfilesModule {}

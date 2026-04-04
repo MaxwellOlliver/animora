@@ -23,6 +23,9 @@ export async function api<T>(
 
   if (auth) {
     const session = await getSession();
+    if (session.profileId) {
+      headers.set("X-Profile-Id", session.profileId);
+    }
     if (session.accessToken) {
       await refreshIfNeeded(session);
       headers.set("Authorization", `Bearer ${session.accessToken}`);

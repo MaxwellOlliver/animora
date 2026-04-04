@@ -35,7 +35,7 @@ type CursorPaginatedResponse = {
 async function fetchContinueWatching(
   cursor?: string,
 ): Promise<CursorPaginatedResponse> {
-  const url = new URL("/api/proxy/profiles/@me/watch-history/continue", window.location.origin);
+  const url = new URL("/api/proxy/watch-history/continue", window.location.origin);
   if (cursor) url.searchParams.set("cursor", cursor);
 
   const response = await fetch(url);
