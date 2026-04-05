@@ -8,6 +8,7 @@ import { TrailerPlayer } from "./trailer-player";
 import type { WatchHistoryEpisode } from "../queries/fetch-continue-watching";
 import { buildMediaUrl } from "@/utils/media-utils";
 import { MEDIA_PURPOSE } from "@animora/contracts";
+import Link from "next/link";
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -34,7 +35,7 @@ export function EpisodeCard({ entry }: EpisodeCardProps) {
           <div className="aspect-video w-full overflow-clip">
             <TrailerPlayer
               src={null}
-              poster={thumbnailSrc ?? undefined}
+              banner={thumbnailSrc ?? undefined}
               alt={episode.title}
             />
           </div>
@@ -51,7 +52,11 @@ export function EpisodeCard({ entry }: EpisodeCardProps) {
                 <span>{formatDuration(episode.durationSeconds)}</span>
               )}
             </div>
-            <Button variant="primary" className="bg-secondary">
+            <Button
+              variant="primary"
+              className="bg-secondary"
+              render={<Link href={`/watch/${episode.id}`} scroll={false} />}
+            >
               <PlayIcon />
               watch
             </Button>
@@ -59,7 +64,10 @@ export function EpisodeCard({ entry }: EpisodeCardProps) {
         </div>
       }
     >
-      <div className="episode-card flex w-[clamp(180px,18vw,260px)] shrink-0 flex-col gap-2">
+      <Link
+        href={`/watch/${episode.id}`}
+        className="episode-card flex w-[clamp(180px,18vw,260px)] shrink-0 flex-col gap-2"
+      >
         {thumbnailSrc ? (
           <Image
             src={thumbnailSrc}
@@ -80,7 +88,7 @@ export function EpisodeCard({ entry }: EpisodeCardProps) {
             {episode.title}
           </h5>
         </div>
-      </div>
+      </Link>
     </CardPopover>
   );
 }

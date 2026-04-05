@@ -13,9 +13,7 @@ export type EpisodeWatchHistory = {
 async function fetchEpisodeWatchHistory(
   episodeId: string,
 ): Promise<EpisodeWatchHistory | null> {
-  const response = await fetch(
-    `/api/proxy/watch-history/episode/${episodeId}`,
-  );
+  const response = await fetch(`/api/proxy/watch-history/episode/${episodeId}`);
 
   if (!response.ok) {
     throw new Error(
@@ -30,4 +28,5 @@ export const buildFetchEpisodeWatchHistoryQueryOptions = (episodeId: string) =>
   queryOptions({
     queryKey: ["watch", "episode", episodeId, "history"],
     queryFn: () => fetchEpisodeWatchHistory(episodeId),
+    refetchOnWindowFocus: false,
   });

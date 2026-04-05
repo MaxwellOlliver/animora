@@ -54,7 +54,7 @@ export function CatalogSection({
   };
 
   return (
-    <div className="catalog-section relative z-10 flex flex-col gap-4 px-12 py-12 rounded-lg">
+    <div className="catalog-section relative z-10 flex flex-col gap-4 px-12 py-8 rounded-lg">
       <div className="flex w-full items-center">
         <h3 className="font-heading text-2xl leading-8 font-semibold">
           {title}

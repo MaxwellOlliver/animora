@@ -6,6 +6,7 @@ import { SidebarEpisodeCard } from "@/features/watch/components/sidebar-episode-
 import { WatchPartyChat } from "@/features/watch/components/watch-party-chat";
 import { WatchVideoPlayer } from "@/features/watch/components/watch-video-player";
 import { ApiError, SessionExpiredError } from "@/lib/api";
+import { ensureFreshSession } from "@/lib/ensure-fresh-session";
 import { fetchWatchEpisode } from "@/features/watch/queries/fetch-watch-episode";
 
 const MOCK_TIMESTAMP_ACTIONS = [
@@ -49,6 +50,7 @@ function formatDuration(seconds: number): string {
 
 export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
   const { episodeId } = await params;
+  await ensureFreshSession(`/watch/${episodeId}`);
   const payload = await getWatchRoomPayload(episodeId);
 
   if (
@@ -78,15 +80,19 @@ export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
           },
         ]}
       />
-      <div className="grid w-full max-w-307.5 grid-cols-12 gap-x-8 py-8">
+      <div className="grid w-full max-w-350 grid-cols-12 gap-x-8 py-8">
         <div className="col-span-8 flex flex-col gap-4 p-2.5">
           <EpisodeInfo
+            episodeId={episodeId}
             episodeNumber={payload.episode.number}
             title={payload.episode.title}
             seriesId={payload.episode.series.id}
             seriesName={payload.episode.series.name}
             description={payload.episode.description}
             releasedAt={formatReleaseDate(payload.episode.createdAt)}
+            likes={payload.rating.likes}
+            dislikes={payload.rating.dislikes}
+            myRating={payload.rating.myRating}
           />
           <div className="h-4" />
           <CommentsSection />
