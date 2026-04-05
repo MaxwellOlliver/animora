@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { ApiError, SessionExpiredError } from "@/lib/api";
+import { ensureFreshSession } from "@/lib/ensure-fresh-session";
 import { ProfileEditorScreen } from "@/features/profiles/components/profile-editor-screen";
 import { fetchProfile } from "@/features/profiles/queries/fetch-profiles";
 import { updateProfile } from "@/features/profiles/actions/update-profile";
@@ -13,6 +14,7 @@ export default async function ProfileEditPage({
   params,
 }: ProfileEditPageProps) {
   const { id } = await params;
+  await ensureFreshSession(`/profile-edit/${id}`);
   let profile;
 
   try {

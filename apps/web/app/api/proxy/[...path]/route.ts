@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@animora/logger";
 import { getSession } from "@/lib/session";
 import { refreshIfNeeded } from "@/lib/refresh-mutex";
+import { serverEnv } from "@/lib/server-env";
 
-const API_BASE_URL = process.env.API_URL ?? "http://localhost:8080/api";
+const API_BASE_URL = serverEnv.API_URL;
 const logger = getLogger().child({ scope: "api-proxy" });
 
 function tokenSuffix(token?: string): string | null {
@@ -52,7 +53,7 @@ async function proxyRequest(
 
   if (session.accessToken) {
     try {
-      await refreshIfNeeded(session, { persistSession: true });
+      await refreshIfNeeded(session);
       logProxy("request:auth-ready", {
         method: req.method,
         expiresAt: session.expiresAt ?? null,

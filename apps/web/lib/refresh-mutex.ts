@@ -4,9 +4,6 @@ import { getLogger } from "@animora/logger";
 import { decodeTokenExpiry, type SessionData } from "./session";
 
 type AuthResponse = { accessToken: string; refreshToken: string };
-type RefreshOptions = {
-  persistSession?: boolean;
-};
 
 const REFRESH_THRESHOLD_SECONDS = 120;
 
@@ -40,11 +37,9 @@ export function needsRefresh(session: IronSession<SessionData>): boolean {
 
 export async function refreshIfNeeded(
   session: IronSession<SessionData>,
-  options: RefreshOptions = {},
 ): Promise<void> {
   const secondsLeft = getSecondsLeft(session);
   const shouldRefresh = needsRefresh(session);
-  const persistSession = options.persistSession ?? false;
 
   logRefresh("check", {
     expiresAt: session.expiresAt ?? null,
@@ -57,16 +52,6 @@ export async function refreshIfNeeded(
   });
 
   if (!shouldRefresh) return;
-
-  if (!persistSession) {
-    logRefresh("skipped:read-only-session", {
-      expiresAt: session.expiresAt ?? null,
-      secondsLeft,
-      refreshTokenSuffix: tokenSuffix(session.refreshToken),
-      accessTokenSuffix: tokenSuffix(session.accessToken),
-    });
-    return;
-  }
 
   const key = sessionKey(session);
   if (!key) {

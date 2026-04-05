@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { SessionExpiredError } from "@/lib/api";
+import { ensureFreshSession } from "@/lib/ensure-fresh-session";
 import { fetchProfiles } from "@/features/profiles/queries/fetch-profiles";
 import { ProfileSelectionView } from "@/features/profiles/components/profile-selection-view";
 
 export default async function ProfileSelectionPage() {
+  await ensureFreshSession("/profile-selection");
   let profiles;
 
   try {

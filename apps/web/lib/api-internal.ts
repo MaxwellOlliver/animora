@@ -1,4 +1,6 @@
-const API_BASE_URL = process.env.API_URL ?? "http://localhost:8080/api";
+import { serverEnv } from "./server-env";
+
+const API_BASE_URL = serverEnv.API_URL;
 
 export class ApiError extends Error {
   constructor(

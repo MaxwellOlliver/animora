@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { serverEnv } from "@/lib/server-env";
 
 export async function GET(
   _req: NextRequest,
@@ -6,7 +7,7 @@ export async function GET(
 ) {
   const path = (await params).path.join("/");
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_S3_ENDPOINT}/${path}`);
+  const res = await fetch(`${serverEnv.NEXT_PUBLIC_S3_ENDPOINT}/${path}`);
 
   if (!res.ok) {
     return new NextResponse(null, { status: res.status });

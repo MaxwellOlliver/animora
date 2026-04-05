@@ -25,7 +25,6 @@ export async function updateProfile(
     await api(`/profiles/${profileId}`, {
       method: "PATCH",
       body: parsed.data,
-      persistSession: true,
     });
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {

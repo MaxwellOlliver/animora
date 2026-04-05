@@ -1,6 +1,8 @@
-import { getSession } from "./session";
-import { refreshIfNeeded } from "./refresh-mutex";
+import "server-only";
+
+import { headers } from "next/headers";
 import { ApiError } from "./api-internal";
+import { serverEnv } from "./server-env";
 
 export { ApiError } from "./api-internal";
 
@@ -10,52 +12,50 @@ export class SessionExpiredError extends Error {
     this.name = "SessionExpiredError";
   }
 }
-
-const API_BASE_URL = process.env.API_URL ?? "http://localhost:8080/api";
-
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
   auth?: boolean;
-  persistSession?: boolean;
 };
 
 export async function api<T>(
   path: string,
-  {
-    body,
-    auth = true,
-    persistSession = false,
-    headers: customHeaders,
-    ...init
-  }: RequestOptions = {},
+  { body, auth = true, headers: customHeaders, ...init }: RequestOptions = {},
 ): Promise<T> {
-  const headers = new Headers(customHeaders);
+  return fetchThroughProxy<T>(path, {
+    auth,
+    body,
+    headers: customHeaders,
+    ...init,
+  });
+}
+
+async function fetchThroughProxy<T>(
+  path: string,
+  { body, auth = true, headers: customHeaders, ...init }: RequestOptions,
+): Promise<T> {
+  const requestHeaders = await headers();
+  const proxyHeaders = new Headers(customHeaders);
+  const cookie = requestHeaders.get("cookie");
 
   if (body !== undefined) {
-    headers.set("Content-Type", "application/json");
+    proxyHeaders.set("Content-Type", "application/json");
   }
 
-  if (auth) {
-    const session = await getSession();
-    if (session.profileId) {
-      headers.set("X-Profile-Id", session.profileId);
-    }
-    if (session.accessToken) {
-      await refreshIfNeeded(session, { persistSession });
-      headers.set("Authorization", `Bearer ${session.accessToken}`);
-    }
+  if (cookie) {
+    proxyHeaders.set("Cookie", cookie);
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(buildProxyUrl(path), {
     ...init,
-    headers,
+    headers: proxyHeaders,
     body: body !== undefined ? JSON.stringify(body) : undefined,
+    cache: "no-store",
   });
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => null);
 
-    if (auth && !persistSession && response.status === 401) {
+    if (auth && response.status === 401) {
       throw new SessionExpiredError();
     }
 
@@ -65,4 +65,9 @@ export async function api<T>(
   if (response.status === 204) return undefined as T;
 
   return response.json() as Promise<T>;
+}
+
+function buildProxyUrl(path: string): string {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return new URL(`/api/proxy${normalizedPath}`, serverEnv.APP_URL).toString();
 }

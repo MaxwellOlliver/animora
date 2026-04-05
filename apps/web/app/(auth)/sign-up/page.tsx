@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signUp } from "@/features/auth/actions/sign-up";
 import type { ActionResult } from "@/lib/action";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api";
+import { env } from "@/lib/env";
 
 export default function SignUpPage() {
   const [state, action, pending] = useActionState<ActionResult, FormData>(
@@ -102,7 +101,7 @@ export default function SignUpPage() {
         {/* Google sign up */}
         <div className="flex justify-center">
           <a
-            href={`${API_URL}/auth/google`}
+            href={`${env.NEXT_PUBLIC_API_URL}/auth/google`}
             className="flex h-10 items-center gap-2 rounded-md border border-[#3a3a3a] bg-[#131314] px-3 py-2 transition-opacity hover:opacity-90"
           >
             <Image

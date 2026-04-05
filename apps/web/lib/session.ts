@@ -1,5 +1,6 @@
 import { getIronSession, type IronSession } from "iron-session";
 import { cookies } from "next/headers";
+import { serverEnv } from "./server-env";
 
 export type SessionData = {
   accessToken: string;
@@ -9,11 +10,11 @@ export type SessionData = {
 };
 
 export const SESSION_OPTIONS = {
-  password: process.env.SESSION_SECRET!,
+  password: serverEnv.SESSION_SECRET,
   cookieName: "animora_session",
   cookieOptions: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: serverEnv.NODE_ENV === "production",
     sameSite: "lax" as const,
     path: "/",
   },
