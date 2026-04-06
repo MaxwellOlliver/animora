@@ -4,13 +4,10 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { useMediaRemote } from "@vidstack/react";
-import { getSnapshot } from "./player-store";
 
 interface PlayerContextValue {
   settingsOpen: boolean;
@@ -23,15 +20,6 @@ const playerContext = createContext<PlayerContextValue | null>(null);
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const remote = useMediaRemote();
-  const initialized = useRef(false);
-
-  useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-    const stored = getSnapshot();
-    remote.changeVolume(stored.volume);
-    if (stored.muted) remote.mute();
-  }, [remote]);
 
   const toggleSettings = useCallback(() => {
     setSettingsOpen((prev) => {

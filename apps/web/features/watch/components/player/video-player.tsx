@@ -8,7 +8,6 @@ import {
   type MediaPlayerInstance,
   type MediaProviderAdapter,
 } from "@vidstack/react";
-import "@vidstack/react/player/styles/base.css";
 import { PlayerControls } from "./controls";
 import { PlayerProgressBar } from "./progress-bar";
 import { PlayerControlsVisibility } from "./controls-visibility";
@@ -18,10 +17,12 @@ import { PlayerLoader } from "./loader";
 import { SettingsPopover } from "./settings";
 import { PlayerProvider } from "./player-context";
 import { TapPanels } from "./tap-panels";
+import { usePlayerSettings } from "./player-store";
 
 type VideoPlayerProps = {
   src: string;
   title?: string;
+  autoPlay?: boolean;
   initialTimeSeconds?: number;
   children?: React.ReactNode;
   onPrevEpisode?: () => void;
@@ -33,6 +34,7 @@ type VideoPlayerProps = {
 export function VideoPlayer({
   src,
   title,
+  autoPlay = false,
   initialTimeSeconds = 0,
   children,
   onPrevEpisode,
@@ -42,6 +44,8 @@ export function VideoPlayer({
 }: VideoPlayerProps) {
   const playerRef = useRef<MediaPlayerInstance>(null);
   const hasAppliedInitialTimeRef = useRef(false);
+  const volume = usePlayerSettings((s) => s.volume);
+  const muted = usePlayerSettings((s) => s.muted);
 
   function onProviderChange(provider: MediaProviderAdapter | null) {
     if (isHLSProvider(provider)) {
@@ -61,7 +65,11 @@ export function VideoPlayer({
   useEffect(() => {
     const player = playerRef.current;
 
-    if (!player || hasAppliedInitialTimeRef.current || initialTimeSeconds <= 0) {
+    if (
+      !player ||
+      hasAppliedInitialTimeRef.current ||
+      initialTimeSeconds <= 0
+    ) {
       return;
     }
 
@@ -73,6 +81,9 @@ export function VideoPlayer({
     <MediaPlayer
       ref={playerRef}
       src={src}
+      volume={volume}
+      muted={muted}
+      autoPlay={autoPlay}
       crossOrigin
       playsInline
       onProviderChange={onProviderChange}

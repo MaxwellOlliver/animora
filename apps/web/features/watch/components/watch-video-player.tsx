@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useMediaRemote, useMediaState } from "@vidstack/react";
+import { useMediaState } from "@vidstack/react";
 import { Loader2 } from "lucide-react";
 
 import { VideoPlayer } from "@/features/watch/components/player/video-player";
@@ -49,24 +49,6 @@ function WatchAutoplay({
   return null;
 }
 
-function WatchStartPlayback() {
-  const canPlay = useMediaState("canPlay");
-  const paused = useMediaState("paused");
-  const remote = useMediaRemote();
-  const hasRequestedPlayRef = useRef(false);
-
-  useEffect(() => {
-    if (!canPlay || !paused || hasRequestedPlayRef.current) {
-      return;
-    }
-
-    hasRequestedPlayRef.current = true;
-    remote.play();
-  }, [canPlay, paused, remote]);
-
-  return null;
-}
-
 export function WatchVideoPlayer({
   episodeId,
   src,
@@ -105,6 +87,7 @@ export function WatchVideoPlayer({
       key={`${episodeId}:${initialTimeSeconds}`}
       src={src}
       title={title}
+      autoPlay
       initialTimeSeconds={initialTimeSeconds}
       onNextEpisode={
         nextEpisodeId ? () => navigateToEpisode(nextEpisodeId) : undefined
@@ -113,7 +96,6 @@ export function WatchVideoPlayer({
       overlayMessages={overlayMessages}
     >
       <WatchHistorySync episodeId={episodeId} />
-      <WatchStartPlayback />
       <WatchAutoplay
         nextEpisodeId={nextEpisodeId}
         onNavigate={navigateToEpisode}
