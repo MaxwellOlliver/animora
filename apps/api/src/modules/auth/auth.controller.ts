@@ -105,13 +105,42 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Refresh access token' })
-  async refresh(@Req() req: { user: JwtRefreshPayload }) {
-    this.logger.info('request-accepted', {
-      jtiSuffix: this.getSuffix(req.user.jti),
+  async refresh(
+    @Req()
+    req: {
+      user: JwtRefreshPayload;
+      headers: { authorization?: string };
+    },
+  ) {
+    this.logger.info('request-received', {
       userId: req.user.sub,
+      jtiSuffix: this.getSuffix(req.user.jti),
     });
 
-    return this.refreshTokenUseCase.execute(req.user.sub, req.user.jti);
+    try {
+      const { accessToken } = await this.refreshTokenUseCase.execute(
+        req.user.sub,
+        req.user.jti,
+      );
+
+      const refreshToken =
+        req.headers.authorization?.replace('Bearer ', '') ?? '';
+
+      this.logger.info('request-completed', {
+        userId: req.user.sub,
+        jtiSuffix: this.getSuffix(req.user.jti),
+        newAccessTokenSuffix: this.getSuffix(accessToken),
+      });
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      this.logger.error('request-failed', {
+        userId: req.user.sub,
+        jtiSuffix: this.getSuffix(req.user.jti),
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
   }
 
   @Post('logout')
