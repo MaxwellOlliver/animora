@@ -1,12 +1,13 @@
 import { Navbar } from "@/features/catalog/components/navbar";
-import { SeriesDetailModal } from "@/features/catalog/components/series-detail-modal";
 
 const NAVBAR_HEIGHT = 80;
 
 export default function CatalogLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <div
@@ -19,7 +20,7 @@ export default function CatalogLayout({
     >
       <Navbar />
       <div className="flex h-full w-full flex-col gap-4">{children}</div>
-      <SeriesDetailModal />
+      {modal}
     </div>
   );
 }

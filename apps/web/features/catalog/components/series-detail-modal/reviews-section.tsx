@@ -8,7 +8,6 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -17,9 +16,11 @@ import { buildFetchSeriesReviewsQueryOptions } from "../../queries/fetch-series-
 import { buildFetchMyReviewQueryOptions } from "../../queries/fetch-my-review";
 import { ReviewCard } from "./review-card";
 
-export function ReviewsSection() {
-  const searchParams = useSearchParams();
-  const seriesId = searchParams.get("s");
+interface ReviewsSectionProps {
+  seriesId: string;
+}
+
+export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
   const queryClient = useQueryClient();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -27,20 +28,16 @@ export function ReviewsSection() {
   const [hoveredStar, setHoveredStar] = useState(0);
   const [text, setText] = useState("");
 
-  const { data: myReview } = useQuery({
-    ...buildFetchMyReviewQueryOptions(seriesId!),
-    enabled: !!seriesId,
-  });
+  const { data: myReview } = useQuery(
+    buildFetchMyReviewQueryOptions(seriesId),
+  );
 
   const {
     data: reviewsPages,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery({
-    ...buildFetchSeriesReviewsQueryOptions(seriesId!),
-    enabled: !!seriesId,
-  });
+  } = useInfiniteQuery(buildFetchSeriesReviewsQueryOptions(seriesId));
 
   const reviews = reviewsPages?.pages.flatMap((p) => p.items) ?? [];
 

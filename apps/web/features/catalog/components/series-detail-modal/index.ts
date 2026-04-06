@@ -1,4 +1,4 @@
-export { SeriesDetailModal } from "./series-detail-modal";
+export { SeriesDetailModal, SeriesDetailContent } from "./series-detail-modal";
 export { EpisodeRow } from "./episode-row";
 export { EpisodesSection } from "./episodes-section";
 export { ReviewCard } from "./review-card";

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog";
 import { useEffect, useState } from "react";
 import {
@@ -34,34 +34,27 @@ function formatCount(n: number): string {
   return String(n);
 }
 
-export function SeriesDetailModal() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const seriesId = searchParams.get("s");
-  const open = !!seriesId;
+interface SeriesDetailContentProps {
+  seriesId: string;
+}
 
+export function SeriesDetailContent({ seriesId }: SeriesDetailContentProps) {
   const [muted, setMuted] = useState(true);
 
-  const { data: series, isLoading: isSeriesLoading } = useQuery({
-    ...buildFetchSeriesQueryOptions(seriesId!),
-    enabled: open,
-  });
+  const { data: series, isLoading: isSeriesLoading } = useQuery(
+    buildFetchSeriesQueryOptions(seriesId),
+  );
 
-  const { data: playlists, isLoading: isPlaylistsLoading } = useQuery({
-    ...buildFetchSeriesPlaylistsQueryOptions(seriesId!),
-    enabled: open,
-  });
+  const { data: playlists, isLoading: isPlaylistsLoading } = useQuery(
+    buildFetchSeriesPlaylistsQueryOptions(seriesId),
+  );
 
-  const { data: trailers, isLoading: isTrailersLoading } = useQuery({
-    ...buildFetchSeriesTrailersQueryOptions(seriesId!),
-    enabled: open,
-  });
+  const { data: trailers, isLoading: isTrailersLoading } = useQuery(
+    buildFetchSeriesTrailersQueryOptions(seriesId),
+  );
 
   const { data: featuredTrailer, isLoading: isFeaturedTrailerLoading } =
-    useQuery({
-      ...buildFetchFeaturedTrailerQueryOptions(seriesId!),
-      enabled: open,
-    });
+    useQuery(buildFetchFeaturedTrailerQueryOptions(seriesId));
 
   const isLoading =
     isSeriesLoading ||
@@ -89,19 +82,95 @@ export function SeriesDetailModal() {
       ]
     : [];
 
-  function handleClose() {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("s");
-    const query = params.toString();
-    router.replace(query ? `?${query}` : window.location.pathname, {
-      scroll: false,
-    });
+  if (isLoading) {
+    return <SeriesDetailSkeleton />;
   }
 
+  return (
+    <div className="relative w-full max-w-4xl rounded-xl bg-card shadow-2xl">
+      <div className="relative">
+        <div className="aspect-video w-full overflow-clip rounded-t-xl">
+          <TrailerPlayer
+            src={featuredTrailerSrc}
+            banner={bannerUrl}
+            alt={series?.name ?? ""}
+            muted={muted}
+            onMutedChange={setMuted}
+          />
+        </div>
+        <div className="pointer-events-none aspect-video absolute inset-0 rounded-t-xl bg-linear-to-t from-card from-0% via-card/80 via-35% to-transparent to-100%" />
+        <div className="absolute top-3 right-3 flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="rounded-full bg-black/60 hover:bg-black/80"
+            onClick={() => setMuted(!muted)}
+          >
+            {muted ? (
+              <VolumeOffIcon className="size-4" />
+            ) : (
+              <Volume2Icon className="size-4" />
+            )}
+          </Button>
+        </div>
+        <div className="relative z-10 -mt-64 flex flex-col gap-4 px-6 pb-6">
+          {logo && (
+            <Image
+              src={buildMediaUrl(logo.media.purpose, logo.media.key)}
+              alt={series?.name ?? ""}
+              width={240}
+              height={120}
+              className="h-24 w-auto object-contain object-left drop-shadow-lg"
+              unoptimized
+            />
+          )}
+
+          <StarRating
+            rating={series?.rating.average ?? 0}
+            count={formatCount(series?.rating.count ?? 0)}
+          />
+          <div className="flex items-center gap-3">
+            <Button variant="primary" className="gap-2 px-6">
+              <PlayIcon className="size-4" />
+              Continue watching
+            </Button>
+            <Button variant="pale" size="icon-md">
+              <BookmarkIcon className="size-4" />
+            </Button>
+          </div>
+
+          {series && (
+            <SeriesDescription
+              description={series.synopsis}
+              studios={studios}
+              genres={series.genres.map((g) => g.name)}
+              contentClassification={series.contentClassification}
+            />
+          )}
+        </div>
+      </div>
+      <div className="flex flex-col gap-6 px-6 pb-6">
+        <EpisodesSection playlists={playlists ?? []} />
+        <TrailersSection trailers={trailers ?? []} />
+        <ReviewsSection seriesId={seriesId} />
+      </div>
+    </div>
+  );
+}
+
+interface SeriesDetailModalProps {
+  seriesId: string;
+  open: boolean;
+}
+
+export function SeriesDetailModal({
+  seriesId,
+  open,
+}: SeriesDetailModalProps) {
+  const router = useRouter();
+
   useEffect(() => {
-    if (!open) {
-      return;
-    }
+    if (!open) return;
 
     const body = document.body;
     const wasAlreadyLocked = body.classList.contains("overflow-hidden");
@@ -116,6 +185,10 @@ export function SeriesDetailModal() {
       }
     };
   }, [open]);
+
+  function handleClose() {
+    router.back();
+  }
 
   return (
     <DialogPrimitive.Root
@@ -132,89 +205,22 @@ export function SeriesDetailModal() {
             if (e.target === e.currentTarget) handleClose();
           }}
         >
-          {isLoading ? (
-            <SeriesDetailSkeleton />
-          ) : (
-            <div className="relative w-full max-w-4xl rounded-xl bg-card shadow-2xl">
-              <div className="relative">
-                <div className="aspect-video w-full overflow-clip rounded-t-xl">
-                  <TrailerPlayer
-                    src={featuredTrailerSrc}
-                    banner={bannerUrl}
-                    alt={series?.name ?? ""}
-                    muted={muted}
-                    onMutedChange={setMuted}
-                  />
-                </div>
-                <div className="pointer-events-none aspect-video absolute inset-0 rounded-t-xl bg-linear-to-t from-card from-0% via-card/80 via-35% to-transparent to-100%" />
-                <div className="absolute top-3 right-3 flex items-center gap-2">
+          <div className="relative">
+            <div className="absolute top-3 right-3 z-20">
+              <DialogPrimitive.Close
+                render={
                   <Button
                     variant="ghost"
                     size="icon-sm"
                     className="rounded-full bg-black/60 hover:bg-black/80"
-                    onClick={() => setMuted(!muted)}
-                  >
-                    {muted ? (
-                      <VolumeOffIcon className="size-4" />
-                    ) : (
-                      <Volume2Icon className="size-4" />
-                    )}
-                  </Button>
-                  <DialogPrimitive.Close
-                    render={
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        className="rounded-full bg-black/60 hover:bg-black/80"
-                      />
-                    }
-                  >
-                    <XIcon className="size-4" />
-                  </DialogPrimitive.Close>
-                </div>
-                <div className="relative z-10 -mt-64 flex flex-col gap-4 px-6 pb-6">
-                  {logo && (
-                    <Image
-                      src={buildMediaUrl(logo.media.purpose, logo.media.key)}
-                      alt={series?.name ?? ""}
-                      width={240}
-                      height={120}
-                      className="h-24 w-auto object-contain object-left drop-shadow-lg"
-                      unoptimized
-                    />
-                  )}
-
-                  <StarRating
-                    rating={series?.rating.average ?? 0}
-                    count={formatCount(series?.rating.count ?? 0)}
                   />
-                  <div className="flex items-center gap-3">
-                    <Button variant="primary" className="gap-2 px-6">
-                      <PlayIcon className="size-4" />
-                      Continue watching
-                    </Button>
-                    <Button variant="pale" size="icon-md">
-                      <BookmarkIcon className="size-4" />
-                    </Button>
-                  </div>
-
-                  {series && (
-                    <SeriesDescription
-                      description={series.synopsis}
-                      studios={studios}
-                      genres={series.genres.map((g) => g.name)}
-                      contentClassification={series.contentClassification}
-                    />
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col gap-6 px-6 pb-6">
-                <EpisodesSection playlists={playlists ?? []} />
-                <TrailersSection trailers={trailers ?? []} />
-                <ReviewsSection />
-              </div>
+                }
+              >
+                <XIcon className="size-4" />
+              </DialogPrimitive.Close>
             </div>
-          )}
+            <SeriesDetailContent seriesId={seriesId} />
+          </div>
         </DialogPrimitive.Popup>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>

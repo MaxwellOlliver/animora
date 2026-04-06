@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import {
   BookmarkIcon,
@@ -24,7 +23,6 @@ interface SeriesCardProps {
 }
 
 export function SeriesCard({ series }: SeriesCardProps) {
-  const searchParams = useSearchParams();
   const [muted, setMuted] = useState(true);
   const [shouldFetchTrailer, setShouldFetchTrailer] = useState(false);
 
@@ -45,11 +43,7 @@ export function SeriesCard({ series }: SeriesCardProps) {
   const banner = series.assets.find((a) => a.purpose === "banner");
   const cardImage = poster ?? banner;
 
-  function buildSeriesHref(id: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("s", id);
-    return `?${params.toString()}`;
-  }
+  const seriesHref = `/series/${series.id}`;
 
   return (
     <CardPopover
@@ -101,7 +95,7 @@ export function SeriesCard({ series }: SeriesCardProps) {
                 variant="pale"
                 size="icon-md"
                 render={
-                  <Link href={buildSeriesHref(series.id)} scroll={false} />
+                  <Link href={seriesHref} scroll={false} />
                 }
               >
                 <InfoIcon />
@@ -115,7 +109,7 @@ export function SeriesCard({ series }: SeriesCardProps) {
       }
     >
       <Link
-        href={buildSeriesHref(series.id)}
+        href={seriesHref}
         scroll={false}
         className="series-card outline-none flex w-[clamp(150px,14vw,220px)] shrink-0 flex-col gap-2 rounded-xl p-2 transition-[background-color] focus-visible:bg-white/5 hover:bg-white/5"
       >

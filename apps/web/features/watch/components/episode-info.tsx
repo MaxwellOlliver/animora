@@ -90,7 +90,7 @@ export function EpisodeInfo({
 
       <div className="flex flex-col gap-4">
         <Link
-          href={`/home?s=${seriesId}`}
+          href={`/series/${seriesId}`}
           className="font-heading text-base w-fit font-semibold text-secondary hover:underline"
         >
           {seriesName}
