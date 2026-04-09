@@ -6,9 +6,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { buildMediaUrl } from "@/utils/media-utils";
 import { commentSchema, type CommentForm } from "../schemas/comment";
 
-export function CommentInput() {
+interface CommentInputProps {
+  avatar?: { key: string; purpose: string } | null;
+  onSubmit: (data: CommentForm) => void;
+  isPending?: boolean;
+  placeholder?: string;
+  compact?: boolean;
+}
+
+export function CommentInput({
+  avatar,
+  onSubmit,
+  isPending,
+  placeholder = "Your comment",
+  compact,
+}: CommentInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { register, handleSubmit, control, watch, reset } =
@@ -35,22 +50,34 @@ export function CommentInput() {
     [formOnChange],
   );
 
-  const onSubmit = (data: CommentForm) => {
-    console.log(data);
+  const handleFormSubmit = (data: CommentForm) => {
+    onSubmit(data);
     reset();
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
   };
 
+  const avatarSrc = avatar
+    ? buildMediaUrl(
+        avatar.purpose as Parameters<typeof buildMediaUrl>[0],
+        avatar.key,
+      )
+    : "/images/avatar-placeholder.svg";
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="flex flex-col gap-3"
+    >
       <div className="flex items-start gap-3">
-        <Avatar
-          src="/images/avatar-placeholder.svg"
-          alt="You"
-          className="size-10 shrink-0 rounded-lg"
-        />
+        {!compact && (
+          <Avatar
+            src={avatarSrc}
+            alt="You"
+            className="size-10 shrink-0 rounded-lg"
+          />
+        )}
         <div className="flex min-h-10 flex-1 items-center overflow-hidden rounded-md border border-border bg-input px-2.5 py-2">
           <textarea
             ref={(el) => {
@@ -60,7 +87,7 @@ export function CommentInput() {
               ).current = el;
             }}
             rows={1}
-            placeholder="Your comment"
+            placeholder={placeholder}
             onChange={handleTextChange}
             className="w-full resize-none bg-transparent text-sm leading-5 text-foreground outline-none placeholder:text-placeholder"
             {...textRegister}
@@ -68,22 +95,27 @@ export function CommentInput() {
         </div>
         <Button
           type="submit"
-          disabled={!text.trim()}
+          disabled={!text.trim() || isPending}
           className="disabled:opacity-50"
         >
-          comment
+          {isPending ? "..." : "comment"}
         </Button>
       </div>
-      <Controller
-        control={control}
-        name="spoiler"
-        render={({ field }) => (
-          <label className="flex items-center gap-2 text-sm text-foreground-muted ml-13">
-            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-            Mark as spoiler
-          </label>
-        )}
-      />
+      {!compact && (
+        <Controller
+          control={control}
+          name="spoiler"
+          render={({ field }) => (
+            <label className="ml-13 flex items-center gap-2 text-sm text-foreground-muted">
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+              Mark as spoiler
+            </label>
+          )}
+        />
+      )}
     </form>
   );
 }

@@ -7,6 +7,8 @@ import { WatchPartyChat } from "@/features/watch/components/watch-party-chat";
 import { WatchVideoPlayer } from "@/features/watch/components/watch-video-player";
 import { ApiError, SessionExpiredError } from "@/lib/api";
 import { ensureFreshSession } from "@/lib/ensure-fresh-session";
+import { getSession } from "@/lib/session";
+import { fetchProfile } from "@/features/profiles/queries/fetch-profiles";
 import { fetchWatchEpisode } from "@/features/watch/queries/fetch-watch-episode";
 
 const MOCK_TIMESTAMP_ACTIONS = [
@@ -51,7 +53,14 @@ function formatDuration(seconds: number): string {
 export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
   const { episodeId } = await params;
   await ensureFreshSession(`/watch/${episodeId}`);
-  const payload = await getWatchRoomPayload(episodeId);
+  const [payload, session] = await Promise.all([
+    getWatchRoomPayload(episodeId),
+    getSession(),
+  ]);
+  const profile = session.profileId
+    ? await fetchProfile(session.profileId).catch(() => null)
+    : null;
+  const currentProfileAvatar = profile?.avatar?.picture ?? null;
 
   if (
     !payload.video ||
@@ -95,7 +104,10 @@ export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
             myRating={payload.rating.myRating}
           />
           <div className="h-4" />
-          <CommentsSection />
+          <CommentsSection
+            episodeId={episodeId}
+            currentProfileAvatar={currentProfileAvatar}
+          />
         </div>
         <div className="col-span-4 flex flex-col gap-4">
           <WatchPartyChat />
