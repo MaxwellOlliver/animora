@@ -1,0 +1,1 @@
+ALTER TABLE "episode_comments" ADD COLUMN "spoiler" boolean DEFAULT false NOT NULL;

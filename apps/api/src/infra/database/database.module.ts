@@ -18,6 +18,7 @@ import * as videoSchema from '@/modules/admin/videos/video.entity';
 import * as authSchema from '@/modules/auth/refresh-token.entity';
 import * as profileSchema from '@/modules/profiles/profile.entity';
 import * as userSchema from '@/modules/users/user.entity';
+import * as episodeCommentSchema from '@/modules/episode-comments/episode-comment.entity';
 import * as watchHistorySchema from '@/modules/watch-history/watch-history.entity';
 
 const schema = {
@@ -35,6 +36,7 @@ const schema = {
   ...videoSchema,
   ...uploadSchema,
   ...uploadChunkSchema,
+  ...episodeCommentSchema,
   ...watchHistorySchema,
 };
 
