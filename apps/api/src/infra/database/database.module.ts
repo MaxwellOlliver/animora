@@ -18,7 +18,8 @@ import * as videoSchema from '@/modules/admin/videos/video.entity';
 import * as authSchema from '@/modules/auth/refresh-token.entity';
 import * as profileSchema from '@/modules/profiles/profile.entity';
 import * as userSchema from '@/modules/users/user.entity';
-import * as episodeCommentSchema from '@/modules/episode-comments/episode-comment.entity';
+import * as episodeCommentSchema from '@/modules/episode-comments/entities/episode-comment.entity';
+import * as episodeCommentReactionSchema from '@/modules/episode-comments/entities/episode-comment-reaction.entity';
 import * as watchHistorySchema from '@/modules/watch-history/watch-history.entity';
 
 const schema = {
@@ -37,6 +38,7 @@ const schema = {
   ...uploadSchema,
   ...uploadChunkSchema,
   ...episodeCommentSchema,
+  ...episodeCommentReactionSchema,
   ...watchHistorySchema,
 };
 

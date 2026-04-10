@@ -8,8 +8,8 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-import { episodes } from '../admin/episodes/episode.entity';
-import { profiles } from '../profiles/profile.entity';
+import { episodes } from '@/modules/admin/episodes/episode.entity';
+import { profiles } from '@/modules/profiles/profile.entity';
 
 export const episodeComments = pgTable(
   'episode_comments',

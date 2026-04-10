@@ -1,14 +1,12 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
+import { EpisodeCommentReactionsRepository } from '../repositories/episode-comment-reactions.repository';
 import { EpisodeCommentsRepository } from '../repositories/episode-comments.repository';
 
 @Injectable()
-export class DeleteEpisodeCommentUseCase {
+export class DeleteCommentReactionUseCase {
   constructor(
+    private readonly reactionsRepository: EpisodeCommentReactionsRepository,
     private readonly commentsRepository: EpisodeCommentsRepository,
   ) {}
 
@@ -20,10 +18,7 @@ export class DeleteEpisodeCommentUseCase {
     if (!comment) {
       throw new NotFoundException('Comment not found');
     }
-    if (comment.profileId !== input.profileId) {
-      throw new ForbiddenException('You can only delete your own comments');
-    }
 
-    await this.commentsRepository.delete(input.commentId);
+    await this.reactionsRepository.delete(input.profileId, input.commentId);
   }
 }

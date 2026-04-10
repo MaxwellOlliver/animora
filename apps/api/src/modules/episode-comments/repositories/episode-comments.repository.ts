@@ -16,7 +16,7 @@ import {
   type EpisodeComment,
   episodeComments,
   type NewEpisodeComment,
-} from './episode-comment.entity';
+} from '../entities/episode-comment.entity';
 
 export type EpisodeCommentWithProfile = EpisodeComment & {
   profile: {
@@ -24,6 +24,9 @@ export type EpisodeCommentWithProfile = EpisodeComment & {
     name: string;
     avatar: { key: string; purpose: string } | null;
   };
+  likes: number;
+  dislikes: number;
+  myReaction: 'like' | 'dislike' | null;
 };
 
 export type TopLevelComment = EpisodeCommentWithProfile & {
@@ -59,6 +62,14 @@ export class EpisodeCommentsRepository {
     await this.db.delete(episodeComments).where(eq(episodeComments.id, id));
   }
 
+  async countByEpisode(episodeId: string): Promise<number> {
+    const rows = await this.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(episodeComments)
+      .where(eq(episodeComments.episodeId, episodeId));
+    return rows[0]?.count ?? 0;
+  }
+
   async findById(id: string): Promise<EpisodeComment | undefined> {
     const rows = await this.db
       .select()
@@ -70,6 +81,7 @@ export class EpisodeCommentsRepository {
   async findByEpisodeCursor(
     episodeId: string,
     { cursor, limit = 20 }: CursorPaginatedRequest,
+    viewerProfileId?: string,
   ): Promise<CursorPaginatedResponse<TopLevelComment>> {
     const baseCondition = and(
       eq(episodeComments.episodeId, episodeId),
@@ -84,6 +96,25 @@ export class EpisodeCommentsRepository {
       WHERE ec.parent_id = ${episodeComments.id}
     )`.as('reply_count');
 
+    const likesSql = sql<number>`(
+      SELECT count(*)::int FROM episode_comment_reactions ecr
+      WHERE ecr.comment_id = ${episodeComments.id} AND ecr.value = 'like'
+    )`.as('likes');
+
+    const dislikesSql = sql<number>`(
+      SELECT count(*)::int FROM episode_comment_reactions ecr
+      WHERE ecr.comment_id = ${episodeComments.id} AND ecr.value = 'dislike'
+    )`.as('dislikes');
+
+    const myReactionSql = viewerProfileId
+      ? sql<'like' | 'dislike' | null>`(
+          SELECT ecr.value FROM episode_comment_reactions ecr
+          WHERE ecr.comment_id = ${episodeComments.id}
+            AND ecr.profile_id = ${viewerProfileId}
+          LIMIT 1
+        )`.as('my_reaction')
+      : sql<null>`NULL::episode_comment_reaction_value`.as('my_reaction');
+
     const rows = await this.db
       .select({
         comment: episodeComments,
@@ -92,6 +123,9 @@ export class EpisodeCommentsRepository {
         avatarKey: media.key,
         avatarPurpose: media.purpose,
         replyCount: replyCountSql,
+        likes: likesSql,
+        dislikes: dislikesSql,
+        myReaction: myReactionSql,
       })
       .from(episodeComments)
       .innerJoin(profiles, eq(episodeComments.profileId, profiles.id))
@@ -116,6 +150,9 @@ export class EpisodeCommentsRepository {
               : null,
         },
         replyCount: row.replyCount,
+        likes: row.likes ?? 0,
+        dislikes: row.dislikes ?? 0,
+        myReaction: row.myReaction ?? null,
       })),
       nextCursor: hasNextPage
         ? (items[items.length - 1]?.comment.createdAt.toISOString() ?? null)
@@ -126,6 +163,7 @@ export class EpisodeCommentsRepository {
   async findRepliesCursor(
     parentId: string,
     { cursor, limit = 20 }: CursorPaginatedRequest,
+    viewerProfileId?: string,
   ): Promise<CursorPaginatedResponse<ReplyComment>> {
     const baseCondition = eq(episodeComments.parentId, parentId);
     const conditions = cursor
@@ -134,6 +172,25 @@ export class EpisodeCommentsRepository {
 
     const replyToComment = alias(episodeComments, 'reply_to_comment');
     const replyToProfile = alias(profiles, 'reply_to_profile');
+
+    const likesSql = sql<number>`(
+      SELECT count(*)::int FROM episode_comment_reactions ecr
+      WHERE ecr.comment_id = ${episodeComments.id} AND ecr.value = 'like'
+    )`.as('likes');
+
+    const dislikesSql = sql<number>`(
+      SELECT count(*)::int FROM episode_comment_reactions ecr
+      WHERE ecr.comment_id = ${episodeComments.id} AND ecr.value = 'dislike'
+    )`.as('dislikes');
+
+    const myReactionSql = viewerProfileId
+      ? sql<'like' | 'dislike' | null>`(
+          SELECT ecr.value FROM episode_comment_reactions ecr
+          WHERE ecr.comment_id = ${episodeComments.id}
+            AND ecr.profile_id = ${viewerProfileId}
+          LIMIT 1
+        )`.as('my_reaction')
+      : sql<null>`NULL::episode_comment_reaction_value`.as('my_reaction');
 
     const rows = await this.db
       .select({
@@ -144,6 +201,9 @@ export class EpisodeCommentsRepository {
         avatarPurpose: media.purpose,
         replyToId: replyToComment.id,
         replyToProfileName: replyToProfile.name,
+        likes: likesSql,
+        dislikes: dislikesSql,
+        myReaction: myReactionSql,
       })
       .from(episodeComments)
       .innerJoin(profiles, eq(episodeComments.profileId, profiles.id))
@@ -176,6 +236,9 @@ export class EpisodeCommentsRepository {
           row.replyToId && row.replyToProfileName
             ? { id: row.replyToId, profileName: row.replyToProfileName }
             : null,
+        likes: row.likes ?? 0,
+        dislikes: row.dislikes ?? 0,
+        myReaction: row.myReaction ?? null,
       })),
       nextCursor: hasNextPage
         ? (items[items.length - 1]?.comment.createdAt.toISOString() ?? null)

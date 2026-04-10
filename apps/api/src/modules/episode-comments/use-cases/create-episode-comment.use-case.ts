@@ -6,8 +6,8 @@ import {
 
 import { EpisodesRepository } from '@/modules/admin/episodes/episodes.repository';
 
-import type { EpisodeComment } from '../episode-comment.entity';
-import { EpisodeCommentsRepository } from '../episode-comments.repository';
+import type { EpisodeComment } from '../entities/episode-comment.entity';
+import { EpisodeCommentsRepository } from '../repositories/episode-comments.repository';
 
 @Injectable()
 export class CreateEpisodeCommentUseCase {
