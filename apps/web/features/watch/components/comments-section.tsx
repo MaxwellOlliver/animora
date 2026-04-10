@@ -3,12 +3,17 @@
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 
-import { CommentInput } from "./comment-input";
 import { CommentCard } from "./comment-card";
-import { buildFetchEpisodeCommentsQueryOptions } from "../queries/fetch-episode-comments";
+import { CommentCardSkeleton } from "./comment-card-skeleton";
+import { CommentInput } from "./comment-input";
+import {
+  buildFetchEpisodeCommentCountQueryOptions,
+  buildFetchEpisodeCommentsQueryOptions,
+} from "../queries/fetch-episode-comments";
 import type { CommentForm } from "../schemas/comment";
 
 interface CommentsSectionProps {
@@ -27,9 +32,15 @@ export function CommentsSection({
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isPending: isLoadingComments,
   } = useInfiniteQuery(buildFetchEpisodeCommentsQueryOptions(episodeId));
 
+  const { data: commentCount } = useQuery(
+    buildFetchEpisodeCommentCountQueryOptions(episodeId),
+  );
+
   const comments = commentsPages?.pages.flatMap((p) => p.items) ?? [];
+  const total = commentCount?.total ?? 0;
 
   const createMutation = useMutation({
     mutationFn: async (data: CommentForm) => {
@@ -53,7 +64,9 @@ export function CommentsSection({
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="font-heading text-xl font-medium leading-7">Comments</h3>
+      <h3 className="font-heading text-xl font-medium leading-7">
+        {total} comments
+      </h3>
 
       <CommentInput
         avatar={currentProfileAvatar}
@@ -62,29 +75,39 @@ export function CommentsSection({
       />
 
       <div className="flex flex-col gap-4 pt-6">
-        {comments.map((comment) => (
-          <CommentCard
-            key={comment.id}
-            comment={comment}
-            episodeId={episodeId}
-            currentProfileAvatar={currentProfileAvatar}
-          />
-        ))}
+        {isLoadingComments &&
+          Array.from({ length: 4 }).map((_, i) => (
+            <CommentCardSkeleton key={i} />
+          ))}
 
-        {comments.length === 0 && (
+        {!isLoadingComments &&
+          comments.map((comment) => (
+            <CommentCard
+              key={comment.id}
+              comment={comment}
+              episodeId={episodeId}
+              currentProfileAvatar={currentProfileAvatar}
+            />
+          ))}
+
+        {!isLoadingComments && comments.length === 0 && (
           <p className="text-sm text-foreground-muted mx-auto">
             No comments yet. Be the first to comment!
           </p>
         )}
 
-        {hasNextPage && (
+        {isFetchingNextPage &&
+          Array.from({ length: 2 }).map((_, i) => (
+            <CommentCardSkeleton key={`more-${i}`} />
+          ))}
+
+        {hasNextPage && !isFetchingNextPage && (
           <button
             type="button"
             className="text-sm text-secondary hover:underline"
-            disabled={isFetchingNextPage}
             onClick={() => fetchNextPage()}
           >
-            {isFetchingNextPage ? "Loading..." : "Load more comments"}
+            Load more comments
           </button>
         )}
       </div>

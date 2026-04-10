@@ -1,10 +1,12 @@
-import { infiniteQueryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
 
 export type CommentProfile = {
   id: string;
   name: string;
   avatar: { key: string; purpose: string } | null;
 };
+
+export type CommentReactionValue = "like" | "dislike";
 
 export type EpisodeComment = {
   id: string;
@@ -17,6 +19,9 @@ export type EpisodeComment = {
   createdAt: string;
   updatedAt: string;
   profile: CommentProfile;
+  likes: number;
+  dislikes: number;
+  myReaction: CommentReactionValue | null;
 };
 
 export type TopLevelComment = EpisodeComment & {
@@ -68,6 +73,24 @@ async function fetchCommentReplies(
   }
   return response.json();
 }
+
+async function fetchEpisodeCommentCount(
+  episodeId: string,
+): Promise<{ total: number }> {
+  const response = await fetch(
+    `/api/proxy/episodes/${episodeId}/comments/count`,
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to fetch comment count: ${response.status}`);
+  }
+  return response.json();
+}
+
+export const buildFetchEpisodeCommentCountQueryOptions = (episodeId: string) =>
+  queryOptions({
+    queryKey: ["episodes", episodeId, "comments", "count"],
+    queryFn: () => fetchEpisodeCommentCount(episodeId),
+  });
 
 export const buildFetchEpisodeCommentsQueryOptions = (episodeId: string) =>
   infiniteQueryOptions({

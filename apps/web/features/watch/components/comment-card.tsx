@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
 import { Avatar } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 import { buildMediaUrl } from "@/utils/media-utils";
 import {
   buildFetchCommentRepliesQueryOptions,
@@ -16,6 +17,7 @@ import {
   type CommentProfile,
 } from "../queries/fetch-episode-comments";
 import { CommentInput } from "./comment-input";
+import { CommentReactions } from "./comment-reactions";
 import type { CommentForm } from "../schemas/comment";
 
 interface CommentCardProps {
@@ -160,31 +162,31 @@ export function CommentCard({
             </span>
           </div>
           <SpoilerText text={comment.text} spoiler={comment.spoiler} />
-          <div className="flex items-center gap-4">
+          <CommentReactions
+            commentId={comment.id}
+            initial={{
+              likes: comment.likes,
+              dislikes: comment.dislikes,
+              myReaction: comment.myReaction,
+            }}
+            onReply={handleReplyToRoot}
+          />
+          {comment.replyCount > 0 && (
             <button
               type="button"
-              className="flex items-center gap-1.5 text-sm text-foreground-muted transition-colors hover:text-primary"
-              onClick={handleReplyToRoot}
+              className="flex w-fit items-center gap-1.5 text-sm text-secondary transition-colors hover:underline"
+              onClick={() => setShowReplies(!showReplies)}
             >
-              <MessageCircle className="size-4" />
-              reply
-            </button>
-            {comment.replyCount > 0 && (
-              <button
-                type="button"
-                className="flex items-center gap-1.5 text-sm text-secondary transition-colors hover:underline"
-                onClick={() => setShowReplies(!showReplies)}
-              >
-                {showReplies ? (
-                  <ChevronUp className="size-4" />
-                ) : (
-                  <ChevronDown className="size-4" />
+              <ChevronDown
+                className={cn(
+                  "size-4 transition-transform",
+                  showReplies && "rotate-180",
                 )}
-                {comment.replyCount}{" "}
-                {comment.replyCount === 1 ? "reply" : "replies"}
-              </button>
-            )}
-          </div>
+              />
+              {comment.replyCount}{" "}
+              {comment.replyCount === 1 ? "reply" : "replies"}
+            </button>
+          )}
         </div>
       </div>
 
@@ -211,14 +213,16 @@ export function CommentCard({
                   </span>
                 )}
                 <SpoilerText text={reply.text} spoiler={reply.spoiler} />
-                <button
-                  type="button"
-                  className="flex w-fit items-center gap-1.5 text-sm text-foreground-muted transition-colors hover:text-primary"
-                  onClick={() => handleReplyToReply(reply)}
-                >
-                  <MessageCircle className="size-3.5" />
-                  reply
-                </button>
+                <CommentReactions
+                  commentId={reply.id}
+                  initial={{
+                    likes: reply.likes,
+                    dislikes: reply.dislikes,
+                    myReaction: reply.myReaction,
+                  }}
+                  onReply={() => handleReplyToReply(reply)}
+                  size="size-3.5"
+                />
               </div>
             </div>
           ))}
