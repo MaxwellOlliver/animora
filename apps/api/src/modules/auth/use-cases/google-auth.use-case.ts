@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { CreateProfileUseCase } from '../../profiles/use-cases/create-profile.use-case';
+import { UserRegistrationPort } from '../../users/ports/user-registration.port';
 import { UsersRepository } from '../../users/users.repository';
 import type { GoogleProfile } from '../strategies/google.strategy';
 import { LoginUseCase } from './login.use-case';
@@ -9,7 +9,7 @@ import { LoginUseCase } from './login.use-case';
 export class GoogleAuthUseCase {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly createProfileUseCase: CreateProfileUseCase,
+    private readonly userRegistration: UserRegistrationPort,
     private readonly loginUseCase: LoginUseCase,
   ) {}
 
@@ -17,21 +17,19 @@ export class GoogleAuthUseCase {
     let user = await this.usersRepository.findByGoogleId(profile.googleId);
 
     if (!user) {
-      user = await this.usersRepository.findByEmail(profile.email);
+      const existingByEmail = await this.usersRepository.findByEmail(
+        profile.email,
+      );
 
-      if (user) {
-        user = await this.usersRepository.update(user.id, {
+      if (existingByEmail) {
+        user = await this.usersRepository.update(existingByEmail.id, {
           googleId: profile.googleId,
         });
       } else {
-        user = await this.usersRepository.create({
+        user = await this.userRegistration.registerWithGoogle({
           email: profile.email,
           googleId: profile.googleId,
-          provider: 'GOOGLE',
-        });
-        await this.createProfileUseCase.execute({
-          userId: user.id,
-          name: profile.name,
+          profileName: profile.name,
         });
       }
     }

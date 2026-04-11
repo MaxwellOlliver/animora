@@ -17,7 +17,6 @@ import type { FastifyReply } from 'fastify';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 
-import { CreateProfileUseCase } from '../profiles/use-cases/create-profile.use-case';
 import { CreateUserUseCase } from '../users/use-cases/create-user.use-case';
 import type { User } from '../users/user.entity';
 import { LoginDto } from './dto/login.dto';
@@ -44,7 +43,6 @@ export class AuthController {
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
     private readonly logoutUseCase: LogoutUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
-    private readonly createProfileUseCase: CreateProfileUseCase,
     private readonly configService: ConfigService,
   ) {}
 
@@ -52,11 +50,10 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   async register(@Body() dto: RegisterDto) {
-    // TODO: Replace with a single use case that handles both user and profile creation in a transaction
-    const user = await this.createUserUseCase.execute(dto);
-    await this.createProfileUseCase.execute({
-      userId: user.id,
-      name: dto.name,
+    const user = await this.createUserUseCase.execute({
+      email: dto.email,
+      password: dto.password,
+      profileName: dto.name,
     });
     return this.loginUseCase.execute(user);
   }

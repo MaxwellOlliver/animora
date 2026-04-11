@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtSignOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
-import { ProfilesModule } from '../profiles/profiles.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { RefreshTokenRepository } from './refresh-token.repository';
@@ -19,7 +18,6 @@ import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
 @Module({
   imports: [
     UsersModule,
-    ProfilesModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
