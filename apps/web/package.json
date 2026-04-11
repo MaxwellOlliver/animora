@@ -35,9 +35,9 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@animora/eslint-config": "workspace:*",
+    "@animora/typescript-config": "workspace:*",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "eslint-plugin-tailwindcss": "4.0.0-beta.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
