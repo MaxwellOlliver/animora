@@ -99,7 +99,7 @@ export function SeriesDetailContent({ seriesId }: SeriesDetailContentProps) {
           />
         </div>
         <div className="pointer-events-none aspect-video absolute inset-0 rounded-t-xl bg-linear-to-t from-card from-0% via-card/80 via-35% to-transparent to-100%" />
-        <div className="absolute top-3 right-3 flex items-center gap-2">
+        <div className="absolute top-3 right-12 flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon-sm"
@@ -163,10 +163,7 @@ interface SeriesDetailModalProps {
   open: boolean;
 }
 
-export function SeriesDetailModal({
-  seriesId,
-  open,
-}: SeriesDetailModalProps) {
+export function SeriesDetailModal({ seriesId, open }: SeriesDetailModalProps) {
   const router = useRouter();
 
   useEffect(() => {
