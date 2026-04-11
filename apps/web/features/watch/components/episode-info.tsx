@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { Heart, ChevronDown } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { WatchPartyButton } from "./watch-party-button";
+import { ChevronDown,Heart } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+
 import { Toast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+
+import { WatchPartyButton } from "./watch-party-button";
 
 type EpisodeRatingValue = "like" | "dislike";
 

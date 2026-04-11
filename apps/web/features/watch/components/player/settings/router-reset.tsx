@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+
 import { usePlayerContext } from "../player-context";
 import { useSettingsRouter } from "./router";
 

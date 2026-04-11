@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { PencilIcon, PlusIcon, StarIcon } from "lucide-react";
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { PencilIcon, PlusIcon, StarIcon } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-import { buildFetchSeriesReviewsQueryOptions } from "../../queries/fetch-series-reviews";
 import { buildFetchMyReviewQueryOptions } from "../../queries/fetch-my-review";
+import { buildFetchSeriesReviewsQueryOptions } from "../../queries/fetch-series-reviews";
 import { ReviewCard } from "./review-card";
 
 interface ReviewsSectionProps {

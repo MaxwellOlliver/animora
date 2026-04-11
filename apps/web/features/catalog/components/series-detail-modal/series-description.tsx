@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { buildMediaUrl } from "@/utils/media-utils";
+
 import type { ContentClassificationSummary } from "../../queries/fetch-series";
 
 interface SeriesDescriptionProps {

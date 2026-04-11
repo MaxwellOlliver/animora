@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-import { useMediaState, useMediaRemote } from "@vidstack/react";
+import { useMediaRemote,useMediaState } from "@vidstack/react";
 import { Pause, Play, RotateCcw, RotateCw } from "lucide-react";
-import { usePlayerContext } from "./player-context";
+import { useCallback, useRef, useState } from "react";
+
 import { cn } from "@/lib/utils";
+
+import { usePlayerContext } from "./player-context";
 
 const SEEK_SECONDS = 10;
 const DOUBLE_TAP_MS = 300;

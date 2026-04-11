@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ApiError } from "@/lib/api";
-import { fetchSeriesDetail } from "@/features/catalog/queries/fetch-series-detail.server";
+
 import { SeriesDetailContent } from "@/features/catalog/components/series-detail-modal";
+import { fetchSeriesDetail } from "@/features/catalog/queries/fetch-series-detail.server";
+import { ApiError } from "@/lib/api";
 
 type SeriesPageProps = {
   params: Promise<{ id: string }>;

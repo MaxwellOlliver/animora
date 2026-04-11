@@ -1,15 +1,16 @@
 import { notFound, redirect } from "next/navigation";
-import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
-import { EpisodeInfo } from "@/features/watch/components/episode-info";
+
+import { fetchProfile } from "@/features/profiles/queries/fetch-profiles";
 import { CommentsSection } from "@/features/watch/components/comments-section";
+import { EpisodeInfo } from "@/features/watch/components/episode-info";
 import { SidebarEpisodeCard } from "@/features/watch/components/sidebar-episode-card";
 import { WatchPartyChat } from "@/features/watch/components/watch-party-chat";
 import { WatchVideoPlayer } from "@/features/watch/components/watch-video-player";
+import { fetchWatchEpisode } from "@/features/watch/queries/fetch-watch-episode";
 import { ApiError, SessionExpiredError } from "@/lib/api";
 import { ensureFreshSession } from "@/lib/ensure-fresh-session";
 import { getSession } from "@/lib/session";
-import { fetchProfile } from "@/features/profiles/queries/fetch-profiles";
-import { fetchWatchEpisode } from "@/features/watch/queries/fetch-watch-episode";
+import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
 
 const MOCK_TIMESTAMP_ACTIONS = [
   { label: "skip opening", startTime: 30, endTime: 120, skipTo: 120 },

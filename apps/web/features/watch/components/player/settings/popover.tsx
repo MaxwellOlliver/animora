@@ -1,13 +1,15 @@
 "use client";
 
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+
+import { cn } from "@/lib/utils";
+
+import { usePlayerContext } from "../player-context";
+import { SettingsHomeRoute } from "./home-route";
+import { SettingsQualitiesRoute } from "./qualities-route";
 import { SettingsRoute } from "./route";
 import { SettingsRouter } from "./router";
 import { SettingsRouterReset } from "./router-reset";
-import { SettingsHomeRoute } from "./home-route";
-import { cn } from "@/lib/utils";
-import { SettingsQualitiesRoute } from "./qualities-route";
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
-import { usePlayerContext } from "../player-context";
 
 export function SettingsPopover() {
   const { settingsOpen, closeSettings } = usePlayerContext();

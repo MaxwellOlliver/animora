@@ -1,9 +1,11 @@
-import Image from "next/image";
 import { PencilIcon, TrashIcon } from "lucide-react";
+import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 import { buildMediaUrl } from "@/utils/media-utils";
-import { StarRating } from "./star-rating";
+
 import type { SeriesReview } from "../../queries/fetch-series-reviews";
+import { StarRating } from "./star-rating";
 
 interface ReviewCardProps {
   review: SeriesReview;

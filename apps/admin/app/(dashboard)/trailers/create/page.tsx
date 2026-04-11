@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,14 +12,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-
+import { uploadTrailerThumbnail } from "@/features/trailers/api";
 import {
   TrailerCreateUpdateForm,
   type TrailerCreateUpdateValues,
 } from "@/features/trailers/components/trailer-create-update-form";
 import { useCreateTrailer } from "@/features/trailers/hooks";
-import { uploadTrailerThumbnail } from "@/features/trailers/api";
 
 export default function CreateTrailerPage() {
   const router = useRouter();

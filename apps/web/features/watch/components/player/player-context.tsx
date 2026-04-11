@@ -1,5 +1,6 @@
 "use client";
 
+import { useMediaRemote } from "@vidstack/react";
 import {
   createContext,
   useCallback,
@@ -7,7 +8,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useMediaRemote } from "@vidstack/react";
 
 interface PlayerContextValue {
   settingsOpen: boolean;

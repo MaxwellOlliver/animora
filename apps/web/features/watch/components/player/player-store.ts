@@ -36,7 +36,9 @@ export type PlayerSettings = {
   autoPlay: boolean;
   autoSkip: boolean;
   quality: string;
-  updateSettings: (partial: Partial<Omit<PlayerSettings, "updateSettings">>) => void;
+  updateSettings: (
+    partial: Partial<Omit<PlayerSettings, "updateSettings">>,
+  ) => void;
 };
 
 const initial = load();

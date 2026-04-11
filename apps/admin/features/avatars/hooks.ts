@@ -1,14 +1,15 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
-  type CreateAvatarInput,
-  type UpdateAvatarInput,
   createAvatar,
+  type CreateAvatarInput,
   deleteAvatar,
   fetchAvatarById,
   fetchAvatars,
   updateAvatar,
+  type UpdateAvatarInput,
   uploadAvatarPicture,
 } from "./api";
 

@@ -1,9 +1,9 @@
+import { refreshTokens } from "@/features/auth/api";
 import { getAccessToken } from "@/features/auth/lib/tokens";
 import {
   clearTokens,
   storeTokens,
 } from "@/features/auth/lib/tokens";
-import { refreshTokens } from "@/features/auth/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import {
   createContext,
   useCallback,
@@ -8,15 +9,16 @@ import {
   useRef,
   useState,
 } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+
 import { getAccessToken } from "@/features/auth/lib/tokens";
-import type { UploadProgress, VideoOwnerType } from "./types";
+
 import {
   completeUpload,
   getVideoStatusStreamUrl,
   initUpload,
   uploadChunk,
 } from "./api";
+import type { UploadProgress, VideoOwnerType } from "./types";
 
 interface VideoUploadContextValue {
   progress: UploadProgress;

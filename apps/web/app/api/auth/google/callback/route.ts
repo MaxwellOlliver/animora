@@ -1,5 +1,6 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { getSession, decodeTokenExpiry } from "@/lib/session";
+import { type NextRequest,NextResponse } from "next/server";
+
+import { decodeTokenExpiry,getSession } from "@/lib/session";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;

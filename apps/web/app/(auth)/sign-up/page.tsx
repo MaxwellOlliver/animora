@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { ArrowRight, Loader2,Lock, LockKeyhole, Mail, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, User, Mail, Lock, LockKeyhole, Loader2 } from "lucide-react";
+import { useActionState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signUp } from "@/features/auth/actions/sign-up";

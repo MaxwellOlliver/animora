@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,14 +12,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-
+import { uploadAvatarPicture } from "@/features/avatars/api";
 import {
   AvatarCreateUpdateForm,
   type AvatarCreateUpdateValues,
 } from "@/features/avatars/components/avatar-create-update-form";
 import { useCreateAvatar } from "@/features/avatars/hooks";
-import { uploadAvatarPicture } from "@/features/avatars/api";
 
 export default function CreateAvatarPage() {
   const router = useRouter();

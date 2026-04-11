@@ -1,13 +1,14 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
   createContentClassification,
   type CreateContentClassificationInput,
   fetchContentClassificationById,
   fetchContentClassifications,
-  type UpdateContentClassificationInput,
   updateContentClassification,
+  type UpdateContentClassificationInput,
   uploadContentClassificationIcon,
 } from "./api";
 

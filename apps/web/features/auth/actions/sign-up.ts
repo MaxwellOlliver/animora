@@ -1,10 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
+
 import { signUpSchema } from "@/features/auth/schemas/sign-up";
 import type { ActionResult } from "@/lib/action";
-import { getSession, decodeTokenExpiry } from "@/lib/session";
-import { apiInternal, ApiError } from "@/lib/api-internal";
+import { ApiError,apiInternal } from "@/lib/api-internal";
+import { decodeTokenExpiry,getSession } from "@/lib/session";
 
 type AuthResponse = { accessToken: string; refreshToken: string };
 

@@ -8,6 +8,7 @@ import { media } from '@/modules/media/media.entity';
 import {
   type NewSeriesAsset,
   type SeriesAsset,
+  SeriesAssetPurpose,
   seriesAssets,
 } from '../entities/series-asset.entity';
 
@@ -62,7 +63,7 @@ export class SeriesAssetsRepository {
       .where(
         and(
           eq(seriesAssets.seriesId, seriesId),
-          eq(seriesAssets.purpose, purpose as any),
+          eq(seriesAssets.purpose, purpose as SeriesAssetPurpose),
         ),
       );
   }

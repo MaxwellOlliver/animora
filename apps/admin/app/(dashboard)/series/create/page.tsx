@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,14 +12,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-
+import { uploadSeriesAsset } from "@/features/series/api";
 import {
   SeriesCreateUpdateForm,
   type SeriesCreateUpdateValues,
 } from "@/features/series/components/series-create-update-form";
 import { useCreateSeries } from "@/features/series/hooks";
-import { uploadSeriesAsset } from "@/features/series/api";
 
 export default function CreateSeriesPage() {
   const router = useRouter();

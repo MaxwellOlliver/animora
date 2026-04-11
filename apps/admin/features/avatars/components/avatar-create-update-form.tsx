@@ -1,18 +1,15 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Loader2 } from "lucide-react";
 
+import { FormSection } from "@/components/form-section";
+import { FormSectionGroup } from "@/components/form-section-group";
 import { Button } from "@/components/ui/button";
-import {
-  createDefaultPhotoValue,
-  PhotoUploadField,
-  type PhotoUploadValue,
-} from "@/components/ui/photo-upload-field";
 import {
   Field,
   FieldError,
@@ -20,10 +17,14 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  createDefaultPhotoValue,
+  PhotoUploadField,
+  type PhotoUploadValue,
+} from "@/components/ui/photo-upload-field";
 import { Switch } from "@/components/ui/switch";
-import { FormSection } from "@/components/form-section";
-import { FormSectionGroup } from "@/components/form-section-group";
 import { getMediaImageUrl } from "@/lib/s3";
+
 import type { Media } from "../types";
 
 const avatarSchema = z.object({

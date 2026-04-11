@@ -2,27 +2,25 @@
 
 import { type ColumnDef } from "@tanstack/react-table";
 import {
-  Loader2,
-  ImageOff,
-  ChevronDown,
-  ArrowUpDown,
-  ArrowUp,
   ArrowDown,
-  MoreHorizontal,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronDown,
+  ImageOff,
   ListVideo,
+  Loader2,
+  MoreHorizontal,
   Pencil,
   Plus,
   Trash,
 } from "lucide-react";
-import { TableCell, TableRow } from "@/components/ui/table";
+import Image from "next/image";
+import Link from "next/link";
+import { useMemo } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useSeriesList } from "../hooks";
-import type { Series } from "../types";
-import Image from "next/image";
-import { getMediaImageUrl } from "@/lib/s3";
-import { useMemo } from "react";
+import { DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,8 +29,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DataTable } from "@/components/ui/data-table";
-import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { getMediaImageUrl } from "@/lib/s3";
+
+import { useSeriesList } from "../hooks";
+import type { Series } from "../types";
 
 function BannerCell({ series }: { series: Series }) {
   const banner = series.assets?.find((a) => a.purpose === "banner");

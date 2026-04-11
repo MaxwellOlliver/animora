@@ -1,4 +1,5 @@
 import type { MediaPurpose } from "@animora/contracts";
+
 import { api } from "@/lib/api";
 
 export type Profile = {

@@ -1,5 +1,6 @@
 import { getIronSession } from "iron-session";
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest,NextResponse } from "next/server";
+
 import { SESSION_OPTIONS, type SessionData } from "@/lib/session";
 
 const AUTH_ROUTES = ["/sign-in", "/sign-up"];

@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { EpisodeThumbnail } from "@/components/ui/episode-thumbnail";
 
 interface SidebarEpisodeCardProps {

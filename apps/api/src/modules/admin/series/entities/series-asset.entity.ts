@@ -31,4 +31,6 @@ export const seriesAssets = pgTable(
 );
 
 export type SeriesAsset = typeof seriesAssets.$inferSelect;
+export type SeriesAssetPurpose =
+  (typeof seriesAssetPurposeEnum.enumValues)[number];
 export type NewSeriesAsset = typeof seriesAssets.$inferInsert;

@@ -1,5 +1,7 @@
-import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
 import { Separator } from "./ui/separator";
 
 interface FormSectionProps {

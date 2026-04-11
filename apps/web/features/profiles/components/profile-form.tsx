@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { Pen } from "lucide-react";
+import Image from "next/image";
+
 import { Field } from "@/components/ui/field";
 import type { ProfileForm as ProfileFormValues } from "@/features/profiles/schemas/profile";
 

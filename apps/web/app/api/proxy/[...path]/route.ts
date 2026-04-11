@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@animora/logger";
-import { getSession } from "@/lib/session";
+import { NextRequest, NextResponse } from "next/server";
+
 import { refreshIfNeeded } from "@/lib/refresh-mutex";
 import { serverEnv } from "@/lib/server-env";
+import { getSession } from "@/lib/session";
 
 const API_BASE_URL = serverEnv.API_URL;
 const logger = getLogger().child({ scope: "api-proxy" });

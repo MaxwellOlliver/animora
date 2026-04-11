@@ -1,5 +1,6 @@
-import { forwardRef, type ReactNode } from "react";
 import { Field as BaseField } from "@base-ui-components/react/field";
+import { forwardRef, type ReactNode } from "react";
+
 import { Input } from "./input";
 
 type FieldProps = Omit<React.ComponentProps<typeof Input>, "id"> & {

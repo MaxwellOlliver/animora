@@ -1,7 +1,8 @@
 "use client";
 
+import { useMediaRemote,useMediaState } from "@vidstack/react";
 import { useEffect, useRef } from "react";
-import { useMediaState, useMediaRemote } from "@vidstack/react";
+
 import { usePlayerContext } from "./player-context";
 import { usePlayerSettings } from "./player-store";
 

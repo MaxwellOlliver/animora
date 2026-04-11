@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useMediaState } from "@vidstack/react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 
+import type { OverlayMessage } from "@/features/watch/components/player/overlay-messages";
+import { usePlayerSettings } from "@/features/watch/components/player/player-store";
+import type { TimestampAction } from "@/features/watch/components/player/skip-button";
 import { VideoPlayer } from "@/features/watch/components/player/video-player";
 import { WatchHistorySync } from "@/features/watch/components/watch-history-sync";
-import type { OverlayMessage } from "@/features/watch/components/player/overlay-messages";
-import type { TimestampAction } from "@/features/watch/components/player/skip-button";
-import { usePlayerSettings } from "@/features/watch/components/player/player-store";
 import { buildFetchEpisodeWatchHistoryQueryOptions } from "@/features/watch/queries/fetch-episode-watch-history";
 
 type WatchVideoPlayerProps = {

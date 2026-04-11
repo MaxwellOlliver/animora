@@ -1,6 +1,7 @@
 "use client";
 
 import { buildMediaUrl } from "@/utils/media-utils";
+
 import type { TrailerSummary } from "../../queries/fetch-series-trailers";
 import { TrailerCard } from "./trailer-card";
 

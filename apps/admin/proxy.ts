@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
 import { decodeJwt } from "jose"
+import type { NextRequest } from "next/server"
+import { NextResponse } from "next/server"
+
 import type { JwtPayload } from "@/features/auth/types"
 
 const PUBLIC_PATHS = ["/login"]

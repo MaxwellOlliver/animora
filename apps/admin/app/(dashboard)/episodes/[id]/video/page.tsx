@@ -1,6 +1,16 @@
 "use client";
 
+import {
+  CheckCircle2,
+  Loader2,
+  Trash2,
+  Upload,
+  Video,
+  XCircle,
+} from "lucide-react";
+import { useParams } from "next/navigation";
 import { useRef } from "react";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,19 +23,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  CheckCircle2,
-  Loader2,
-  Trash2,
-  Upload,
-  Video,
-  XCircle,
-} from "lucide-react";
-import { useParams } from "next/navigation";
 import { useEpisodeById } from "@/features/episodes/hooks";
 import { getHlsUrl } from "@/features/videos/api";
 import { VideoPlayer } from "@/features/videos/components/video-player";
-import { useVideoByOwner, useDeleteVideo } from "@/features/videos/hooks";
+import { useDeleteVideo,useVideoByOwner } from "@/features/videos/hooks";
 import { useVideoUpload } from "@/features/videos/video-upload-context";
 import { ApiError } from "@/lib/api-client";
 

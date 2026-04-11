@@ -1,6 +1,7 @@
 "use client";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
+
 import { continueWatchingQueryOptions } from "../queries/fetch-continue-watching";
 import { CatalogSection } from "./catalog-section";
 import { EpisodeCard } from "./episode-card";

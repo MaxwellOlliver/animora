@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,9 +12,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-import { GenreCreateUpdateForm } from "@/features/genres/components/genre-create-update-form";
 import { type CreateGenreInput } from "@/features/genres/api";
+import { GenreCreateUpdateForm } from "@/features/genres/components/genre-create-update-form";
 import { useCreateGenre } from "@/features/genres/hooks";
 
 export default function CreateGenrePage() {

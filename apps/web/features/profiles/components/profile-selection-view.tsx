@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import type { MediaPurpose } from "@animora/contracts";
+import { ArrowLeft, Check,Pen } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Pen, ArrowLeft, Check } from "lucide-react";
-import { ProfileCard } from "@/features/profiles/components/profile-card";
+import { useState } from "react";
+
 import { NewProfileCard } from "@/features/profiles/components/new-profile-card";
+import { ProfileCard } from "@/features/profiles/components/profile-card";
 import type { Profile } from "@/features/profiles/queries/fetch-profiles";
 import { buildMediaUrl } from "@/utils/media-utils";
-import type { MediaPurpose } from "@animora/contracts";
 
 export function ProfileSelectionView({ profiles }: { profiles: Profile[] }) {
   const searchParams = useSearchParams();

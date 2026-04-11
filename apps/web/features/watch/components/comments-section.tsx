@@ -7,14 +7,14 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-import { CommentCard } from "./comment-card";
-import { CommentCardSkeleton } from "./comment-card-skeleton";
-import { CommentInput } from "./comment-input";
 import {
   buildFetchEpisodeCommentCountQueryOptions,
   buildFetchEpisodeCommentsQueryOptions,
 } from "../queries/fetch-episode-comments";
 import type { CommentForm } from "../schemas/comment";
+import { CommentCard } from "./comment-card";
+import { CommentCardSkeleton } from "./comment-card-skeleton";
+import { CommentInput } from "./comment-input";
 
 interface CommentsSectionProps {
   episodeId: string;

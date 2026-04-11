@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
-import { ApiError, SessionExpiredError } from "@/lib/api";
-import { ensureFreshSession } from "@/lib/ensure-fresh-session";
+
+import { updateProfile } from "@/features/profiles/actions/update-profile";
 import { ProfileEditorScreen } from "@/features/profiles/components/profile-editor-screen";
 import { fetchProfile } from "@/features/profiles/queries/fetch-profiles";
-import { updateProfile } from "@/features/profiles/actions/update-profile";
+import { ApiError, SessionExpiredError } from "@/lib/api";
+import { ensureFreshSession } from "@/lib/ensure-fresh-session";
 import { buildMediaUrl } from "@/utils/media-utils";
 
 type ProfileEditPageProps = {

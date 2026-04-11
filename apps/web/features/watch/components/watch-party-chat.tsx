@@ -1,8 +1,10 @@
 "use client";
 
+import { Check, Circle,Copy, SendHorizonal, Smile } from "lucide-react";
 import { useState } from "react";
-import { Copy, Check, Smile, SendHorizonal, Circle } from "lucide-react";
+
 import { Avatar } from "@/components/ui/avatar";
+
 import { WatchPartyMembers } from "./watch-party-members";
 
 const MOCK_ROOM_CODE = "A1K998SU";

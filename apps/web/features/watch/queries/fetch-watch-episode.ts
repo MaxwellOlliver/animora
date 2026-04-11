@@ -1,5 +1,5 @@
-import { api } from "@/lib/api";
 import type { Media } from "@/features/catalog/queries/fetch-recommended";
+import { api } from "@/lib/api";
 
 export type WatchEpisodePayload = {
   episode: {

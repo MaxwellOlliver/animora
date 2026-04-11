@@ -1,24 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { buildMediaUrl } from "@/utils/media-utils";
+
 import {
   buildFetchCommentRepliesQueryOptions,
-  type TopLevelComment,
-  type ReplyComment,
   type CommentProfile,
+  type ReplyComment,
+  type TopLevelComment,
 } from "../queries/fetch-episode-comments";
+import type { CommentForm } from "../schemas/comment";
 import { CommentInput } from "./comment-input";
 import { CommentReactions } from "./comment-reactions";
-import type { CommentForm } from "../schemas/comment";
 
 interface CommentCardProps {
   comment: TopLevelComment;

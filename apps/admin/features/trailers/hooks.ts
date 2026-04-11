@@ -1,14 +1,15 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
-  type CreateTrailerInput,
-  type UpdateTrailerInput,
   createTrailer,
+  type CreateTrailerInput,
   deleteTrailer,
   fetchTrailerById,
   fetchTrailers,
   updateTrailer,
+  type UpdateTrailerInput,
   uploadTrailerThumbnail,
 } from "./api";
 

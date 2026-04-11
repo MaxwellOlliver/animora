@@ -1,11 +1,12 @@
 "use client";
 
-import { SettingsItem } from "./item";
-import { Check } from "lucide-react";
-import { SettingsItemsGroup } from "./items-group";
-import { SettingsGroupHeader } from "./group-header";
 import { useVideoQualityOptions } from "@vidstack/react";
+import { Check } from "lucide-react";
+
 import { usePlayerContext } from "../player-context";
+import { SettingsGroupHeader } from "./group-header";
+import { SettingsItem } from "./item";
+import { SettingsItemsGroup } from "./items-group";
 
 export function SettingsQualitiesRoute() {
   const options = useVideoQualityOptions({ auto: true, sort: "descending" });

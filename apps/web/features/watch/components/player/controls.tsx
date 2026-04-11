@@ -1,21 +1,22 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-import { useMediaState, useMediaRemote, useMediaPlayer } from "@vidstack/react";
+import { useMediaPlayer,useMediaRemote, useMediaState } from "@vidstack/react";
 import {
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
-  Volume2,
-  VolumeX,
-  Volume1,
   Maximize,
   Minimize,
+  Pause,
   PictureInPicture2,
+  Play,
   Settings,
+  SkipBack,
+  SkipForward,
   Subtitles,
+  Volume1,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+
 import { usePlayerContext } from "./player-context";
 import { updateSettings } from "./player-store";
 

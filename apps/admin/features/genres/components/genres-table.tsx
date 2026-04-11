@@ -9,8 +9,8 @@ import {
   Plus,
   Tags,
 } from "lucide-react";
-import { useMemo } from "react";
 import Link from "next/link";
+import { useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TableCell, TableRow } from "@/components/ui/table";
+
 import { useGenresList } from "../hooks";
 import type { Genre } from "../types";
 

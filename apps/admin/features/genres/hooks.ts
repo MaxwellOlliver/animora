@@ -1,13 +1,14 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
+  createGenre,
   type CreateGenreInput,
   fetchGenreById,
   fetchGenres,
-  type UpdateGenreInput,
-  createGenre,
   updateGenre,
+  type UpdateGenreInput,
 } from "./api";
 
 export function useGenresList() {

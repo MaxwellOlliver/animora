@@ -1,23 +1,24 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import {
   isHLSProvider,
   MediaPlayer,
-  MediaProvider,
   type MediaPlayerInstance,
+  MediaProvider,
   type MediaProviderAdapter,
 } from "@vidstack/react";
+import { useEffect, useRef } from "react";
+
 import { PlayerControls } from "./controls";
-import { PlayerProgressBar } from "./progress-bar";
 import { PlayerControlsVisibility } from "./controls-visibility";
-import { PlayerSkipButton, type TimestampAction } from "./skip-button";
-import { PlayerOverlayMessages, type OverlayMessage } from "./overlay-messages";
 import { PlayerLoader } from "./loader";
-import { SettingsPopover } from "./settings";
+import { type OverlayMessage,PlayerOverlayMessages } from "./overlay-messages";
 import { PlayerProvider } from "./player-context";
-import { TapPanels } from "./tap-panels";
 import { usePlayerSettings } from "./player-store";
+import { PlayerProgressBar } from "./progress-bar";
+import { SettingsPopover } from "./settings";
+import { PlayerSkipButton, type TimestampAction } from "./skip-button";
+import { TapPanels } from "./tap-panels";
 
 type VideoPlayerProps = {
   src: string;

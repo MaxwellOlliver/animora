@@ -1,18 +1,16 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Loader2 } from "lucide-react";
 
+import { FormSection } from "@/components/form-section";
+import { FormSectionGroup } from "@/components/form-section-group";
+import { Grid } from "@/components/grid";
 import { Button } from "@/components/ui/button";
-import {
-  createDefaultPhotoValue,
-  PhotoUploadField,
-  type PhotoUploadValue,
-} from "@/components/ui/photo-upload-field";
 import {
   Field,
   FieldDescription,
@@ -21,13 +19,16 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  createDefaultPhotoValue,
+  PhotoUploadField,
+  type PhotoUploadValue,
+} from "@/components/ui/photo-upload-field";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { FormSection } from "@/components/form-section";
-import { Grid } from "@/components/grid";
 import { getMediaImageUrl } from "@/lib/s3";
+
 import type { Media } from "../types";
-import { FormSectionGroup } from "@/components/form-section-group";
 
 const classificationSchema = z.object({
   name: z

@@ -1,7 +1,7 @@
 "use client";
 
-import { type ReactNode } from "react";
 import { useMediaState } from "@vidstack/react";
+import { type ReactNode } from "react";
 
 type PlayerControlsVisibilityProps = {
   children: ReactNode;

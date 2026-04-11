@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
 import { useMediaState } from "@vidstack/react";
+import { useCallback, useEffect, useRef } from "react";
 
 type WatchHistoryStatus = "watching" | "finished";
 

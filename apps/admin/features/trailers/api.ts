@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api-client";
+
 import type { Trailer } from "./types";
 
 export interface CreateTrailerInput {

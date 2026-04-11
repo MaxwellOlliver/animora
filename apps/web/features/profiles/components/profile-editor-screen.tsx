@@ -1,12 +1,13 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import Link from "next/link";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
-import type { ActionResult } from "@/lib/action";
-import { ProfileForm } from "@/features/profiles/components/profile-form";
+import Link from "next/link";
+import { useActionState, useState } from "react";
+
 import { AvatarPickerModal } from "@/features/profiles/components/avatar-picker-modal";
+import { ProfileForm } from "@/features/profiles/components/profile-form";
 import { getAvatarImageUrl, type ProfileAvatar } from "@/features/profiles/queries/fetch-avatars";
+import type { ActionResult } from "@/lib/action";
 
 type ProfileEditorScreenProps = {
   title: string;

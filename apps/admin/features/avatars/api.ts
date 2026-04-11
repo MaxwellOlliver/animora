@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api-client";
+
 import type { Avatar } from "./types";
 
 export interface CreateAvatarInput {

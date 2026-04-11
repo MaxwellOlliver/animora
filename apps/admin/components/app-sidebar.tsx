@@ -12,7 +12,6 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { UploadProgressPopover } from "@/features/videos/components/upload-progress-popover";
-
 import LogoFull from "@/public/logo-full.svg";
 import LogoSymbol from "@/public/logo-symbol.svg";
 

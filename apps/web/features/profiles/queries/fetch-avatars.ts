@@ -1,5 +1,6 @@
-import { queryOptions } from "@tanstack/react-query";
 import type { MediaPurpose } from "@animora/contracts";
+import { queryOptions } from "@tanstack/react-query";
+
 import { env } from "@/lib/env";
 import { buildMediaUrl } from "@/utils/media-utils";
 

@@ -1,5 +1,5 @@
-import { forwardRef, type ReactNode } from "react";
 import { Input as BaseInput } from "@base-ui-components/react/input";
+import { forwardRef, type ReactNode } from "react";
 
 type InputProps = React.ComponentProps<typeof BaseInput> & {
   icon?: ReactNode;

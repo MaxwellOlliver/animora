@@ -1,6 +1,7 @@
+import { Pen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Pen } from "lucide-react";
+
 import { selectProfile } from "@/features/profiles/actions/select-profile";
 
 function ProfileCardContent({

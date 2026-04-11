@@ -1,7 +1,7 @@
 "use client";
 
 import { Popover } from "@base-ui-components/react/popover";
-import { useRef, useCallback, useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface CardPopoverProps {
   children: React.ReactNode;

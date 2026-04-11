@@ -1,5 +1,5 @@
-import type { AuthTokens, LoginCredentials } from "./types"
 import { getAccessToken, getRefreshToken } from "./lib/tokens"
+import type { AuthTokens, LoginCredentials } from "./types"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000"
 

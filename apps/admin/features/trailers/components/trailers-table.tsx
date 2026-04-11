@@ -2,25 +2,23 @@
 
 import { type ColumnDef } from "@tanstack/react-table";
 import {
-  ImageOff,
-  ArrowUpDown,
-  ArrowUp,
   ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  Film,
+  ImageOff,
   MoreHorizontal,
   Pencil,
   Plus,
   Trash,
   Video,
-  Film,
 } from "lucide-react";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useTrailersList, useDeleteTrailer } from "../hooks";
-import type { Trailer } from "../types";
 import Image from "next/image";
-import { getMediaImageUrl } from "@/lib/s3";
+import Link from "next/link";
 import { useMemo } from "react";
+
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,8 +27,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DataTable } from "@/components/ui/data-table";
-import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { getMediaImageUrl } from "@/lib/s3";
+
+import { useDeleteTrailer,useTrailersList } from "../hooks";
+import type { Trailer } from "../types";
 
 function ThumbnailCell({ trailer }: { trailer: Trailer }) {
   if (!trailer.thumbnail) {

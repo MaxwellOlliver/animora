@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,14 +12,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-
+import { uploadPlaylistCover } from "@/features/playlists/api";
 import {
   PlaylistCreateUpdateForm,
   type PlaylistCreateUpdateValues,
 } from "@/features/playlists/components/playlist-create-update-form";
 import { useCreatePlaylist } from "@/features/playlists/hooks";
-import { uploadPlaylistCover } from "@/features/playlists/api";
 
 export default function CreatePlaylistPage() {
   const router = useRouter();

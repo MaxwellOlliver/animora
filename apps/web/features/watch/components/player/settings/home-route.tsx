@@ -1,13 +1,15 @@
 "use client";
 
-import { SettingsItem } from "./item";
-import { ChevronRight, Play, SkipForward, Video } from "lucide-react";
-import { useSettingsRouter } from "./router";
-import { SettingsItemsGroup } from "./items-group";
-import { Switch } from "@/components/ui/switch";
-import { SettingsGroupHeader } from "./group-header";
-import { updateSettings, usePlayerSettings } from "../player-store";
 import { useMediaState } from "@vidstack/react";
+import { ChevronRight, Play, SkipForward, Video } from "lucide-react";
+
+import { Switch } from "@/components/ui/switch";
+
+import { updateSettings, usePlayerSettings } from "../player-store";
+import { SettingsGroupHeader } from "./group-header";
+import { SettingsItem } from "./item";
+import { SettingsItemsGroup } from "./items-group";
+import { useSettingsRouter } from "./router";
 
 export function SettingsHomeRoute() {
   const { push } = useSettingsRouter();

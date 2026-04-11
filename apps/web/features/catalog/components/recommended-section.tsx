@@ -2,6 +2,7 @@
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
+
 import { recommendedQueryOptions } from "../queries/fetch-recommended";
 import { CatalogSection } from "./catalog-section";
 import { SeriesCard } from "./series-card";

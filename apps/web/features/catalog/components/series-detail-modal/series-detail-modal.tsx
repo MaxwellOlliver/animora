@@ -1,9 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   BookmarkIcon,
   PlayIcon,
@@ -11,21 +9,24 @@ import {
   VolumeOffIcon,
   XIcon,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { buildMediaUrl, buildHlsUrl } from "@/utils/media-utils";
+import { buildHlsUrl,buildMediaUrl } from "@/utils/media-utils";
+
+import { buildFetchFeaturedTrailerQueryOptions } from "../../queries/fetch-featured-trailer";
 import { buildFetchSeriesQueryOptions } from "../../queries/fetch-series";
 import { buildFetchSeriesPlaylistsQueryOptions } from "../../queries/fetch-series-playlists";
 import { buildFetchSeriesTrailersQueryOptions } from "../../queries/fetch-series-trailers";
-import { buildFetchFeaturedTrailerQueryOptions } from "../../queries/fetch-featured-trailer";
 import { TrailerPlayer } from "../trailer-player";
-import { StarRating } from "./star-rating";
-import { SeriesDescription } from "./series-description";
 import { EpisodesSection } from "./episodes-section";
-import { TrailersSection } from "./trailers-section";
 import { ReviewsSection } from "./reviews-section";
+import { SeriesDescription } from "./series-description";
 import { SeriesDetailSkeleton } from "./series-detail-skeleton";
+import { StarRating } from "./star-rating";
+import { TrailersSection } from "./trailers-section";
 
 function formatCount(n: number): string {
   if (n >= 1_000_000)

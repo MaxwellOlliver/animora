@@ -1,18 +1,16 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Loader2 } from "lucide-react";
 
+import { FormSection } from "@/components/form-section";
+import { FormSectionGroup } from "@/components/form-section-group";
+import { Grid } from "@/components/grid";
 import { Button } from "@/components/ui/button";
-import {
-  createDefaultPhotoValue,
-  PhotoUploadField,
-  type PhotoUploadValue,
-} from "@/components/ui/photo-upload-field";
 import {
   Field,
   FieldError,
@@ -21,18 +19,21 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
+  createDefaultPhotoValue,
+  PhotoUploadField,
+  type PhotoUploadValue,
+} from "@/components/ui/photo-upload-field";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FormSection } from "@/components/form-section";
-import { FormSectionGroup } from "@/components/form-section-group";
-import { Grid } from "@/components/grid";
-import { getMediaImageUrl } from "@/lib/s3";
-import { useSeriesList } from "@/features/series/hooks";
 import { usePlaylistsList } from "@/features/playlists/hooks";
+import { useSeriesList } from "@/features/series/hooks";
+import { getMediaImageUrl } from "@/lib/s3";
+
 import type { Media } from "../types";
 
 const trailerSchema = z.object({

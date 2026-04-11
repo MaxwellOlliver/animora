@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { api, ApiError } from "@/lib/api";
-import type { ActionResult } from "@/lib/action";
+
 import { profileSchema } from "@/features/profiles/schemas/profile";
+import type { ActionResult } from "@/lib/action";
+import { api, ApiError } from "@/lib/api";
 
 export async function updateProfile(
   profileId: string,

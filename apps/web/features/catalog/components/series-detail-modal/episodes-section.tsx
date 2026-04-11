@@ -1,15 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 
 import {
   Select,
-  SelectTrigger,
-  SelectPopup,
   SelectItem,
+  SelectPopup,
+  SelectTrigger,
 } from "@/components/ui/select";
 import { buildMediaUrl } from "@/utils/media-utils";
+
 import { buildFetchPlaylistEpisodesQueryOptions } from "../../queries/fetch-playlist-episodes";
 import type { PlaylistSummary } from "../../queries/fetch-series-playlists";
 import { EpisodeRow } from "./episode-row";

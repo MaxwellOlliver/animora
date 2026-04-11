@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,14 +12,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-
+import { uploadEpisodeThumbnail } from "@/features/episodes/api";
 import {
   EpisodeCreateUpdateForm,
   type EpisodeCreateUpdateValues,
 } from "@/features/episodes/components/episode-create-update-form";
 import { useCreateEpisode } from "@/features/episodes/hooks";
-import { uploadEpisodeThumbnail } from "@/features/episodes/api";
 
 export default function CreateEpisodePage() {
   const router = useRouter();

@@ -1,13 +1,15 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { CheckCircle2, Loader2, Upload, XCircle } from "lucide-react";
+import { usePathname } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
 import { useVideoUpload } from "../video-upload-context";
 
 function ProgressBar({ value }: { value: number }) {

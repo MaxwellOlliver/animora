@@ -1,6 +1,5 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -13,8 +12,8 @@ import {
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { type ReactNode, useState } from "react";
 
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -25,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 declare module "@tanstack/react-table" {

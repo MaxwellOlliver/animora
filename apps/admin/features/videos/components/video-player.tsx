@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import {
+  isHLSProvider,
   MediaPlayer,
   type MediaPlayerInstance,
   MediaProvider,
   type MediaProviderAdapter,
-  isHLSProvider,
 } from "@vidstack/react";
 import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
+import { useEffect, useRef } from "react";
 
 interface VideoPlayerProps {
   src: string;

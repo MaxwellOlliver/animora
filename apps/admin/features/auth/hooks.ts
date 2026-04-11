@@ -2,10 +2,12 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
+
+import { useAuth } from "@/providers/auth-provider"
+
 import { login, logout, refreshTokens } from "./api"
 import { clearTokens, decodeJwt, storeTokens } from "./lib/tokens"
 import type { LoginCredentials } from "./types"
-import { useAuth } from "@/providers/auth-provider"
 
 export function useLogin() {
   const router = useRouter()

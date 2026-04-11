@@ -1,14 +1,16 @@
 "use client";
 
-import Image from "next/image";
+import { MEDIA_PURPOSE } from "@animora/contracts";
 import { PlayIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
+import { buildMediaUrl } from "@/utils/media-utils";
+
+import type { WatchHistoryEpisode } from "../queries/fetch-continue-watching";
 import { CardPopover } from "./card-popover";
 import { TrailerPlayer } from "./trailer-player";
-import type { WatchHistoryEpisode } from "../queries/fetch-continue-watching";
-import { buildMediaUrl } from "@/utils/media-utils";
-import { MEDIA_PURPOSE } from "@animora/contracts";
-import Link from "next/link";
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);

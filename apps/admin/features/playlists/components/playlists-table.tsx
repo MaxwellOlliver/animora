@@ -2,24 +2,22 @@
 
 import { type ColumnDef } from "@tanstack/react-table";
 import {
-  ImageOff,
-  ArrowUpDown,
-  ArrowUp,
   ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ImageOff,
   MoreHorizontal,
   Pencil,
   Plus,
   Trash,
 } from "lucide-react";
-import { TableCell, TableRow } from "@/components/ui/table";
+import Image from "next/image";
+import Link from "next/link";
+import { useMemo } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { usePlaylistsList, useDeletePlaylist } from "../hooks";
-import type { Playlist } from "../types";
-import Image from "next/image";
-import { getMediaImageUrl } from "@/lib/s3";
-import { useMemo } from "react";
+import { DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,8 +26,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DataTable } from "@/components/ui/data-table";
-import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { getMediaImageUrl } from "@/lib/s3";
+
+import { useDeletePlaylist,usePlaylistsList } from "../hooks";
+import type { Playlist } from "../types";
 
 function CoverCell({ playlist }: { playlist: Playlist }) {
   if (!playlist.cover) {

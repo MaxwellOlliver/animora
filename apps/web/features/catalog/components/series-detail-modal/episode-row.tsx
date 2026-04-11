@@ -1,6 +1,7 @@
 import { EllipsisVerticalIcon } from "lucide-react";
-import { EpisodeThumbnail } from "@/components/ui/episode-thumbnail";
 import Link from "next/link";
+
+import { EpisodeThumbnail } from "@/components/ui/episode-thumbnail";
 
 interface EpisodeRowProps {
   id: string;

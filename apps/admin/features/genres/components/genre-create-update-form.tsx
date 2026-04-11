@@ -1,12 +1,14 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Loader2 } from "lucide-react";
 
+import { FormSection } from "@/components/form-section";
+import { Grid } from "@/components/grid";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -17,8 +19,6 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { FormSection } from "@/components/form-section";
-import { Grid } from "@/components/grid";
 
 export const genreCreateUpdateSchema = z.object({
   name: z

@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+
 import type { SeriesDetail } from "./fetch-series";
 
 export async function fetchSeriesDetail(id: string): Promise<SeriesDetail> {

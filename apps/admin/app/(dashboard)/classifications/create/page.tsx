@@ -1,5 +1,8 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,16 +13,13 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-
-import { ClassificationCreateUpdateForm } from "@/features/classifications/components/classification-create-update-form";
 import {
   createContentClassification,
   updateContentClassification,
   uploadContentClassificationIcon,
 } from "@/features/classifications/api";
 import type { ClassificationCreateUpdateValues } from "@/features/classifications/components/classification-create-update-form";
+import { ClassificationCreateUpdateForm } from "@/features/classifications/components/classification-create-update-form";
 
 export default function CreateClassificationPage() {
   const router = useRouter();

@@ -2,9 +2,9 @@
 
 import { type ColumnDef } from "@tanstack/react-table";
 import {
-  ArrowUpDown,
-  ArrowUp,
   ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   ImageOff,
   MoreHorizontal,
   Pencil,
@@ -12,14 +12,12 @@ import {
   Trash,
   UserCircle,
 } from "lucide-react";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAvatarsList, useDeleteAvatar } from "../hooks";
-import type { Avatar } from "../types";
 import Image from "next/image";
-import { getMediaImageUrl } from "@/lib/s3";
+import Link from "next/link";
 import { useMemo } from "react";
+
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,8 +26,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DataTable } from "@/components/ui/data-table";
-import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { getMediaImageUrl } from "@/lib/s3";
+
+import { useAvatarsList, useDeleteAvatar } from "../hooks";
+import type { Avatar } from "../types";
 
 function PictureCell({ avatar }: { avatar: Avatar }) {
   if (!avatar.picture) {

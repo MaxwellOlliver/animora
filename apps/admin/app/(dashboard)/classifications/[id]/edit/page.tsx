@@ -1,5 +1,7 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,15 +13,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useParams, useRouter } from "next/navigation";
-
+import type { ClassificationCreateUpdateValues } from "@/features/classifications/components/classification-create-update-form";
 import { ClassificationCreateUpdateForm } from "@/features/classifications/components/classification-create-update-form";
 import {
   useContentClassificationById,
   useUpdateContentClassification,
   useUploadContentClassificationIcon,
 } from "@/features/classifications/hooks";
-import type { ClassificationCreateUpdateValues } from "@/features/classifications/components/classification-create-update-form";
 
 export default function EditClassificationPage() {
   const params = useParams<{ id: string }>();

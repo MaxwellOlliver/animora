@@ -1,6 +1,7 @@
-import type { IronSession } from "iron-session";
-import { ApiError, apiInternal } from "./api-internal";
 import { getLogger } from "@animora/logger";
+import type { IronSession } from "iron-session";
+
+import { ApiError, apiInternal } from "./api-internal";
 import { decodeTokenExpiry, type SessionData } from "./session";
 
 type AuthResponse = { accessToken: string; refreshToken: string };

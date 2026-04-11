@@ -63,4 +63,4 @@ function TabsIndicator({
   );
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsPanel, TabsIndicator };
+export { Tabs, TabsIndicator,TabsList, TabsPanel, TabsTrigger };

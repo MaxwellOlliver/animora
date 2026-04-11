@@ -1,12 +1,15 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 
+import { FormSection } from "@/components/form-section";
+import { FormSectionGroup } from "@/components/form-section-group";
+import { Grid } from "@/components/grid";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,13 +47,11 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { FormSection } from "@/components/form-section";
-import { FormSectionGroup } from "@/components/form-section-group";
-import { Grid } from "@/components/grid";
+import { useContentClassificationsList } from "@/features/classifications/hooks";
+import { useGenresList } from "@/features/genres/hooks";
 import { getMediaImageUrl } from "@/lib/s3";
 import { cn } from "@/lib/utils";
-import { useGenresList } from "@/features/genres/hooks";
-import { useContentClassificationsList } from "@/features/classifications/hooks";
+
 import type { SeriesAsset } from "../types";
 
 const seriesSchema = z.object({

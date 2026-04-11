@@ -1,5 +1,5 @@
-import { infiniteQueryOptions } from "@tanstack/react-query";
 import { MediaPurpose } from "@animora/contracts";
+import { infiniteQueryOptions } from "@tanstack/react-query";
 
 export type Media = {
   id: string;

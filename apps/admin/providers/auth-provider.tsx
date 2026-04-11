@@ -1,8 +1,9 @@
 "use client"
 
-import { use, createContext, useCallback, useMemo, useSyncExternalStore } from "react"
+import { createContext, use, useCallback, useMemo, useSyncExternalStore } from "react"
+
+import { decodeJwt, getAccessToken, isTokenExpired } from "@/features/auth/lib/tokens"
 import type { AuthUser } from "@/features/auth/types"
-import { getAccessToken, decodeJwt, isTokenExpired } from "@/features/auth/lib/tokens"
 
 // --- Context interface: state + actions + meta (composition pattern) ---
 

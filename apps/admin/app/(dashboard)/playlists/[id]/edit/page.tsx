@@ -1,5 +1,7 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,8 +13,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useParams, useRouter } from "next/navigation";
-
 import {
   PlaylistCreateUpdateForm,
   type PlaylistCreateUpdateValues,

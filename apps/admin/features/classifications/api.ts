@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api-client";
+
 import type { ContentClassification } from "./types";
 
 export interface CreateContentClassificationInput {

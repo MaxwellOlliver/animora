@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useCallback, useState } from "react";
 import {
-  useMediaState,
-  useMediaRemote,
-  useMediaPlayer,
   HLSProvider,
+  useMediaPlayer,
+  useMediaRemote,
+  useMediaState,
 } from "@vidstack/react";
+import { useCallback, useRef, useState } from "react";
 
 export function PlayerProgressBar() {
   const currentTime = useMediaState("currentTime");

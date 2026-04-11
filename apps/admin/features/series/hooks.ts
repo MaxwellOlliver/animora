@@ -6,13 +6,14 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+
 import {
-  type CreateSeriesInput,
-  type UpdateSeriesInput,
   createSeries,
+  type CreateSeriesInput,
   fetchSeries,
   fetchSeriesById,
   updateSeries,
+  type UpdateSeriesInput,
   uploadSeriesAsset,
 } from "./api";
 import type { SeriesAssetPurpose } from "./types";

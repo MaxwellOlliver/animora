@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   BookmarkIcon,
   InfoIcon,
@@ -10,13 +8,17 @@ import {
   Volume2Icon,
   VolumeOffIcon,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
+import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
+
+import { buildFetchFeaturedTrailerQueryOptions } from "../queries/fetch-featured-trailer";
+import type { RecommendedSeries } from "../queries/fetch-recommended";
 import { CardPopover } from "./card-popover";
 import { TrailerPlayer } from "./trailer-player";
-import type { RecommendedSeries } from "../queries/fetch-recommended";
-import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
-import { useQuery } from "@tanstack/react-query";
-import { buildFetchFeaturedTrailerQueryOptions } from "../queries/fetch-featured-trailer";
 
 interface SeriesCardProps {
   series: RecommendedSeries;

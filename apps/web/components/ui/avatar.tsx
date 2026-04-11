@@ -1,6 +1,7 @@
-import { forwardRef } from "react";
 import { Avatar as BaseAvatar } from "@base-ui-components/react/avatar";
 import { User } from "lucide-react";
+import { forwardRef } from "react";
+
 import { cn } from "@/lib/utils";
 
 type AvatarProps = {
