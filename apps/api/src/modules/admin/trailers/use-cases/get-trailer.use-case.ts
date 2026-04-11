@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { TrailersRepository, type TrailerWithMedia } from '../trailers.repository';
+import {
+  TrailersRepository,
+  type TrailerWithMedia,
+} from '../trailers.repository';
 
 @Injectable()
 export class GetTrailerUseCase {

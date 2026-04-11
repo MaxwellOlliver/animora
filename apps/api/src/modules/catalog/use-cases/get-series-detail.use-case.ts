@@ -16,9 +16,7 @@ export class GetSeriesDetailUseCase {
     const series = await this.getSeriesByIdUseCase.execute(id);
 
     const [classification, rating] = await Promise.all([
-      this.classificationsRepository.findById(
-        series.contentClassificationId,
-      ),
+      this.classificationsRepository.findById(series.contentClassificationId),
       this.seriesReviewsRepository.getAverageRating(id),
     ]);
 

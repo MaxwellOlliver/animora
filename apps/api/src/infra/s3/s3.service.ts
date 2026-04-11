@@ -1,3 +1,4 @@
+import { buildStorageKey, type MediaPurpose } from '@animora/contracts';
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
@@ -12,8 +13,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import type { Readable } from 'stream';
-
-import { buildStorageKey, type MediaPurpose } from '@animora/contracts';
 
 import { S3_CLIENT } from './s3.tokens';
 

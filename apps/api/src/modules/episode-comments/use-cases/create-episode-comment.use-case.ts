@@ -43,9 +43,7 @@ export class CreateEpisodeCommentUseCase {
 
     if (input.replyToId) {
       if (!input.parentId) {
-        throw new BadRequestException(
-          'replyToId requires parentId to be set',
-        );
+        throw new BadRequestException('replyToId requires parentId to be set');
       }
       const replyTo = await this.commentsRepository.findById(input.replyToId);
       if (!replyTo) {

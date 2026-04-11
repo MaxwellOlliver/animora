@@ -3,11 +3,11 @@ import { and, asc, desc, eq } from 'drizzle-orm';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
-import { media } from '@/modules/media/media.entity';
 import { type Video, videos } from '@/modules/admin/videos/video.entity';
+import { media } from '@/modules/media/media.entity';
 
 import { series } from '../series/entities/series.entity';
-import { type Trailer, trailers, type NewTrailer } from './trailer.entity';
+import { type NewTrailer, type Trailer, trailers } from './trailer.entity';
 
 export type TrailerWithMedia = Trailer & {
   thumbnail: typeof media.$inferSelect | null;
@@ -63,17 +63,26 @@ export class TrailersRepository {
     return { ...rows[0].trailer, thumbnail: rows[0].thumbnail };
   }
 
-  async findNewestBySeriesId(seriesId: string): Promise<TrailerWithVideo | undefined> {
+  async findNewestBySeriesId(
+    seriesId: string,
+  ): Promise<TrailerWithVideo | undefined> {
     const rows = await this.db
       .select({ trailer: trailers, thumbnail: media, video: videos })
       .from(trailers)
       .leftJoin(media, eq(trailers.thumbnailId, media.id))
-      .leftJoin(videos, and(eq(videos.ownerId, trailers.id), eq(videos.ownerType, 'trailer')))
+      .leftJoin(
+        videos,
+        and(eq(videos.ownerId, trailers.id), eq(videos.ownerType, 'trailer')),
+      )
       .where(eq(trailers.seriesId, seriesId))
       .orderBy(desc(trailers.createdAt))
       .limit(1);
     if (!rows[0]) return undefined;
-    return { ...rows[0].trailer, thumbnail: rows[0].thumbnail, video: rows[0].video };
+    return {
+      ...rows[0].trailer,
+      thumbnail: rows[0].thumbnail,
+      video: rows[0].video,
+    };
   }
 
   async findBySeriesIdAndNumber(
@@ -83,9 +92,7 @@ export class TrailersRepository {
     const [row] = await this.db
       .select()
       .from(trailers)
-      .where(
-        and(eq(trailers.seriesId, seriesId), eq(trailers.number, number)),
-      )
+      .where(and(eq(trailers.seriesId, seriesId), eq(trailers.number, number)))
       .limit(1);
     return row;
   }

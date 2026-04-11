@@ -30,10 +30,7 @@ export class SeriesReviewsRepository {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
   async create(data: NewSeriesReview): Promise<SeriesReview> {
-    const result = await this.db
-      .insert(seriesReviews)
-      .values(data)
-      .returning();
+    const result = await this.db.insert(seriesReviews).values(data).returning();
     return result[0];
   }
 

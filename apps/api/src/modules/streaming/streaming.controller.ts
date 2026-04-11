@@ -1,4 +1,10 @@
-import { Controller, Get, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ActiveProfile } from '@/common/decorators/active-profile.decorator';
@@ -18,7 +24,8 @@ export class StreamingController {
   @UseGuards(ActiveProfileGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Get episode watch payload including media, video, and rating data',
+    summary:
+      'Get episode watch payload including media, video, and rating data',
   })
   async getWatchEpisode(
     @ActiveProfile() activeProfile: ProfileWithAvatar,

@@ -29,9 +29,7 @@ export class SeriesAssetsRepository {
     return rows.map((r) => ({ ...r.asset, media: r.media }));
   }
 
-  async findBySeriesIds(
-    seriesIds: string[],
-  ): Promise<SeriesAssetWithMedia[]> {
+  async findBySeriesIds(seriesIds: string[]): Promise<SeriesAssetWithMedia[]> {
     if (seriesIds.length === 0) return [];
 
     const rows = await this.db

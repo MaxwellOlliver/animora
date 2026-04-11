@@ -7,7 +7,9 @@ import { media } from '@/modules/media/media.entity';
 
 import { type Avatar, avatars, type NewAvatar } from './avatar.entity';
 
-export type AvatarWithMedia = Avatar & { picture: typeof media.$inferSelect | null };
+export type AvatarWithMedia = Avatar & {
+  picture: typeof media.$inferSelect | null;
+};
 
 @Injectable()
 export class AvatarsRepository {

@@ -8,9 +8,7 @@ import { EpisodeCommentsRepository } from '../repositories/episode-comments.repo
 
 @Injectable()
 export class DeleteEpisodeCommentUseCase {
-  constructor(
-    private readonly commentsRepository: EpisodeCommentsRepository,
-  ) {}
+  constructor(private readonly commentsRepository: EpisodeCommentsRepository) {}
 
   async execute(input: {
     profileId: string;

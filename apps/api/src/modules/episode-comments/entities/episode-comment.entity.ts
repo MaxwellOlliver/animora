@@ -35,10 +35,7 @@ export const episodeComments = pgTable(
       t.episodeId,
       t.createdAt,
     ),
-    index('episode_comments_parent_created_at_idx').on(
-      t.parentId,
-      t.createdAt,
-    ),
+    index('episode_comments_parent_created_at_idx').on(t.parentId, t.createdAt),
   ],
 );
 

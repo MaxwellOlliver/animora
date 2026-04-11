@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import type { VideoOwnerType } from '../../videos/video.entity';
 import { CreateVideoUseCase } from '../../videos/use-cases/create-video.use-case';
+import type { VideoOwnerType } from '../../videos/video.entity';
 import type { InitUploadDto } from '../dto/init-upload.dto';
 import { UploadsRepository } from '../repositories/uploads.repository';
 

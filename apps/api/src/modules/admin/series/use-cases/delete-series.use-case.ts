@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { DeleteMediaUseCase } from '@/modules/media/use-cases/delete-media.use-case';
 
-import { SeriesAssetsRepository } from '../repositories/series-assets.repository';
 import { SeriesRepository } from '../repositories/series.repository';
+import { SeriesAssetsRepository } from '../repositories/series-assets.repository';
 
 @Injectable()
 export class DeleteSeriesUseCase {

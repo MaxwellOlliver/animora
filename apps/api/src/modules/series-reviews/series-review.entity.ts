@@ -31,10 +31,7 @@ export const seriesReviews = pgTable(
   },
   (t) => [
     unique('series_reviews_series_profile_unique').on(t.seriesId, t.profileId),
-    index('series_reviews_series_created_at_idx').on(
-      t.seriesId,
-      t.createdAt,
-    ),
+    index('series_reviews_series_created_at_idx').on(t.seriesId, t.createdAt),
   ],
 );
 

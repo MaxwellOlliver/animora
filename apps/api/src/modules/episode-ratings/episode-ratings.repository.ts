@@ -6,8 +6,8 @@ import { DRIZZLE } from '@/infra/database/database.module';
 
 import {
   EpisodeRating,
-  NewEpisodeRating,
   episodeRatings,
+  NewEpisodeRating,
 } from './episode-rating.entity';
 
 export type EpisodeRatingSummary = {
@@ -71,10 +71,8 @@ export class EpisodeRatingsRepository {
     const [counts, myRating] = await Promise.all([
       this.db
         .select({
-          likes:
-            sql<number>`coalesce(sum(case when ${episodeRatings.value} = 'like' then 1 else 0 end), 0)::int`,
-          dislikes:
-            sql<number>`coalesce(sum(case when ${episodeRatings.value} = 'dislike' then 1 else 0 end), 0)::int`,
+          likes: sql<number>`coalesce(sum(case when ${episodeRatings.value} = 'like' then 1 else 0 end), 0)::int`,
+          dislikes: sql<number>`coalesce(sum(case when ${episodeRatings.value} = 'dislike' then 1 else 0 end), 0)::int`,
         })
         .from(episodeRatings)
         .where(eq(episodeRatings.episodeId, episodeId)),

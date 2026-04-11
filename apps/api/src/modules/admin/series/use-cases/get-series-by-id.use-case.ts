@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import {
-  type SeriesWithDetailsAndMedia,
   SeriesRepository,
+  type SeriesWithDetailsAndMedia,
 } from '../repositories/series.repository';
 
 @Injectable()
