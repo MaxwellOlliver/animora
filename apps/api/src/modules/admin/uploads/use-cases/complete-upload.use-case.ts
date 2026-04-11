@@ -1,4 +1,4 @@
-import { EVENTS, VideoUploadedEvent } from '@animora/contracts';
+import { EVENTS, VideoTranscodeEvent } from '@animora/contracts';
 import {
   BadRequestException,
   GoneException,
@@ -56,13 +56,16 @@ export class CompleteUploadUseCase {
       rawObjectKey,
     });
 
-    await this.rabbitMQService.emit<VideoUploadedEvent>(EVENTS.VIDEO_UPLOADED, {
-      videoId: upload.videoId,
-      ownerType: video.ownerType,
-      ownerId: video.ownerId,
-      rawObjectKey,
-      qualities: ['360p', '720p', '1080p'],
-    });
+    await this.rabbitMQService.emit<VideoTranscodeEvent>(
+      EVENTS.VIDEO_TRANSCODE,
+      {
+        videoId: upload.videoId,
+        ownerType: video.ownerType,
+        ownerId: video.ownerId,
+        rawObjectKey,
+        qualities: ['360p', '720p', '1080p'],
+      },
+    );
 
     this.videoEventsService.emit(upload.videoId, 'processing');
 

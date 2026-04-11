@@ -1,8 +1,8 @@
-import { mkdir, readdir, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 
 import type { VideoQuality } from '@animora/contracts';
-import { Context, Effect, Layer } from 'effect';
+import { Context, Duration, Effect, Layer, Schedule } from 'effect';
 
 import { TranscodeError } from '../errors/transcode.error';
 import { FfmpegService } from '../infra/ffmpeg/ffmpeg.layer';
@@ -65,6 +65,11 @@ const QUALITY_PROFILES: Record<
   },
 };
 
+const TRANSCODE_RETRY_SCHEDULE = Schedule.intersect(
+  Schedule.exponential(Duration.seconds(2)),
+  Schedule.recurs(2),
+);
+
 const transcodeQuality = (
   inputPath: string,
   outputDir: string,
@@ -73,7 +78,10 @@ const transcodeQuality = (
   const profile = QUALITY_PROFILES[quality];
   const qualityDir = join(outputDir, quality);
 
-  return Effect.gen(function* () {
+  const attempt = Effect.gen(function* () {
+    yield* Effect.promise(() =>
+      rm(qualityDir, { recursive: true, force: true }),
+    );
     yield* Effect.promise(() => mkdir(qualityDir, { recursive: true }));
 
     const ffmpeg = yield* FfmpegService;
@@ -125,6 +133,15 @@ const transcodeQuality = (
 
     yield* Effect.log(`Transcoded ${quality}`);
   });
+
+  return attempt.pipe(
+    Effect.tapError((error) =>
+      Effect.logWarning(
+        `Transcode ${quality} failed, retrying: ${String(error)}`,
+      ),
+    ),
+    Effect.retry(TRANSCODE_RETRY_SCHEDULE),
+  );
 };
 
 const writeMasterPlaylist = (

@@ -3,8 +3,8 @@ import { Effect, Exit, Layer } from 'effect';
 import { Readable } from 'node:stream';
 import { createRouter } from '../src/infra/rabbitmq/rabbitmq.router';
 import { UnknownPatternError } from '../src/errors/unknown-pattern.error';
-import { EVENTS, QUEUES, type VideoUploadedEvent } from '@animora/contracts';
-import { handleVideoUploaded } from '../src/videos/handlers/video-uploaded.handler';
+import { EVENTS, QUEUES, type VideoTranscodeEvent } from '@animora/contracts';
+import { handleVideoTranscode } from '../src/videos/handlers/video-transcode.handler';
 import { TranscodeService } from '../src/videos/transcode.service';
 import { S3Service } from '../src/infra/s3/s3.service';
 import { VideosRepository } from '../src/videos/videos.repository';
@@ -12,7 +12,7 @@ import { PublisherService } from '../src/infra/rabbitmq/rabbitmq.publisher';
 import { DatabaseError } from '../src/errors/database.error';
 import { TranscodeError } from '../src/errors/transcode.error';
 
-const testEvent: VideoUploadedEvent = {
+const testEvent: VideoTranscodeEvent = {
   videoId: 'video-123',
   ownerType: 'episode',
   ownerId: 'ep-123',
@@ -54,14 +54,14 @@ function makeLayer({
   );
 }
 
-function run(event: VideoUploadedEvent, layer = makeLayer()) {
+function run(event: VideoTranscodeEvent, layer = makeLayer()) {
   return Effect.runPromise(
-    handleVideoUploaded(event).pipe(Effect.provide(layer)),
+    handleVideoTranscode(event).pipe(Effect.provide(layer)),
   );
 }
 
-describe('handleVideoUploaded', () => {
-  test('publishes VideoProcessedEvent with status ready on success', async () => {
+describe('handleVideoTranscode', () => {
+  test('publishes VideoTranscodedEvent on success', async () => {
     const published: Published[] = [];
 
     await run(
@@ -75,11 +75,11 @@ describe('handleVideoUploaded', () => {
     );
 
     expect(published).toHaveLength(1);
-    expect(published[0].queue).toBe(QUEUES.VIDEO_PROCESSED);
-    expect(published[0].pattern).toBe(EVENTS.VIDEO_PROCESSED);
+    expect(published[0].queue).toBe(QUEUES.VIDEO_EVENTS);
+    expect(published[0].pattern).toBe(EVENTS.VIDEO_TRANSCODED);
     expect(published[0].data).toMatchObject({
       videoId: testEvent.videoId,
-      status: 'ready',
+      masterPlaylistKey: expect.any(String),
     });
   });
 
@@ -89,8 +89,6 @@ describe('handleVideoUploaded', () => {
     await run(
       testEvent,
       makeLayer({
-        transcode: () =>
-          Effect.succeed({ masterPlaylistKey: 'hls/test/master.m3u8' }),
         publish: (queue, pattern, data) =>
           Effect.sync(() => {
             published.push({ queue, pattern, data });
@@ -99,11 +97,11 @@ describe('handleVideoUploaded', () => {
     );
 
     expect((published[0].data as any).masterPlaylistKey).toBe(
-      `hls/${testEvent.videoId}/master.m3u8`,
+      `p/hls/${testEvent.videoId}/master.m3u8`,
     );
   });
 
-  test('publishes failed status when ffmpeg fails', async () => {
+  test('publishes VideoTranscodeFailedEvent when ffmpeg fails', async () => {
     const published: Published[] = [];
 
     await run(
@@ -119,10 +117,12 @@ describe('handleVideoUploaded', () => {
     );
 
     expect(published).toHaveLength(1);
-    expect((published[0].data as any).status).toBe('failed');
+    expect(published[0].queue).toBe(QUEUES.VIDEO_EVENTS);
+    expect(published[0].pattern).toBe(EVENTS.VIDEO_TRANSCODE_FAILED);
+    expect((published[0].data as any).reason).toContain('FFmpeg crashed');
   });
 
-  test('calls updateStatus with videoId and status', async () => {
+  test('calls updateStatus with videoId and ready on success', async () => {
     const dbCalls: DbCall[] = [];
 
     await run(
@@ -146,7 +146,7 @@ describe('handleVideoUploaded', () => {
     const published: Published[] = [];
 
     const exit = await Effect.runPromiseExit(
-      handleVideoUploaded(testEvent).pipe(
+      handleVideoTranscode(testEvent).pipe(
         Effect.provide(
           makeLayer({
             updateStatus: () =>
@@ -172,8 +172,14 @@ describe('createRouter', () => {
     const calls: string[] = [];
 
     const router = createRouter({
-      'event.a': () => Effect.sync(() => { calls.push('a'); }),
-      'event.b': () => Effect.sync(() => { calls.push('b'); }),
+      'event.a': () =>
+        Effect.sync(() => {
+          calls.push('a');
+        }),
+      'event.b': () =>
+        Effect.sync(() => {
+          calls.push('b');
+        }),
     });
 
     await Effect.runPromise(router('event.a', {}));
@@ -186,7 +192,10 @@ describe('createRouter', () => {
     let received: unknown;
 
     const router = createRouter({
-      'event.a': (data) => Effect.sync(() => { received = data; }),
+      'event.a': (data) =>
+        Effect.sync(() => {
+          received = data;
+        }),
     });
 
     await Effect.runPromise(router('event.a', { videoId: '123' }));

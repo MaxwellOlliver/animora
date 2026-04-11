@@ -1,14 +1,13 @@
-import type { VideoProcessedEvent } from '@animora/contracts';
 import { Effect } from 'effect';
 
 import { VideosRepository } from '../videos.repository';
 
-export const updateVideoStatus = (event: VideoProcessedEvent) =>
+export const updateVideoStatus = (
+  videoId: string,
+  status: 'ready' | 'failed',
+  masterPlaylistKey?: string,
+) =>
   Effect.gen(function* () {
     const repo = yield* VideosRepository;
-    yield* repo.updateStatus(
-      event.videoId,
-      event.status,
-      event.masterPlaylistKey,
-    );
+    yield* repo.updateStatus(videoId, status, masterPlaylistKey);
   });

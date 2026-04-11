@@ -2,7 +2,7 @@ export type VideoOwnerType = 'episode' | 'trailer';
 
 export type VideoQuality = '360p' | '720p' | '1080p';
 
-export interface VideoUploadedEvent {
+export interface VideoTranscodeEvent {
   videoId: string;
   ownerType: VideoOwnerType;
   ownerId: string;
@@ -10,11 +10,16 @@ export interface VideoUploadedEvent {
   qualities: VideoQuality[];
 }
 
-export interface VideoProcessedEvent {
+export interface VideoTranscodedEvent {
   videoId: string;
   ownerType: VideoOwnerType;
   ownerId: string;
-  status: 'ready' | 'failed';
-  masterPlaylistKey?: string;
-  error?: string;
+  masterPlaylistKey: string;
+}
+
+export interface VideoTranscodeFailedEvent {
+  videoId: string;
+  ownerType: VideoOwnerType;
+  ownerId: string;
+  reason: string;
 }

@@ -1,9 +1,10 @@
 export const QUEUES = {
-  VIDEO_PROCESSING: 'video.processing', // Worker consumes — video.uploaded
-  VIDEO_PROCESSED: 'video.processed',   // API consumes   — video.processed
+  VIDEO_TRANSCODE: 'video.transcode', // Worker consumes — transcode commands
+  VIDEO_EVENTS: 'video.events', // API consumes — worker lifecycle events
 } as const;
 
 export const EVENTS = {
-  VIDEO_UPLOADED: 'video.uploaded',
-  VIDEO_PROCESSED: 'video.processed',
+  VIDEO_TRANSCODE: 'video.transcode',
+  VIDEO_TRANSCODED: 'video.transcoded',
+  VIDEO_TRANSCODE_FAILED: 'video.transcode_failed',
 } as const;

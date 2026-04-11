@@ -16,7 +16,7 @@ import { RABBITMQ_CLIENT, RabbitMQService } from './rabbitmq.service';
           transport: Transport.RMQ,
           options: {
             urls: [config.getOrThrow<string>('RABBITMQ_URL')],
-            queue: QUEUES.VIDEO_PROCESSING,
+            queue: QUEUES.VIDEO_TRANSCODE,
             queueOptions: { durable: true },
           },
         }),

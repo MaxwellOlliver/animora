@@ -1,5 +1,5 @@
 import * as amqplib from 'amqplib';
-import { Context, Effect, Layer, Queue, Schema, Scope } from 'effect';
+import { Context, Duration, Effect, Layer, Queue, Schema, Scope } from 'effect';
 
 import { MessageParseError } from '../../errors/message-parse.error';
 import { AmqpChannel } from './rabbitmq.layer';
@@ -8,6 +8,8 @@ const RabbitMqMessageSchema = Schema.Struct({
   pattern: Schema.String,
   data: Schema.Unknown,
 });
+
+const MESSAGE_TIMEOUT = Duration.hours(6);
 
 export class ConsumerService extends Context.Tag('ConsumerService')<
   ConsumerService,
@@ -59,7 +61,15 @@ export const ConsumerLive = Layer.effect(
                   Effect.mapError((cause) => new MessageParseError({ cause })),
                 );
 
-                yield* handler(pattern, data);
+                yield* handler(pattern, data).pipe(
+                  Effect.timeoutFail({
+                    duration: MESSAGE_TIMEOUT,
+                    onTimeout: () =>
+                      new Error(
+                        `Handler timed out after ${Duration.format(MESSAGE_TIMEOUT)} (pattern=${pattern})`,
+                      ),
+                  }),
+                );
                 yield* Effect.sync(() => channel.ack(msg));
               }).pipe(
                 Effect.catchAll((error) =>

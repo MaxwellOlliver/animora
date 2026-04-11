@@ -6,7 +6,6 @@ const EnvSchema = Schema.Struct({
   WORKER_CONCURRENCY: Schema.optionalWith(Schema.NumberFromString, {
     default: () => 1,
   }),
-
   S3_ACCESS_KEY: Schema.NonEmptyString,
   S3_SECRET_KEY: Schema.NonEmptyString,
   S3_REGION: Schema.NonEmptyString,
@@ -18,7 +17,6 @@ type Config = {
   databaseUrl: string;
   rabbitmqUrl: string;
   workerConcurrency: number;
-
   s3AccessKey: string;
   s3SecretKey: string;
   s3Region: string;
@@ -35,7 +33,6 @@ export const ConfigLive = Layer.effect(
       databaseUrl: env.DATABASE_URL,
       rabbitmqUrl: env.RABBITMQ_URL,
       workerConcurrency: env.WORKER_CONCURRENCY,
-
       s3AccessKey: env.S3_ACCESS_KEY,
       s3SecretKey: env.S3_SECRET_KEY,
       s3Region: env.S3_REGION,

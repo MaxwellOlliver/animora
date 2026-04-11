@@ -4,8 +4,9 @@ import * as amqplib from 'amqplib';
 import {
   EVENTS,
   QUEUES,
-  type VideoUploadedEvent,
-  type VideoProcessedEvent,
+  type VideoTranscodeEvent,
+  type VideoTranscodedEvent,
+  type VideoTranscodeFailedEvent,
 } from '@animora/contracts';
 
 const TIMEOUT_MS = 15_000;
@@ -13,28 +14,34 @@ const TIMEOUT_MS = 15_000;
 let conn: amqplib.ChannelModel;
 let ch: amqplib.Channel;
 
-const pending = new Map<string, (result: VideoProcessedEvent) => void>();
+type WorkerResult =
+  | { kind: 'transcoded'; data: VideoTranscodedEvent }
+  | { kind: 'failed'; data: VideoTranscodeFailedEvent };
+
+const pending = new Map<string, (result: WorkerResult) => void>();
 
 beforeAll(async () => {
   conn = await amqplib.connect(process.env.RABBITMQ_URL!);
   ch = await conn.createChannel();
-  await ch.assertQueue(QUEUES.VIDEO_PROCESSING, { durable: true });
-  await ch.assertQueue(QUEUES.VIDEO_PROCESSED, { durable: true });
-  await ch.purgeQueue(QUEUES.VIDEO_PROCESSING);
-  await ch.purgeQueue(QUEUES.VIDEO_PROCESSED);
+  await ch.assertQueue(QUEUES.VIDEO_TRANSCODE, { durable: true });
+  await ch.assertQueue(QUEUES.VIDEO_EVENTS, { durable: true });
+  await ch.purgeQueue(QUEUES.VIDEO_TRANSCODE);
+  await ch.purgeQueue(QUEUES.VIDEO_EVENTS);
 
-  await ch.consume(QUEUES.VIDEO_PROCESSED, (msg) => {
+  await ch.consume(QUEUES.VIDEO_EVENTS, (msg) => {
     if (!msg) return;
     ch.ack(msg);
 
     const envelope = JSON.parse(msg.content.toString()) as {
       pattern: string;
-      data: VideoProcessedEvent;
+      data: VideoTranscodedEvent | VideoTranscodeFailedEvent;
     };
     const resolve = pending.get(envelope.data.videoId);
     if (resolve) {
       pending.delete(envelope.data.videoId);
-      resolve(envelope.data);
+      const kind =
+        envelope.pattern === EVENTS.VIDEO_TRANSCODED ? 'transcoded' : 'failed';
+      resolve({ kind, data: envelope.data } as WorkerResult);
     }
   });
 });
@@ -44,7 +51,7 @@ afterAll(async () => {
   await conn.close();
 });
 
-function publish(event: VideoUploadedEvent): Promise<VideoProcessedEvent> {
+function publish(event: VideoTranscodeEvent): Promise<WorkerResult> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       pending.delete(event.videoId);
@@ -59,16 +66,16 @@ function publish(event: VideoUploadedEvent): Promise<VideoProcessedEvent> {
     });
 
     ch.sendToQueue(
-      QUEUES.VIDEO_PROCESSING,
+      QUEUES.VIDEO_TRANSCODE,
       Buffer.from(
-        JSON.stringify({ pattern: EVENTS.VIDEO_UPLOADED, data: event }),
+        JSON.stringify({ pattern: EVENTS.VIDEO_TRANSCODE, data: event }),
       ),
       { persistent: true },
     );
   });
 }
 
-function makeEvent(): VideoUploadedEvent {
+function makeEvent(): VideoTranscodeEvent {
   return {
     videoId: 'bd30772f-b674-4d3b-838c-26e024ac203b',
     ownerType: 'episode',
@@ -79,23 +86,23 @@ function makeEvent(): VideoUploadedEvent {
 }
 
 describe('worker e2e', () => {
-  test('processes a single message and returns status ready', async () => {
+  test('processes a single message and emits transcoded event', async () => {
     const event = makeEvent();
     const result = await publish(event);
 
-    expect(result.videoId).toBe(event.videoId);
-    expect(result.ownerId).toBe(event.ownerId);
-    expect(result.status).toBe('ready');
+    expect(result.kind).toBe('transcoded');
+    expect(result.data.videoId).toBe(event.videoId);
+    expect(result.data.ownerId).toBe(event.ownerId);
   });
 
-  test('processes multiple messages and all return status ready', async () => {
+  test('processes multiple messages and all emit transcoded events', async () => {
     const events = Array.from({ length: 5 }, () => makeEvent());
     const results = await Promise.all(events.map(publish));
 
     expect(results).toHaveLength(5);
     for (const [i, result] of results.entries()) {
-      expect(result.videoId).toBe(events[i].videoId);
-      expect(result.status).toBe('ready');
+      expect(result.data.videoId).toBe(events[i].videoId);
+      expect(result.kind).toBe('transcoded');
     }
   });
 
@@ -104,33 +111,39 @@ describe('worker e2e', () => {
 
     const raw = await new Promise<{
       pattern: string;
-      data: VideoProcessedEvent;
+      data: VideoTranscodedEvent | VideoTranscodeFailedEvent;
     }>((resolve, reject) => {
       const timer = setTimeout(
         () => reject(new Error('Timed out')),
         TIMEOUT_MS,
       );
 
-      pending.set(event.videoId, (data) => {
+      pending.set(event.videoId, (result) => {
         clearTimeout(timer);
-        resolve({ pattern: EVENTS.VIDEO_PROCESSED, data });
+        resolve({
+          pattern:
+            result.kind === 'transcoded'
+              ? EVENTS.VIDEO_TRANSCODED
+              : EVENTS.VIDEO_TRANSCODE_FAILED,
+          data: result.data,
+        });
       });
 
       ch.sendToQueue(
-        QUEUES.VIDEO_PROCESSING,
+        QUEUES.VIDEO_TRANSCODE,
         Buffer.from(
-          JSON.stringify({ pattern: EVENTS.VIDEO_UPLOADED, data: event }),
+          JSON.stringify({ pattern: EVENTS.VIDEO_TRANSCODE, data: event }),
         ),
         { persistent: true },
       );
     });
 
-    expect(raw.pattern).toBe(EVENTS.VIDEO_PROCESSED);
+    expect(raw.pattern).toBe(EVENTS.VIDEO_TRANSCODED);
     expect(raw.data.videoId).toBe(event.videoId);
   });
 
   test('worker survives a malformed message and keeps processing', async () => {
-    ch.sendToQueue(QUEUES.VIDEO_PROCESSING, Buffer.from('not valid json {{'), {
+    ch.sendToQueue(QUEUES.VIDEO_TRANSCODE, Buffer.from('not valid json {{'), {
       persistent: true,
     });
 
@@ -139,6 +152,6 @@ describe('worker e2e', () => {
     const event = makeEvent();
     const result = await publish(event);
 
-    expect(result.status).toBe('ready');
+    expect(result.kind).toBe('transcoded');
   });
 });
