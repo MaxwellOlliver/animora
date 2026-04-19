@@ -132,7 +132,7 @@ export function EpisodeInfo({
 
           <div className="h-5 w-px bg-border" />
 
-          <WatchPartyButton />
+          <WatchPartyButton episodeId={episodeId} />
         </div>
 
         {description ? (

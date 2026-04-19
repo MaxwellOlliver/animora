@@ -1,79 +1,62 @@
 "use client";
 
-import { Check, Circle,Copy, SendHorizonal, Smile } from "lucide-react";
-import { useState } from "react";
+import { Check, Circle, Copy, SendHorizonal, Smile } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { Avatar } from "@/components/ui/avatar";
+import { useWatchParty } from "@/features/watch-party/watch-party-context";
 
 import { WatchPartyMembers } from "./watch-party-members";
 
-const MOCK_ROOM_CODE = "A1K998SU";
-const MOCK_VIEWER_COUNT = 5;
-
-const MOCK_MESSAGES = [
-  {
-    id: 1,
-    user: "Eren_Fan42",
-    avatar: "/images/avatar-placeholder.svg",
-    text: "This opening scene still gives me chills every time",
-    timestamp: "22:31",
-  },
-  {
-    id: 2,
-    user: "MikasaSimp",
-    avatar: "/images/avatar-placeholder.svg",
-    text: "The animation quality is insane for 2013",
-    timestamp: "22:31",
-  },
-  {
-    id: 3,
-    user: "TitanSlayer",
-    avatar: "/images/avatar-placeholder.svg",
-    text: "Wait for it... this next part 🔥",
-    timestamp: "22:32",
-  },
-  {
-    id: 4,
-    user: "ArminAlert",
-    avatar: "/images/avatar-placeholder.svg",
-    text: "The soundtrack here is peak Sawano",
-    timestamp: "22:33",
-  },
-  {
-    id: 5,
-    user: "Eren_Fan42",
-    avatar: "/images/avatar-placeholder.svg",
-    text: "LETS GOOO",
-    timestamp: "22:33",
-  },
-];
+function formatTime(ms: number): string {
+  return new Date(ms).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export function WatchPartyChat() {
+  const wp = useWatchParty();
   const [copied, setCopied] = useState(false);
   const [message, setMessage] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [wp?.chat.length]);
+
+  if (!wp) {
+    return null;
+  }
+
+  const code = wp.code;
+  const connecting = wp.status === "connecting";
 
   function handleCopy() {
-    navigator.clipboard.writeText(MOCK_ROOM_CODE);
+    navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
 
   function handleSend() {
-    if (!message.trim()) return;
+    if (!message.trim() || !wp) return;
+    wp.sendChat(message);
     setMessage("");
   }
 
   return (
     <div className="flex h-120 flex-col overflow-hidden rounded-lg border border-border bg-card">
-      {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div className="flex items-center gap-2">
+          <h4>Watch Party</h4>
           <button
             type="button"
             onClick={handleCopy}
             className="group flex items-center gap-1.5 rounded-md bg-background-muted px-2.5 py-1 text-xs font-medium text-foreground-muted transition-colors hover:text-foreground"
           >
-            <span className="font-mono tracking-wide">#{MOCK_ROOM_CODE}</span>
+            <span className="font-mono tracking-wide">#{code}</span>
             {copied ? (
               <Check className="size-3 text-success" />
             ) : (
@@ -81,45 +64,74 @@ export function WatchPartyChat() {
             )}
           </button>
           <span className="relative flex size-2">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-75" />
-            <Circle className="relative size-2 fill-success text-success" />
+            {wp.status === "connected" && (
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-75" />
+            )}
+            <Circle
+              className={`relative size-2 ${
+                wp.status === "connected"
+                  ? "fill-success text-success"
+                  : wp.status === "error"
+                    ? "fill-danger text-danger"
+                    : "fill-foreground-muted text-foreground-muted"
+              }`}
+            />
           </span>
         </div>
-
-        <WatchPartyMembers count={MOCK_VIEWER_COUNT} />
+        <WatchPartyMembers />
       </div>
 
-      {/* Messages */}
-      <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-3">
-        {MOCK_MESSAGES.map((msg, i) => (
-          <div
-            key={msg.id}
-            className="group flex items-start gap-2.5 rounded-md px-1.5 py-1.5 transition-colors hover:bg-foreground/3"
-            style={{ animationDelay: `${i * 60}ms` }}
-          >
-            <Avatar
-              src={msg.avatar}
-              alt={msg.user}
-              className="mt-0.5 size-7 shrink-0"
-            />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-baseline gap-2">
-                <span className="truncate text-xs font-semibold text-primary">
-                  {msg.user}
-                </span>
-                <span className="shrink-0 text-[10px] text-foreground-muted/50">
-                  {msg.timestamp}
+      <div
+        ref={scrollRef}
+        className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-3"
+      >
+        {connecting && wp.chat.length === 0 && (
+          <div className="m-auto text-xs text-foreground-muted">
+            Connecting...
+          </div>
+        )}
+        {wp.chat.map((item) => {
+          if (item.kind === "system") {
+            return (
+              <div
+                key={item.id}
+                className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-foreground-muted/70"
+              >
+                <span className="italic">{item.content}</span>
+                <span className="text-foreground-muted">
+                  · {formatTime(item.at)}
                 </span>
               </div>
-              <p className="text-sm leading-snug text-foreground/90 wrap-break-word">
-                {msg.text}
-              </p>
+            );
+          }
+          return (
+            <div
+              key={item.id}
+              className="group flex items-start gap-2.5 rounded-md px-1.5 py-1.5 transition-colors hover:bg-foreground/3"
+            >
+              <Avatar
+                src="/images/avatar-placeholder.svg"
+                alt={item.displayName}
+                className="mt-0.5 size-7 shrink-0"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="truncate text-xs font-semibold text-primary">
+                    {item.displayName}
+                  </span>
+                  <span className="shrink-0 text-[10px] text-foreground-muted/50">
+                    {formatTime(item.at)}
+                  </span>
+                </div>
+                <p className="text-sm leading-snug text-foreground/90 wrap-break-word">
+                  {item.content}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Input */}
       <div className="border-t border-border px-3 py-3">
         <div className="flex items-center gap-2 rounded-lg bg-input px-3 py-2 transition-shadow focus-within:ring-1 focus-within:ring-primary/40">
           <button
@@ -134,12 +146,14 @@ export function WatchPartyChat() {
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Your message"
-            className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-placeholder"
+            maxLength={500}
+            disabled={wp.status !== "connected"}
+            className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-placeholder disabled:opacity-50"
           />
           <button
             type="button"
             onClick={handleSend}
-            disabled={!message.trim()}
+            disabled={!message.trim() || wp.status !== "connected"}
             className="flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100"
           >
             <SendHorizonal className="size-3" />

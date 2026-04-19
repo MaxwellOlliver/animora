@@ -7,6 +7,7 @@ import { SidebarEpisodeCard } from "@/features/watch/components/sidebar-episode-
 import { WatchPartyChat } from "@/features/watch/components/watch-party-chat";
 import { WatchVideoPlayer } from "@/features/watch/components/watch-video-player";
 import { fetchWatchEpisode } from "@/features/watch/queries/fetch-watch-episode";
+import { WatchPartyShell } from "@/features/watch-party/watch-party-shell";
 import { ApiError, SessionExpiredError } from "@/lib/api";
 import { ensureFreshSession } from "@/lib/ensure-fresh-session";
 import { getSession } from "@/lib/session";
@@ -74,6 +75,7 @@ export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
   const playerTitle = `${payload.episode.series.name} - E${payload.episode.number} - ${payload.episode.title}`;
 
   return (
+    <WatchPartyShell>
     <div className="flex w-full flex-col items-center">
       <WatchVideoPlayer
         episodeId={episodeId}
@@ -81,14 +83,6 @@ export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
         title={playerTitle}
         nextEpisodeId={payload.nextEpisode?.id}
         timestampActions={MOCK_TIMESTAMP_ACTIONS}
-        overlayMessages={[
-          {
-            id: "1",
-            text: "Hey guys!",
-            user: "Max",
-            avatar: "/",
-          },
-        ]}
       />
       <div className="grid w-full max-w-350 grid-cols-12 gap-x-8 py-8">
         <div className="col-span-8 flex flex-col gap-4 p-2.5">
@@ -152,5 +146,6 @@ export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
         </div>
       </div>
     </div>
+    </WatchPartyShell>
   );
 }

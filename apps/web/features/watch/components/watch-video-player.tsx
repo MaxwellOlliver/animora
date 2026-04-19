@@ -12,6 +12,8 @@ import type { TimestampAction } from "@/features/watch/components/player/skip-bu
 import { VideoPlayer } from "@/features/watch/components/player/video-player";
 import { WatchHistorySync } from "@/features/watch/components/watch-history-sync";
 import { buildFetchEpisodeWatchHistoryQueryOptions } from "@/features/watch/queries/fetch-episode-watch-history";
+import { useWatchParty } from "@/features/watch-party/watch-party-context";
+import { WatchPartyPlayerSync } from "@/features/watch-party/watch-party-player-sync";
 
 type WatchVideoPlayerProps = {
   episodeId: string;
@@ -19,7 +21,6 @@ type WatchVideoPlayerProps = {
   title?: string;
   nextEpisodeId?: string | null;
   timestampActions?: TimestampAction[];
-  overlayMessages?: OverlayMessage[];
 };
 
 function WatchAutoplay({
@@ -55,9 +56,19 @@ export function WatchVideoPlayer({
   title,
   nextEpisodeId,
   timestampActions = [],
-  overlayMessages = [],
 }: WatchVideoPlayerProps) {
   const router = useRouter();
+  const wp = useWatchParty();
+
+  const overlayMessages: OverlayMessage[] =
+    wp?.chat
+      .filter((item) => item.kind === "chat")
+      .slice(-10)
+      .map((item) => ({
+        id: item.id,
+        user: item.displayName,
+        text: item.content,
+      })) ?? [];
   const {
     data: watchHistory,
     isPending,
@@ -96,6 +107,7 @@ export function WatchVideoPlayer({
       overlayMessages={overlayMessages}
     >
       <WatchHistorySync episodeId={episodeId} />
+      <WatchPartyPlayerSync />
       <WatchAutoplay
         nextEpisodeId={nextEpisodeId}
         onNavigate={navigateToEpisode}
