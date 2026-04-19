@@ -37,7 +37,9 @@
     "@nestjs/microservices": "^11.1.14",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-fastify": "^11.1.14",
+    "@nestjs/platform-socket.io": "^11.1.19",
     "@nestjs/swagger": "^11.2.6",
+    "@nestjs/websockets": "^11.1.19",
     "amqp-connection-manager": "^5.0.0",
     "amqplib": "^0.10.9",
     "bcrypt": "^6.0.0",
@@ -46,6 +48,7 @@
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "fastify": "5.8.2",
+    "ioredis": "^5.10.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
@@ -54,6 +57,7 @@
     "postgres": "^3.4.8",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "socket.io": "^4.8.3",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

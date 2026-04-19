@@ -12,6 +12,7 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { FastifyIoAdapter } from './common/adapters/fastify-io.adapter';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 async function bootstrap() {
@@ -42,6 +43,9 @@ async function bootstrap() {
     limits: { fileSize: 10_485_760 },
   }); // 10 MB
 
+  const ioAdapter = new FastifyIoAdapter(app);
+  app.useWebSocketAdapter(ioAdapter);
+
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes(
@@ -64,5 +68,9 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+  const fastifyInstance = app.getHttpAdapter().getInstance() as {
+    server: unknown;
+  };
+  ioAdapter.attach(fastifyInstance.server);
 }
 void bootstrap();
