@@ -6,6 +6,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { DatabaseModule } from './infra/database/database.module';
 import { RabbitMQModule } from './infra/rabbitmq/rabbitmq.module';
+import { RedisModule } from './infra/redis/redis.module';
 import { S3Module } from './infra/s3/s3.module';
 import { AvatarsModule } from './modules/admin/avatars/avatars.module';
 import { ContentClassificationsModule } from './modules/admin/content-classifications/content-classifications.module';
@@ -26,6 +27,7 @@ import { SeriesReviewsModule } from './modules/series-reviews/series-reviews.mod
 import { StreamingModule } from './modules/streaming/streaming.module';
 import { UsersModule } from './modules/users/users.module';
 import { WatchHistoryModule } from './modules/watch-history/watch-history.module';
+import { WatchPartyModule } from './modules/watch-party/watch-party.module';
 
 @Module({
   imports: [
@@ -33,6 +35,7 @@ import { WatchHistoryModule } from './modules/watch-history/watch-history.module
     DatabaseModule,
     S3Module,
     RabbitMQModule,
+    RedisModule,
     MediaModule,
     AuthModule,
     UsersModule,
@@ -52,6 +55,7 @@ import { WatchHistoryModule } from './modules/watch-history/watch-history.module
     SeriesReviewsModule,
     StreamingModule,
     WatchHistoryModule,
+    WatchPartyModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },
