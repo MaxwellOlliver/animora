@@ -88,7 +88,7 @@ export function VideoPlayer({
       crossOrigin
       playsInline
       onProviderChange={onProviderChange}
-      className="group relative w-full h-[calc(100dvh-10rem)] aspect-auto! overflow-hidden bg-black **:data-media-provider:h-full! [&_video]:size-full! [&_video]:object-contain!"
+      className="group relative w-full aspect-video! max-h-[calc(100dvh-10rem)] overflow-hidden bg-black **:data-media-provider:h-full! [&_video]:size-full! [&_video]:object-contain!"
     >
       <MediaProvider />
       <PlayerProvider>

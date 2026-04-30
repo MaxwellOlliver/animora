@@ -87,7 +87,7 @@ export function WatchVideoPlayer({
 
   if (!isFetched || isPending) {
     return (
-      <div className="flex h-[calc(100dvh-10rem)] w-full items-center justify-center bg-black">
+      <div className="flex aspect-video max-h-[calc(100dvh-10rem)] w-full items-center justify-center bg-black">
         <Loader2 className="size-12 animate-spin text-white/80" />
       </div>
     );
