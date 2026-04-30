@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { ChevronDown,Heart } from "lucide-react";
+import { ChevronDown, Heart } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -93,7 +93,7 @@ export function EpisodeInfo({
       <div className="flex flex-col gap-4">
         <Link
           href={`/series/${seriesId}`}
-          className="font-heading text-base w-fit font-semibold text-secondary hover:underline"
+          className="font-heading text-sm w-fit font-semibold text-secondary hover:underline"
         >
           {seriesName}
         </Link>

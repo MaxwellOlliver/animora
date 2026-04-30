@@ -14,8 +14,8 @@ import { getSession } from "@/lib/session";
 import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
 
 const MOCK_TIMESTAMP_ACTIONS = [
-  { label: "skip opening", startTime: 30, endTime: 120, skipTo: 120 },
-  { label: "skip ending", startTime: 1350, endTime: 1440, skipTo: 1440 },
+  { label: "skip opening", startTime: 30, endTime: 118, skipTo: 118 },
+  { label: "skip ending", startTime: 1332, endTime: 1420, skipTo: 1420 },
 ];
 
 type WatchRoomPageProps = {
@@ -76,42 +76,36 @@ export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
 
   return (
     <WatchPartyShell>
-    <div className="flex w-full flex-col items-center">
-      <WatchVideoPlayer
-        episodeId={episodeId}
-        src={buildHlsUrl(payload.video.masterPlaylistKey)}
-        title={playerTitle}
-        nextEpisodeId={payload.nextEpisode?.id}
-        timestampActions={MOCK_TIMESTAMP_ACTIONS}
-      />
-      <div className="grid w-full max-w-350 grid-cols-12 gap-x-8 py-8">
-        <div className="col-span-8 flex flex-col gap-4 p-2.5">
-          <EpisodeInfo
-            episodeId={episodeId}
-            episodeNumber={payload.episode.number}
-            title={payload.episode.title}
-            seriesId={payload.episode.series.id}
-            seriesName={payload.episode.series.name}
-            description={payload.episode.description}
-            releasedAt={formatReleaseDate(payload.episode.createdAt)}
-            likes={payload.rating.likes}
-            dislikes={payload.rating.dislikes}
-            myRating={payload.rating.myRating}
-          />
-          <div className="h-4" />
-          <CommentsSection
-            episodeId={episodeId}
-            currentProfileAvatar={currentProfileAvatar}
-          />
-        </div>
-        <div className="col-span-4 flex flex-col gap-4">
-          <WatchPartyChat />
-          {payload.nextEpisode && (
-            <>
-              <div className="h-4" />
-              <h3 className="font-heading text-xl font-medium leading-7">
-                Next episode
-              </h3>
+      <div className="flex w-full flex-col items-center">
+        <WatchVideoPlayer
+          episodeId={episodeId}
+          src={buildHlsUrl(payload.video.masterPlaylistKey)}
+          title={playerTitle}
+          nextEpisodeId={payload.nextEpisode?.id}
+          timestampActions={MOCK_TIMESTAMP_ACTIONS}
+        />
+        <div className="grid w-full max-w-350 grid-cols-1 gap-x-8 gap-y-6 px-4 py-8 lg:grid-cols-12 lg:px-0">
+          <div className="p-2.5 lg:col-span-8 lg:row-start-1">
+            <EpisodeInfo
+              episodeId={episodeId}
+              episodeNumber={payload.episode.number}
+              title={payload.episode.title}
+              seriesId={payload.episode.series.id}
+              seriesName={payload.episode.series.name}
+              description={payload.episode.description}
+              releasedAt={formatReleaseDate(payload.episode.createdAt)}
+              likes={payload.rating.likes}
+              dislikes={payload.rating.dislikes}
+              myRating={payload.rating.myRating}
+            />
+          </div>
+          <div className="flex flex-col gap-4 lg:col-span-4 lg:row-span-2 lg:row-start-1">
+            <WatchPartyChat />
+            <div className="h-4" />
+            <h3 className="font-heading text-xl font-medium leading-7">
+              Next episode
+            </h3>
+            {payload.nextEpisode ? (
               <SidebarEpisodeCard
                 href={`/watch/${payload.nextEpisode.id}`}
                 seriesName={payload.episode.series.name}
@@ -132,20 +126,20 @@ export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
                     : undefined
                 }
               />
-            </>
-          )}
-          <div className="h-4" />
-          <h3 className="font-heading text-xl font-medium leading-7">
-            For you
-          </h3>
-          <div className="flex flex-col gap-4">
-            <SidebarEpisodeCard progress={75} />
-            <SidebarEpisodeCard progress={75} />
-            <SidebarEpisodeCard progress={75} />
+            ) : (
+              <div className="flex items-center justify-center rounded-xl bg-elevated/50 px-4 py-8 text-center text-sm text-foreground-muted">
+                You&apos;ve reached the latest episode.
+              </div>
+            )}
+          </div>
+          <div className="p-2.5 lg:col-span-8 lg:row-start-2">
+            <CommentsSection
+              episodeId={episodeId}
+              currentProfileAvatar={currentProfileAvatar}
+            />
           </div>
         </div>
       </div>
-    </div>
     </WatchPartyShell>
   );
 }
