@@ -7,10 +7,15 @@ export interface WatchPartySession {
   locked: boolean;
 }
 
+export interface WatchPartyAvatar {
+  key: string;
+  purpose: string;
+}
+
 export interface WatchPartyMember {
   profileId: string;
   displayName: string;
-  avatarUrl: string | null;
+  avatar: WatchPartyAvatar | null;
   joinedAt: number;
 }
 

@@ -36,7 +36,7 @@ export class JoinSessionUseCase {
       const member: WatchPartyMember = {
         profileId: input.profile.id,
         displayName: input.profile.name,
-        avatar: null,
+        avatar: input.profile.avatar?.picture ?? null,
         joinedAt: Date.now(),
       };
       await this.repository.addMember(input.code, member);

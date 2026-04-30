@@ -1,10 +1,12 @@
 "use client";
 
+import { MediaPurpose } from "@animora/contracts";
 import { Check, Circle, Copy, SendHorizonal, Smile } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Avatar } from "@/components/ui/avatar";
 import { useWatchParty } from "@/features/watch-party/watch-party-context";
+import { buildMediaUrl } from "@/utils/media-utils";
 
 import { WatchPartyMembers } from "./watch-party-members";
 
@@ -33,6 +35,9 @@ export function WatchPartyChat() {
 
   const code = wp.code;
   const connecting = wp.status === "connecting";
+  const avatarByProfileId = new Map(
+    wp.members.map((m) => [m.profileId, m.avatar]),
+  );
 
   function handleCopy() {
     navigator.clipboard.writeText(code);
@@ -110,7 +115,12 @@ export function WatchPartyChat() {
               className="group flex items-start gap-2.5 rounded-md px-1.5 py-1.5 transition-colors hover:bg-foreground/3"
             >
               <Avatar
-                src="/images/avatar-placeholder.svg"
+                src={(() => {
+                  const avatar = avatarByProfileId.get(item.profileId);
+                  return avatar
+                    ? buildMediaUrl(avatar.purpose as MediaPurpose, avatar.key)
+                    : undefined;
+                })()}
                 alt={item.displayName}
                 className="mt-0.5 size-7 shrink-0"
               />

@@ -1,5 +1,6 @@
 "use client";
 
+import { MediaPurpose } from "@animora/contracts";
 import { Crown, LogOut, Users } from "lucide-react";
 
 import { Avatar } from "@/components/ui/avatar";
@@ -12,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useWatchParty } from "@/features/watch-party/watch-party-context";
+import { buildMediaUrl } from "@/utils/media-utils";
 
 export function WatchPartyMembers() {
   const wp = useWatchParty();
@@ -46,7 +48,14 @@ export function WatchPartyMembers() {
                 className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-foreground/[0.04]"
               >
                 <Avatar
-                  src={member.avatarUrl ?? "/images/avatar-placeholder.svg"}
+                  src={
+                    member.avatar
+                      ? buildMediaUrl(
+                          member.avatar.purpose as MediaPurpose,
+                          member.avatar.key,
+                        )
+                      : undefined
+                  }
                   alt={member.displayName}
                   className="size-9"
                 />
