@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { buildHlsUrl,buildMediaUrl } from "@/utils/media-utils";
+import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
 
 import { buildFetchFeaturedTrailerQueryOptions } from "../../queries/fetch-featured-trailer";
 import { buildFetchSeriesQueryOptions } from "../../queries/fetch-series";
@@ -203,7 +203,7 @@ export function SeriesDetailModal({ seriesId, open }: SeriesDetailModalProps) {
             if (e.target === e.currentTarget) handleClose();
           }}
         >
-          <div className="relative">
+          <div className="relative w-full max-w-4xl">
             <div className="absolute top-3 right-3 z-20">
               <DialogPrimitive.Close
                 render={

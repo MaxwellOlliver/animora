@@ -1,8 +1,6 @@
 function Bone({ className }: { className?: string }) {
   return (
-    <div
-      className={`animate-pulse rounded bg-white/10 ${className ?? ""}`}
-    />
+    <div className={`animate-pulse rounded bg-white/10 ${className ?? ""}`} />
   );
 }
 
