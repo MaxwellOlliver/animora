@@ -6,8 +6,8 @@ import { pipeline } from 'node:stream/promises';
 import {
   EVENTS,
   QUEUES,
-  type VideoTranscodeFailedEvent,
   type VideoTranscodedEvent,
+  type VideoTranscodeFailedEvent,
 } from '@animora/contracts';
 import { Effect, Schema } from 'effect';
 
@@ -99,7 +99,17 @@ export const handleVideoTranscode = (data: unknown) =>
     );
 
     if (outcome.kind === 'success') {
-      yield* updateVideoStatus(event.videoId, 'ready', outcome.masterPlaylistKey);
+      yield* updateVideoStatus(
+        event.videoId,
+        'ready',
+        outcome.masterPlaylistKey,
+      ).pipe(
+        Effect.catchTag('DatabaseError', (error) =>
+          Effect.logError(
+            `Failed to update video status for video ${event.videoId}: ${String(error.cause)}`,
+          ),
+        ),
+      );
 
       const transcoded: VideoTranscodedEvent = {
         videoId: event.videoId,
