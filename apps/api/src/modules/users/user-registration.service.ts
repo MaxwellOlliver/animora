@@ -1,4 +1,10 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
@@ -20,9 +26,11 @@ export class DrizzleUserRegistration implements UserRegistrationPort {
   constructor(
     @Inject(DRIZZLE) private readonly db: DrizzleDB,
     private readonly avatarsRepository: AvatarsRepository,
+    private readonly config: ConfigService,
   ) {}
 
   async registerLocal(input: RegisterLocalInput): Promise<User> {
+    this.assertSignupEnabled();
     const avatarId = await this.resolveDefaultAvatarId();
     const hashedPassword = await bcrypt.hash(input.password, BCRYPT_ROUNDS);
 
@@ -47,6 +55,7 @@ export class DrizzleUserRegistration implements UserRegistrationPort {
   }
 
   async registerWithGoogle(input: RegisterWithGoogleInput): Promise<User> {
+    this.assertSignupEnabled();
     const avatarId = await this.resolveDefaultAvatarId();
 
     return this.db.transaction(async (tx) => {
@@ -67,6 +76,13 @@ export class DrizzleUserRegistration implements UserRegistrationPort {
 
       return user;
     });
+  }
+
+  private assertSignupEnabled(): void {
+    const raw = this.config.get<string>('SIGNUP_ENABLED');
+    if (raw !== undefined && raw.toLowerCase() === 'false') {
+      throw new ForbiddenException('Signup is disabled');
+    }
   }
 
   private async resolveDefaultAvatarId(): Promise<string> {

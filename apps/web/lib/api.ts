@@ -3,7 +3,7 @@ import "server-only";
 import { headers } from "next/headers";
 
 import { ApiError } from "./api-internal";
-import { serverEnv } from "./server-env";
+import { getServerEnv } from "./server-env";
 
 export { ApiError } from "./api-internal";
 
@@ -70,5 +70,8 @@ async function fetchThroughProxy<T>(
 
 function buildProxyUrl(path: string): string {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  return new URL(`/api/proxy${normalizedPath}`, serverEnv.APP_URL).toString();
+  return new URL(
+    `/api/proxy${normalizedPath}`,
+    getServerEnv().APP_URL,
+  ).toString();
 }

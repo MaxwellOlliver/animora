@@ -19,14 +19,14 @@ import { S3_CLIENT } from './s3.tokens';
 @Injectable()
 export class S3Service {
   private readonly bucket: string;
-  private readonly endpoint: string;
+  private readonly publicUrl: string;
 
   constructor(
     @Inject(S3_CLIENT) private readonly client: S3Client,
     private readonly config: ConfigService,
   ) {
     this.bucket = config.getOrThrow<string>('S3_BUCKET');
-    this.endpoint = config.getOrThrow<string>('S3_ENDPOINT');
+    this.publicUrl = config.getOrThrow<string>('S3_PUBLIC_URL');
   }
 
   async upload(
@@ -145,11 +145,11 @@ export class S3Service {
   }
 
   getPublicUrl(key: string): string {
-    return `${this.endpoint}/${this.bucket}/${key}`;
+    return `${this.publicUrl}/${key}`;
   }
 
   getMediaUrl(purpose: MediaPurpose, filename: string): string {
     const key = buildStorageKey(purpose, filename);
-    return `${this.endpoint}/${this.bucket}/${key}`;
+    return `${this.publicUrl}/${key}`;
   }
 }

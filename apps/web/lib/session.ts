@@ -1,7 +1,7 @@
 import { getIronSession, type IronSession } from "iron-session";
 import { cookies } from "next/headers";
 
-import { serverEnv } from "./server-env";
+import { getServerEnv } from "./server-env";
 
 export type SessionData = {
   accessToken: string;
@@ -10,20 +10,24 @@ export type SessionData = {
   profileId?: string;
 };
 
-export const SESSION_OPTIONS = {
-  password: serverEnv.SESSION_SECRET,
-  cookieName: "animora_session",
-  cookieOptions: {
-    httpOnly: true,
-    secure: serverEnv.NODE_ENV === "production",
-    sameSite: "lax" as const,
-    path: "/",
-  },
-};
+export function getSessionOptions() {
+  const { SESSION_SECRET, NODE_ENV } = getServerEnv();
+
+  return {
+    password: SESSION_SECRET,
+    cookieName: "animora_session",
+    cookieOptions: {
+      httpOnly: true,
+      secure: NODE_ENV === "production",
+      sameSite: "lax" as const,
+      path: "/",
+    },
+  };
+}
 
 export async function getSession(): Promise<IronSession<SessionData>> {
   const store = await cookies();
-  return getIronSession<SessionData>(store, SESSION_OPTIONS);
+  return getIronSession<SessionData>(store, getSessionOptions());
 }
 
 export function decodeTokenExpiry(jwt: string): number {

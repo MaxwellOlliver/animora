@@ -1,7 +1,7 @@
 import { getIronSession } from "iron-session";
 import { type NextRequest,NextResponse } from "next/server";
 
-import { SESSION_OPTIONS, type SessionData } from "@/lib/session";
+import { getSessionOptions, type SessionData } from "@/lib/session";
 
 const AUTH_ROUTES = ["/sign-in", "/sign-up"];
 const PROFILE_ROUTES = ["/profile-selection", "/profile-create", "/profile-edit"];
@@ -17,7 +17,11 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const response = NextResponse.next();
-  const session = getIronSession<SessionData>(request, response, SESSION_OPTIONS);
+  const session = getIronSession<SessionData>(
+    request,
+    response,
+    getSessionOptions(),
+  );
 
   return session.then((s) => {
     const isLoggedIn = !!s.accessToken;

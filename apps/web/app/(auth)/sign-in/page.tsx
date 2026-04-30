@@ -99,12 +99,14 @@ export default function SignInPage() {
             </a>
           </div>
 
-          <p className="mt-8 text-center text-xs leading-4 text-foreground">
-            Don&apos;t have an account?{" "}
-            <Link href="/sign-up" className="text-primary underline">
-              Sign up
-            </Link>
-          </p>
+          {env.NEXT_PUBLIC_SIGNUP_ENABLED === "true" && (
+            <p className="mt-8 text-center text-xs leading-4 text-foreground">
+              Don&apos;t have an account?{" "}
+              <Link href="/sign-up" className="text-primary underline">
+                Sign up
+              </Link>
+            </p>
+          )}
         </div>
 
         {/* Image side */}

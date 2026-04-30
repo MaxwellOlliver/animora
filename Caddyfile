@@ -1,0 +1,13 @@
+{
+	email maxwellmacedo2015@gmail.com
+}
+
+animora.maxwellmacedo.com {
+	encode zstd gzip
+	reverse_proxy web:3000
+}
+
+api.animora.maxwellmacedo.com {
+	encode zstd gzip
+	reverse_proxy api:8080
+}

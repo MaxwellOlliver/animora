@@ -1,6 +1,4 @@
-import { serverEnv } from "./server-env";
-
-const API_BASE_URL = serverEnv.API_URL;
+import { getServerEnv } from "./server-env";
 
 export class ApiError extends Error {
   constructor(
@@ -21,6 +19,7 @@ export async function apiInternal<T>(
   path: string,
   { body, token, headers: customHeaders, ...init }: RequestOptions = {},
 ): Promise<T> {
+  const { API_URL } = getServerEnv();
   const headers = new Headers(customHeaders);
 
   if (body !== undefined) {
@@ -31,7 +30,7 @@ export async function apiInternal<T>(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${API_URL}${path}`, {
     ...init,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,

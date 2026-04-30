@@ -2,10 +2,9 @@ import { getLogger } from "@animora/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { refreshIfNeeded } from "@/lib/refresh-mutex";
-import { serverEnv } from "@/lib/server-env";
+import { getServerEnv } from "@/lib/server-env";
 import { getSession } from "@/lib/session";
 
-const API_BASE_URL = serverEnv.API_URL;
 const logger = getLogger().child({ scope: "api-proxy" });
 
 function tokenSuffix(token?: string): string | null {
@@ -27,9 +26,10 @@ async function proxyRequest(
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   const { path } = await params;
+  const { API_URL } = getServerEnv();
   const session = await getSession();
 
-  const target = `${API_BASE_URL}/${path.join("/")}${req.nextUrl.search}`;
+  const target = `${API_URL}/${path.join("/")}${req.nextUrl.search}`;
   const secondsLeft = getSecondsLeft(session.expiresAt);
 
   logProxy("request:start", {

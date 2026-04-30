@@ -106,6 +106,7 @@ export function WatchPartyProvider({
   const remotePlaybackListeners = useRef(
     new Set<(b: PlaybackStateBroadcast) => void>(),
   );
+  const lastPlayingRef = useRef<boolean | null>(null);
 
   const applyPlaybackBroadcast = useCallback(
     (payload: {
@@ -187,6 +188,7 @@ export function WatchPartyProvider({
             setChat(
               snapshot.chatBacklog.map((msg) => ({ kind: "chat", ...msg })),
             );
+            lastPlayingRef.current = snapshot.playback.playing;
             applyPlaybackBroadcast({
               playing: snapshot.playback.playing,
               position: snapshot.playback.position,
@@ -271,10 +273,13 @@ export function WatchPartyProvider({
         socket.on(
           WP_SERVER_EVENTS.PLAYBACK_STATE,
           (broadcast: PlaybackStateBroadcast) => {
+            const wasPlaying = lastPlayingRef.current;
+            lastPlayingRef.current = broadcast.playing;
+
             applyPlaybackBroadcast(broadcast);
             remotePlaybackListeners.current.forEach((fn) => fn(broadcast));
 
-            if (broadcast.actorProfileId) {
+            if (broadcast.actorProfileId && wasPlaying !== broadcast.playing) {
               const name =
                 membersRef.current.find(
                   (m) => m.profileId === broadcast.actorProfileId,

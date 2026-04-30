@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { ApiError,apiInternal } from "@/lib/api-internal";
-import { decodeTokenExpiry,getSession } from "@/lib/session";
+import { ApiError, apiInternal } from "@/lib/api-internal";
+import { decodeTokenExpiry, getSession } from "@/lib/session";
 
 type AuthResponse = { accessToken: string; refreshToken: string };
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
