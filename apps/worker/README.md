@@ -211,9 +211,8 @@ Copy `.env.example` and fill in the values:
 | `S3_ACCESS_KEY`      | yes      | Access key                                           |
 | `S3_SECRET_KEY`      | yes      | Secret key                                           |
 
-> **Note:** `.env.example` currently only lists `RABBITMQ_URL`, `DATABASE_URL`, and
-> `WORKER_CONCURRENCY`, but the worker also requires the `S3_*` variables — config
-> validation will fail fast at startup if any are missing.
+Config is validated at startup — the worker fails fast if any required variable
+is missing.
 
 **FFmpeg must be installed and available on `PATH`.** The worker shells out to the
 `ffmpeg` binary directly.
