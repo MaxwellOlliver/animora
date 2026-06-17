@@ -3,28 +3,50 @@ import type {
   VideoTranscodeFailedEvent,
 } from '@animora/contracts';
 import { EVENTS } from '@animora/contracts';
-import { Controller } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { Controller, Logger } from '@nestjs/common';
+import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 
-import { HandleVideoTranscodedUseCase } from './use-cases/handle-video-transcoded.use-case';
 import { HandleVideoTranscodeFailedUseCase } from './use-cases/handle-video-transcode-failed.use-case';
+import { HandleVideoTranscodedUseCase } from './use-cases/handle-video-transcoded.use-case';
 
 @Controller()
 export class VideoEventsConsumer {
+  private readonly logger = new Logger(VideoEventsConsumer.name);
+
   constructor(
     private readonly handleVideoTranscodedUseCase: HandleVideoTranscodedUseCase,
     private readonly handleVideoTranscodeFailedUseCase: HandleVideoTranscodeFailedUseCase,
   ) {}
 
   @EventPattern(EVENTS.VIDEO_TRANSCODED)
-  async onTranscoded(@Payload() event: VideoTranscodedEvent): Promise<void> {
-    this.handleVideoTranscodedUseCase.execute(event);
+  onTranscoded(
+    @Payload() event: VideoTranscodedEvent,
+    @Ctx() context: RmqContext,
+  ): void {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    try {
+      this.handleVideoTranscodedUseCase.execute(event);
+      channel.ack(message);
+    } catch (err) {
+      this.logger.error('Failed to handle VIDEO_TRANSCODED', err);
+      channel.nack(message, false, false);
+    }
   }
 
   @EventPattern(EVENTS.VIDEO_TRANSCODE_FAILED)
-  async onTranscodeFailed(
+  onTranscodeFailed(
     @Payload() event: VideoTranscodeFailedEvent,
-  ): Promise<void> {
-    this.handleVideoTranscodeFailedUseCase.execute(event);
+    @Ctx() context: RmqContext,
+  ): void {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    try {
+      this.handleVideoTranscodeFailedUseCase.execute(event);
+      channel.ack(message);
+    } catch (err) {
+      this.logger.error('Failed to handle VIDEO_TRANSCODE_FAILED', err);
+      channel.nack(message, false, false);
+    }
   }
 }
