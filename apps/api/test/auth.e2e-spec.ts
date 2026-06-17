@@ -162,7 +162,7 @@ describe('Auth (e2e)', () => {
       expect(body).toHaveProperty('refreshToken');
     });
 
-    it('should rotate token (old refresh token fails)', async () => {
+    it('should allow refresh token reuse (tokens are not rotated)', async () => {
       const tokens = await registerUser(app, { email: 'rotate@example.com' });
 
       // Refresh once
@@ -171,11 +171,11 @@ describe('Auth (e2e)', () => {
         .set('Authorization', `Bearer ${tokens.refreshToken}`)
         .expect(200);
 
-      // Old token should no longer work (use case throws ForbiddenException)
+      // Same refresh token stays valid until logout or expiry
       await request(app.getHttpServer())
         .post('/api/auth/refresh')
         .set('Authorization', `Bearer ${tokens.refreshToken}`)
-        .expect(403);
+        .expect(200);
     });
 
     it('should reject invalid token (401)', async () => {
