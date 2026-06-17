@@ -240,8 +240,8 @@ describe('Admin Series (e2e)', () => {
     });
   });
 
-  describe('POST /api/admin/series/:id/banner', () => {
-    it('should upload banner and update bannerKey', async () => {
+  describe('POST /api/admin/series/:id/assets/:purpose', () => {
+    it('should upload banner asset', async () => {
       const admin = await registerAdmin(app, {
         email: 'admin-upload-series@example.com',
       });
@@ -264,22 +264,21 @@ describe('Admin Series (e2e)', () => {
         .expect(201);
       const created = createRes.body as SeriesWithDetails;
 
-      await request(app.getHttpServer())
-        .post(`/api/admin/series/${created.id}/banner`)
+      const uploadRes = await request(app.getHttpServer())
+        .post(`/api/admin/series/${created.id}/assets/banner`)
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .attach('file', Buffer.from('fake-banner-bytes'), {
           filename: 'banner.png',
           contentType: 'image/png',
         })
         .expect(200);
+      const body = uploadRes.body as SeriesWithDetails & {
+        assets: { purpose: string; media: { key: string } }[];
+      };
 
-      const getRes = await request(app.getHttpServer())
-        .get(`/api/admin/series/${created.id}`)
-        .set('Authorization', `Bearer ${admin.accessToken}`)
-        .expect(200);
-      const body = getRes.body as SeriesWithDetails;
-
-      expect(body).toHaveProperty('bannerKey', 'banners/test-upload.png');
+      expect(body.assets).toHaveLength(1);
+      expect(body.assets[0]).toHaveProperty('purpose', 'banner');
+      expect(body.assets[0].media.key).toMatch(/\.png$/);
     });
 
     it('should reject unsupported mime type (400)', async () => {
@@ -306,7 +305,7 @@ describe('Admin Series (e2e)', () => {
       const created = createRes.body as SeriesWithDetails;
 
       await request(app.getHttpServer())
-        .post(`/api/admin/series/${created.id}/banner`)
+        .post(`/api/admin/series/${created.id}/assets/banner`)
         .set('Authorization', `Bearer ${admin.accessToken}`)
         .attach('file', Buffer.from('not-an-image'), {
           filename: 'banner.txt',

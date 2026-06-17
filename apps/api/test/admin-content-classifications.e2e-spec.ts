@@ -163,7 +163,7 @@ describe('Admin Content Classifications (e2e)', () => {
   });
 
   describe('POST /api/admin/content-classifications/:id/icon', () => {
-    it('should upload icon and update iconKey', async () => {
+    it('should upload icon and update iconId', async () => {
       const admin = await registerAdmin(app, {
         email: 'admin-upload-cc@example.com',
       });
@@ -185,10 +185,7 @@ describe('Admin Content Classifications (e2e)', () => {
         .expect(200);
       const body = uploadRes.body as ContentClassification;
 
-      expect(body).toHaveProperty(
-        'iconKey',
-        'classification-icons/test-upload.png',
-      );
+      expect(body.iconId).toEqual(expect.any(String));
     });
 
     it('should reject unsupported mime type (400)', async () => {

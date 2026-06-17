@@ -11,9 +11,16 @@ import { S3Service } from '@/infra/s3/s3.service';
 
 export async function createTestApp(
   databaseUrl: string,
+  options?: { redisUrl?: string },
 ): Promise<NestFastifyApplication> {
   // Set env vars before module compilation
   process.env.DATABASE_URL = databaseUrl;
+  process.env.REDIS_URL =
+    options?.redisUrl ?? process.env.REDIS_URL ?? 'redis://localhost:6379';
+  process.env.RABBITMQ_URL =
+    process.env.RABBITMQ_URL ?? 'amqp://guest:guest@localhost:5672';
+  process.env.S3_PUBLIC_URL =
+    process.env.S3_PUBLIC_URL ?? 'http://localhost:9000/animora-test';
   process.env.JWT_SECRET = 'test-jwt-secret';
   process.env.JWT_EXPIRATION = '15m';
   process.env.JWT_REFRESH_SECRET = 'test-jwt-refresh-secret';
@@ -39,12 +46,15 @@ export async function createTestApp(
         _mimeType: string,
         ext: string,
       ) => Promise.resolve(`${folder}/test-upload.${ext}`),
-      delete: (key: string) => {
-        void key;
-        return Promise.resolve();
-      },
+      putObject: () => Promise.resolve(),
+      putStream: () => Promise.resolve(),
+      composeObjects: () => Promise.resolve(),
+      delete: () => Promise.resolve(),
+      deleteMany: () => Promise.resolve(),
       getPublicUrl: (key: string) =>
         `http://localhost:9000/animora-test/${key}`,
+      getMediaUrl: (purpose: string, filename: string) =>
+        `http://localhost:9000/animora-test/${purpose}/${filename}`,
     })
     .compile();
 
