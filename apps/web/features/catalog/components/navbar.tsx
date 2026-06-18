@@ -8,7 +8,9 @@ import { useEffect,useState } from "react";
 
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useCurrentProfile } from "@/features/profiles/components/profile-provider";
 import { cn } from "@/lib/utils";
+import { buildMediaUrl } from "@/utils/media-utils";
 
 const navbarLinks = [
   { name: "home", href: "/home" },
@@ -19,7 +21,13 @@ const navbarLinks = [
 
 export function Navbar({ hideOnTop = false }: { hideOnTop?: boolean }) {
   const pathname = usePathname();
+  const { profile } = useCurrentProfile();
   const [scrolled, setScrolled] = useState(false);
+
+  const picture = profile?.avatar?.picture;
+  const avatarUrl = picture
+    ? buildMediaUrl(picture.purpose, picture.key)
+    : "/images/avatar-placeholder.svg";
 
   useEffect(() => {
     function onScroll() {
@@ -78,11 +86,7 @@ export function Navbar({ hideOnTop = false }: { hideOnTop?: boolean }) {
         <Button variant="ghost" size="icon-sm">
           <Bookmark />
         </Button>
-        <Avatar
-          className="size-8 rounded-lg"
-          src="/images/avatar-placeholder.svg"
-          alt="Profile"
-        />
+        <Avatar className="size-8 rounded-lg" src={avatarUrl} alt="Profile" />
       </div>
     </nav>
   );
