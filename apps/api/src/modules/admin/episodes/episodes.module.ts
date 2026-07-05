@@ -6,6 +6,7 @@ import { PlaylistsModule } from '../playlists/playlists.module';
 import { VideosModule } from '../videos/videos.module';
 import { EpisodesRepository } from './episodes.repository';
 import { EpisodesAdminController } from './episodes-admin.controller';
+import { EpisodesInternalController } from './episodes-internal.controller';
 import { CreateEpisodeUseCase } from './use-cases/create-episode.use-case';
 import { DeleteEpisodeUseCase } from './use-cases/delete-episode.use-case';
 import { GetEpisodeUseCase } from './use-cases/get-episode.use-case';
@@ -15,7 +16,7 @@ import { UploadEpisodeThumbnailUseCase } from './use-cases/upload-episode-thumbn
 
 @Module({
   imports: [PlaylistsModule, MediaModule, VideosModule],
-  controllers: [EpisodesAdminController],
+  controllers: [EpisodesAdminController, EpisodesInternalController],
   providers: [
     EpisodesRepository,
     CreateEpisodeUseCase,

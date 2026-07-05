@@ -1,15 +1,11 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 
-import { EpisodesRepository } from '@/modules/admin/episodes/episodes.repository';
-import { ProfilesRepository } from '@/modules/profiles/profiles.repository';
+import { ProfilesRepository } from './profiles.repository';
 
 @Controller()
-export class InternalGrpcController {
-  constructor(
-    private readonly profilesRepository: ProfilesRepository,
-    private readonly episodesRepository: EpisodesRepository,
-  ) {}
+export class ProfilesInternalController {
+  constructor(private readonly profilesRepository: ProfilesRepository) {}
 
   @GrpcMethod('ProfilesInternal', 'GetOwnedProfile')
   async getOwnedProfile({
@@ -43,11 +39,5 @@ export class InternalGrpcController {
       avatarKey: profile.avatar?.picture?.key ?? '',
       avatarPurpose: profile.avatar?.picture?.purpose ?? '',
     };
-  }
-
-  @GrpcMethod('EpisodesInternal', 'EpisodeExists')
-  async episodeExists({ episodeId }: { episodeId: string }) {
-    const episode = await this.episodesRepository.findById(episodeId);
-    return { exists: !!episode };
   }
 }
