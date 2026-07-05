@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ActiveProfile } from '@/common/decorators/active-profile.decorator';
 import { ActiveProfileGuard } from '@/common/guards/active-profile.guard';
-import type { ProfileWithAvatar } from '@/modules/profiles/profiles.repository';
+import type { ProfileWithAvatar } from '@/common/types/profile.types';
 
 import { CreateSessionDto } from './dto/create-session.dto';
 import { CreateSessionUseCase } from './use-cases/create-session.use-case';

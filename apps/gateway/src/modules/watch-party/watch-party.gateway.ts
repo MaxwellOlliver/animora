@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
   ConnectedSocket,
@@ -12,17 +12,13 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import type { JwtPayload } from '@/modules/auth/strategies/jwt.strategy';
-import {
-  ProfilesRepository,
-  type ProfileWithAvatar,
-} from '@/modules/profiles/profiles.repository';
+import type { JwtPayload } from '@/common/types/jwt-payload.type';
+import type { ProfileWithAvatar } from '@/common/types/profile.types';
+import { GrpcClientService } from '@/grpc-client/grpc-client.service';
 
-import type {
-  ChatSendPayload,
-  MemberKickPayload,
-  PlaybackSeekPayload,
-} from './types/socket-events.types';
+import { ChatMessageDto } from './dto/chat-message.dto';
+import { PlaybackSeekDto } from './dto/playback-event.dto';
+import type { MemberKickPayload } from './types/socket-events.types';
 import {
   WP_CLIENT_EVENTS,
   WP_SERVER_EVENTS,
@@ -59,6 +55,13 @@ function timerKey(code: string, profileId: string): string {
   namespace: '/watch-party',
   cors: { origin: true, credentials: true },
 })
+@UsePipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }),
+)
 export class WatchPartyGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -72,7 +75,7 @@ export class WatchPartyGateway
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly profilesRepository: ProfilesRepository,
+    private readonly grpcClient: GrpcClientService,
     private readonly joinSession: JoinSessionUseCase,
     private readonly leaveSession: LeaveSessionUseCase,
     private readonly postChat: PostChatMessageUseCase,
@@ -96,7 +99,7 @@ export class WatchPartyGateway
             return next(new Error('Missing token, code or profileId'));
           }
           const payload = this.jwtService.verify<JwtPayload>(token);
-          const profile = await this.profilesRepository.findOwnedByUser(
+          const profile = await this.grpcClient.getOwnedProfile(
             profileId,
             payload.sub,
           );
@@ -193,16 +196,14 @@ export class WatchPartyGateway
   @SubscribeMessage(WP_CLIENT_EVENTS.CHAT_SEND)
   async onChatSend(
     @ConnectedSocket() client: WatchPartySocket,
-    @MessageBody() payload: ChatSendPayload,
+    @MessageBody() payload: ChatMessageDto,
   ) {
     const { profile, code } = ctx(client);
-    const content = payload?.content?.toString().slice(0, 500).trim();
-    if (!content) return;
 
     const message = await this.postChat.execute({
       code,
       profileId: profile.id,
-      content,
+      content: payload.content,
     });
     this.server.to(roomOf(code)).emit(WP_SERVER_EVENTS.CHAT_NEW, message);
   }
@@ -220,9 +221,8 @@ export class WatchPartyGateway
   @SubscribeMessage(WP_CLIENT_EVENTS.PLAYBACK_SEEK)
   onSeek(
     @ConnectedSocket() client: WatchPartySocket,
-    @MessageBody() payload: PlaybackSeekPayload,
+    @MessageBody() payload: PlaybackSeekDto,
   ) {
-    if (typeof payload?.position !== 'number') return;
     return this.handlePlayback(client, {
       type: 'seek',
       position: payload.position,

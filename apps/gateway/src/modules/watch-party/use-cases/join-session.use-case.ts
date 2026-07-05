@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import type { ProfileWithAvatar } from '@/modules/profiles/profiles.repository';
+import type { ProfileWithAvatar } from '@/common/types/profile.types';
 
 import type { WatchPartyMember } from '../types/session.types';
 import { WatchPartyRepository } from '../watch-party.repository';

@@ -140,8 +140,8 @@ export function WatchPartyProvider({
         if (disposed) return;
         setSelfProfileId(ticket.profileId);
 
-        const apiOrigin = new URL(env.NEXT_PUBLIC_API_URL).origin;
-        const socket = io(`${apiOrigin}/watch-party`, {
+        const gatewayOrigin = new URL(env.NEXT_PUBLIC_GATEWAY_URL).origin;
+        const socket = io(`${gatewayOrigin}/watch-party`, {
           transports: ["websocket"],
           auth: {
             token: ticket.token,

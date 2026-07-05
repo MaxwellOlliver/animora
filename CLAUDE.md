@@ -7,6 +7,7 @@ Anime streaming platform. Turborepo monorepo with bun workspaces.
 - `apps/web` — Next.js 16 + React 19 + Tailwind v4 (user-facing)
 - `apps/admin` — Next.js 16 + React 19 + Tailwind v4 (admin panel)
 - `apps/api` — NestJS 11 REST API
+- `apps/gateway` — NestJS 11 realtime gateway (Socket.IO + Redis adapter; watch-party lives here). Talks to `apps/api` over gRPC for the couple of things it can't resolve locally (profile ownership, episode existence).
 - `apps/worker` — NestJS 11 background worker (RabbitMQ consumer, FFmpeg)
 
 ## Packages
@@ -20,7 +21,8 @@ Anime streaming platform. Turborepo monorepo with bun workspaces.
 ```bash
 bun install                    # install all deps
 bun run dev                    # start all apps (turbo)
-cd apps/api && bun run start:dev  # start API only
+cd apps/api && bun run start:dev      # start API only
+cd apps/gateway && bun run start:dev  # start the realtime gateway only
 cd apps/api && bun run test       # run API tests
 ```
 

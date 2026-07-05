@@ -5,7 +5,7 @@ async function request<T>(
   init: { method?: string; body?: unknown } = {},
 ): Promise<T> {
   const { body, method } = init;
-  const response = await fetch(`/api/proxy${path}`, {
+  const response = await fetch(`/api/gateway-proxy${path}`, {
     method,
     headers: body !== undefined ? { "Content-Type": "application/json" } : {},
     body: body !== undefined ? JSON.stringify(body) : undefined,
