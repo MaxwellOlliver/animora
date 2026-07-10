@@ -8,6 +8,7 @@ import { DatabaseModule } from './infra/database/database.module';
 import { RabbitMQModule } from './infra/rabbitmq/rabbitmq.module';
 import { RedisModule } from './infra/redis/redis.module';
 import { S3Module } from './infra/s3/s3.module';
+import { InternalGrpcModule } from './internal-grpc/internal-grpc.module';
 import { AvatarsModule } from './modules/admin/avatars/avatars.module';
 import { ContentClassificationsModule } from './modules/admin/content-classifications/content-classifications.module';
 import { EpisodesModule } from './modules/admin/episodes/episodes.module';
@@ -27,7 +28,6 @@ import { SeriesReviewsModule } from './modules/series-reviews/series-reviews.mod
 import { StreamingModule } from './modules/streaming/streaming.module';
 import { UsersModule } from './modules/users/users.module';
 import { WatchHistoryModule } from './modules/watch-history/watch-history.module';
-import { WatchPartyModule } from './modules/watch-party/watch-party.module';
 
 @Module({
   imports: [
@@ -36,6 +36,7 @@ import { WatchPartyModule } from './modules/watch-party/watch-party.module';
     S3Module,
     RabbitMQModule,
     RedisModule,
+    InternalGrpcModule,
     MediaModule,
     AuthModule,
     UsersModule,
@@ -55,7 +56,6 @@ import { WatchPartyModule } from './modules/watch-party/watch-party.module';
     SeriesReviewsModule,
     StreamingModule,
     WatchHistoryModule,
-    WatchPartyModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

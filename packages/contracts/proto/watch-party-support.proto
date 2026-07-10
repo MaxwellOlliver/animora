@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package animora.internal;
+
+service ProfilesInternal {
+  rpc GetOwnedProfile (GetOwnedProfileRequest) returns (GetOwnedProfileResponse);
+}
+
+message GetOwnedProfileRequest {
+  string profileId = 1;
+  string userId = 2;
+}
+
+message GetOwnedProfileResponse {
+  bool owned = 1;
+  string id = 2;
+  string name = 3;
+  bool hasAvatar = 4;
+  string avatarKey = 5;
+  string avatarPurpose = 6;
+}
+
+service EpisodesInternal {
+  rpc EpisodeExists (EpisodeExistsRequest) returns (EpisodeExistsResponse);
+}
+
+message EpisodeExistsRequest {
+  string episodeId = 1;
+}
+
+message EpisodeExistsResponse {
+  bool exists = 1;
+}

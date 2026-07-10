@@ -9,6 +9,7 @@ const schema = z.object({
     "development",
   ),
   API_URL: z.url(),
+  GATEWAY_URL: z.url(),
   NEXT_PUBLIC_S3_ENDPOINT: z.url(),
   GRAFANA_LOKI_URL: z.url().optional(),
 });
@@ -19,6 +20,7 @@ export function getServerEnv() {
     SESSION_SECRET: process.env.SESSION_SECRET,
     NODE_ENV: process.env.NODE_ENV,
     API_URL: process.env.API_URL,
+    GATEWAY_URL: process.env.GATEWAY_URL,
     NEXT_PUBLIC_S3_ENDPOINT: process.env.NEXT_PUBLIC_S3_ENDPOINT,
     GRAFANA_LOKI_URL: process.env.GRAFANA_LOKI_URL,
   });

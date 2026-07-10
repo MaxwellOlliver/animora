@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 
-import { EpisodesRepository } from '@/modules/admin/episodes/episodes.repository';
+import { GrpcClientService } from '@/grpc-client/grpc-client.service';
 
 import type { WatchPartySession } from '../types/session.types';
 import { WatchPartyRepository } from '../watch-party.repository';
@@ -22,15 +22,15 @@ function generateCode(): string {
 export class CreateSessionUseCase {
   constructor(
     private readonly repository: WatchPartyRepository,
-    private readonly episodesRepository: EpisodesRepository,
+    private readonly grpcClient: GrpcClientService,
   ) {}
 
   async execute(input: {
     ownerProfileId: string;
     episodeId: string;
   }): Promise<WatchPartySession> {
-    const episode = await this.episodesRepository.findById(input.episodeId);
-    if (!episode) {
+    const exists = await this.grpcClient.episodeExists(input.episodeId);
+    if (!exists) {
       throw new NotFoundException('Episode not found');
     }
 

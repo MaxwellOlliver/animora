@@ -4,10 +4,10 @@ import { CreateVideoUseCase } from './use-cases/create-video.use-case';
 import { DeleteVideoUseCase } from './use-cases/delete-video.use-case';
 import { GetVideoUseCase } from './use-cases/get-video.use-case';
 import { GetVideoByOwnerUseCase } from './use-cases/get-video-by-owner.use-case';
-import { HandleVideoTranscodedUseCase } from './use-cases/handle-video-transcoded.use-case';
 import { HandleVideoTranscodeFailedUseCase } from './use-cases/handle-video-transcode-failed.use-case';
-import { VideoEventsService } from './video-events.service';
+import { HandleVideoTranscodedUseCase } from './use-cases/handle-video-transcoded.use-case';
 import { VideoEventsConsumer } from './video-events.consumer';
+import { VideoEventsService } from './video-events.service';
 import { VideosRepository } from './videos.repository';
 import { VideosAdminController } from './videos-admin.controller';
 

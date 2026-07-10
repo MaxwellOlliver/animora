@@ -1,10 +1,7 @@
-import { getWatchPartySupportProtoPath, QUEUES } from '@animora/contracts';
 import fastifyCors from '@fastify/cors';
-import fastifyMultipart from '@fastify/multipart';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -12,7 +9,9 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { FastifyRedisIoAdapter } from './common/adapters/fastify-redis-io.adapter';
+import { GatewayExceptionFilter } from './common/filters/gateway-exception.filter';
+import { REDIS_CLIENT, type RedisClient } from './infra/redis/redis.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -21,23 +20,6 @@ async function bootstrap() {
   );
 
   const config = app.get(ConfigService);
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [config.getOrThrow<string>('RABBITMQ_URL')],
-      queue: QUEUES.VIDEO_EVENTS,
-      queueOptions: { durable: true },
-      noAck: false,
-    },
-  });
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.GRPC,
-    options: {
-      package: 'animora.internal',
-      protoPath: getWatchPartySupportProtoPath(),
-      url: config.getOrThrow<string>('API_GRPC_URL'),
-    },
-  });
 
   const fastify = app.getHttpAdapter().getInstance();
   await fastify.register(fastifyCors, {
@@ -46,9 +28,10 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
-  await fastify.register(fastifyMultipart, {
-    limits: { fileSize: 10_485_760 },
-  }); // 10 MB
+
+  const redis = app.get<RedisClient>(REDIS_CLIENT);
+  const ioAdapter = new FastifyRedisIoAdapter(app, redis);
+  app.useWebSocketAdapter(ioAdapter);
 
   app.setGlobalPrefix('api');
 
@@ -59,18 +42,21 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useGlobalFilters(new GatewayExceptionFilter());
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Animora API')
-    .setDescription('Animora REST API')
+    .setTitle('Animora Gateway')
+    .setDescription('Animora realtime gateway API')
     .setVersion('0.1')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.startAllMicroservices();
-  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+  await app.listen(config.getOrThrow<string>('GATEWAY_PORT'), '0.0.0.0');
+  const fastifyInstance = app.getHttpAdapter().getInstance() as {
+    server: unknown;
+  };
+  ioAdapter.attach(fastifyInstance.server);
 }
 void bootstrap();

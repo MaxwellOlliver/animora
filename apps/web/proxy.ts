@@ -65,7 +65,8 @@ export const config = {
      * - images, favicon (static assets)
      * - api/image (image proxy)
      * - api/proxy (BFF proxy)
+     * - api/gateway-proxy (BFF proxy to the realtime gateway)
      */
-    "/((?!_next/static|_next/image|images|favicon\\.ico|api/image|api/proxy).*)",
+    "/((?!_next/static|_next/image|images|favicon\\.ico|api/image|api/proxy|api/gateway-proxy).*)",
   ],
 };
