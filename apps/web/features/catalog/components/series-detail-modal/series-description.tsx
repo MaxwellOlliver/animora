@@ -37,18 +37,18 @@ export function SeriesDescription({
 
           <div className="flex w-48 shrink-0 flex-col gap-2 text-sm">
             <div>
-              <span className="text-foreground-muted">Studios: </span>
-              <span>{studios.length > 0 ? studios.join(", ") : "No info"}</span>
+              <span>Studios: </span>
+              <span className="text-foreground-muted">
+                {studios.length > 0 ? studios.join(", ") : "No info"}
+              </span>
             </div>
             <div>
-              <span className="text-foreground-muted">Genres: </span>
-              <span>{genres.join(", ")}</span>
+              <span>Genres: </span>
+              <span className="text-foreground-muted">{genres.join(", ")}</span>
             </div>
             {contentClassification && (
               <div>
-                <span className="text-foreground-muted">
-                  Content Classification:{" "}
-                </span>
+                <span>Content Classification: </span>
                 {contentClassification.icon && (
                   <Image
                     src={buildMediaUrl(
@@ -67,7 +67,8 @@ export function SeriesDescription({
                 </span>
                 {contentClassification.description && (
                   <span className="text-foreground-muted">
-                    {" - "}{contentClassification.description}
+                    {" - "}
+                    {contentClassification.description}
                   </span>
                 )}
               </div>
