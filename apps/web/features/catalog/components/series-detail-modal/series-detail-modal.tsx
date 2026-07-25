@@ -195,7 +195,7 @@ export function SeriesDetailModal({ seriesId, open }: SeriesDetailModalProps) {
       onOpenChange={(v) => !v && handleClose()}
     >
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Backdrop className="data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 bg-black/70 backdrop-blur-sm duration-200" />
+        <DialogPrimitive.Backdrop className="data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 bg-black/70 duration-200" />
 
         <DialogPrimitive.Popup
           className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto pt-8 pb-8 outline-none"
