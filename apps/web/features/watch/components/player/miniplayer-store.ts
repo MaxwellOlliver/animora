@@ -21,17 +21,29 @@ type MiniplayerState = {
   initialTimeSeconds: number;
   overlayMessages: OverlayMessage[];
 
-  slotEl: HTMLDivElement | null;
+  // The single persistent DOM node PlayerHost renders the player into. It
+  // never gets destroyed/recreated for the life of an episode session -
+  // only ever physically relocated between the watch page's slot and the
+  // floating container via direct DOM moves (see PlayerSlot/PlayerHost).
+  carrierEl: HTMLDivElement | null;
+  // The floating container's own DOM node - where the carrier rests when
+  // no watch page slot currently claims it.
+  floatingContainerEl: HTMLDivElement | null;
+  // The watch page slot's DOM node, when one is currently mounted/claiming
+  // full-mode placement.
+  activeSlotEl: HTMLDivElement | null;
   slotOwnerId: string | null;
 
   load: (params: LoadParams) => void;
   setOverlayMessages: (messages: OverlayMessage[]) => void;
-  registerSlot: (el: HTMLDivElement, ownerId: string) => void;
-  unregisterSlot: (ownerId: string) => void;
+  setCarrierEl: (el: HTMLDivElement) => void;
+  setFloatingContainerEl: (el: HTMLDivElement) => void;
+  claimSlot: (el: HTMLDivElement, ownerId: string) => void;
+  releaseSlot: (ownerId: string) => void;
   close: () => void;
 };
 
-export const useMiniplayerStore = create<MiniplayerState>()((set) => ({
+export const useMiniplayerStore = create<MiniplayerState>()((set, get) => ({
   episodeId: null,
   src: null,
   title: undefined,
@@ -40,7 +52,9 @@ export const useMiniplayerStore = create<MiniplayerState>()((set) => ({
   initialTimeSeconds: 0,
   overlayMessages: [],
 
-  slotEl: null,
+  carrierEl: null,
+  floatingContainerEl: null,
+  activeSlotEl: null,
   slotOwnerId: null,
 
   load: ({
@@ -63,12 +77,22 @@ export const useMiniplayerStore = create<MiniplayerState>()((set) => ({
 
   setOverlayMessages: (overlayMessages) => set({ overlayMessages }),
 
-  registerSlot: (el, ownerId) => set({ slotEl: el, slotOwnerId: ownerId }),
+  setCarrierEl: (el) => {
+    if (get().carrierEl) return;
+    set({ carrierEl: el });
+  },
 
-  unregisterSlot: (ownerId) =>
+  setFloatingContainerEl: (el) => {
+    if (get().floatingContainerEl) return;
+    set({ floatingContainerEl: el });
+  },
+
+  claimSlot: (el, ownerId) => set({ activeSlotEl: el, slotOwnerId: ownerId }),
+
+  releaseSlot: (ownerId) =>
     set((state) =>
       state.slotOwnerId === ownerId
-        ? { slotEl: null, slotOwnerId: null }
+        ? { activeSlotEl: null, slotOwnerId: null }
         : {},
     ),
 
@@ -81,5 +105,9 @@ export const useMiniplayerStore = create<MiniplayerState>()((set) => ({
       timestampActions: [],
       initialTimeSeconds: 0,
       overlayMessages: [],
+      carrierEl: null,
+      floatingContainerEl: null,
+      activeSlotEl: null,
+      slotOwnerId: null,
     }),
 }));

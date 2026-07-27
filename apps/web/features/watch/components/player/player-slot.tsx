@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useId, useLayoutEffect, useRef } from "react";
 
 import { useMiniplayerStore } from "./miniplayer-store";
 
@@ -8,13 +8,23 @@ export function PlayerSlot() {
   const ref = useRef<HTMLDivElement>(null);
   const ownerId = useId();
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+  useLayoutEffect(() => {
+    const slot = ref.current;
+    if (!slot) return;
 
-    useMiniplayerStore.getState().registerSlot(el, ownerId);
+    const store = useMiniplayerStore.getState();
+    store.claimSlot(slot, ownerId);
+    if (store.carrierEl) {
+      slot.appendChild(store.carrierEl);
+    }
+
     return () => {
-      useMiniplayerStore.getState().unregisterSlot(ownerId);
+      const { carrierEl, floatingContainerEl, releaseSlot } =
+        useMiniplayerStore.getState();
+      if (carrierEl && floatingContainerEl) {
+        floatingContainerEl.appendChild(carrierEl);
+      }
+      releaseSlot(ownerId);
     };
   }, [ownerId]);
 
