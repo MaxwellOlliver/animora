@@ -8,7 +8,6 @@ import { DatabaseModule } from './infra/database/database.module';
 import { RabbitMQModule } from './infra/rabbitmq/rabbitmq.module';
 import { RedisModule } from './infra/redis/redis.module';
 import { S3Module } from './infra/s3/s3.module';
-import { InternalGrpcModule } from './internal-grpc/internal-grpc.module';
 import { AvatarsModule } from './modules/admin/avatars/avatars.module';
 import { ContentClassificationsModule } from './modules/admin/content-classifications/content-classifications.module';
 import { EpisodesModule } from './modules/admin/episodes/episodes.module';
@@ -36,7 +35,6 @@ import { WatchHistoryModule } from './modules/watch-history/watch-history.module
     S3Module,
     RabbitMQModule,
     RedisModule,
-    InternalGrpcModule,
     MediaModule,
     AuthModule,
     UsersModule,
