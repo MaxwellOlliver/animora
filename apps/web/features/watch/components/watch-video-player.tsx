@@ -1,19 +1,15 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useMediaState } from "@vidstack/react";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
+import { useMiniplayerStore } from "@/features/watch/components/player/miniplayer-store";
 import type { OverlayMessage } from "@/features/watch/components/player/overlay-messages";
-import { usePlayerSettings } from "@/features/watch/components/player/player-store";
+import { PlayerSlot } from "@/features/watch/components/player/player-slot";
 import type { TimestampAction } from "@/features/watch/components/player/skip-button";
-import { VideoPlayer } from "@/features/watch/components/player/video-player";
-import { WatchHistorySync } from "@/features/watch/components/watch-history-sync";
 import { buildFetchEpisodeWatchHistoryQueryOptions } from "@/features/watch/queries/fetch-episode-watch-history";
 import { useWatchParty } from "@/features/watch-party/watch-party-context";
-import { WatchPartyPlayerSync } from "@/features/watch-party/watch-party-player-sync";
 
 type WatchVideoPlayerProps = {
   episodeId: string;
@@ -23,33 +19,6 @@ type WatchVideoPlayerProps = {
   timestampActions?: TimestampAction[];
 };
 
-function WatchAutoplay({
-  nextEpisodeId,
-  onNavigate,
-}: {
-  nextEpisodeId?: string | null;
-  onNavigate: (episodeId: string) => void;
-}) {
-  const ended = useMediaState("ended");
-  const autoPlay = usePlayerSettings((state) => state.autoPlay);
-  const hasNavigatedRef = useRef(false);
-
-  useEffect(() => {
-    if (!autoPlay || !ended || !nextEpisodeId || hasNavigatedRef.current) {
-      return;
-    }
-
-    hasNavigatedRef.current = true;
-    onNavigate(nextEpisodeId);
-  }, [autoPlay, ended, nextEpisodeId, onNavigate]);
-
-  useEffect(() => {
-    hasNavigatedRef.current = false;
-  }, [nextEpisodeId]);
-
-  return null;
-}
-
 export function WatchVideoPlayer({
   episodeId,
   src,
@@ -57,18 +26,22 @@ export function WatchVideoPlayer({
   nextEpisodeId,
   timestampActions = [],
 }: WatchVideoPlayerProps) {
-  const router = useRouter();
   const wp = useWatchParty();
+  const loadedEpisodeIdRef = useRef<string | null>(null);
 
-  const overlayMessages: OverlayMessage[] =
-    wp?.chat
-      .filter((item) => item.kind === "chat")
-      .slice(-10)
-      .map((item) => ({
-        id: item.id,
-        user: item.displayName,
-        text: item.content,
-      })) ?? [];
+  const chat = wp?.chat;
+  const overlayMessages: OverlayMessage[] = useMemo(
+    () =>
+      chat
+        ?.filter((item) => item.kind === "chat")
+        .slice(-10)
+        .map((item) => ({
+          id: item.id,
+          user: item.displayName,
+          text: item.content,
+        })) ?? [],
+    [chat],
+  );
   const {
     data: watchHistory,
     isPending,
@@ -81,9 +54,32 @@ export function WatchVideoPlayer({
   const initialTimeSeconds =
     watchHistory?.status === "watching" ? watchHistory.positionSeconds : 0;
 
-  function navigateToEpisode(targetEpisodeId: string) {
-    router.push(`/watch/${targetEpisodeId}`);
-  }
+  useEffect(() => {
+    if (!isFetched || isPending) return;
+    if (loadedEpisodeIdRef.current === episodeId) return;
+    loadedEpisodeIdRef.current = episodeId;
+    useMiniplayerStore.getState().load({
+      episodeId,
+      src,
+      title,
+      nextEpisodeId,
+      timestampActions,
+      initialTimeSeconds,
+    });
+  }, [
+    episodeId,
+    isFetched,
+    isPending,
+    src,
+    title,
+    nextEpisodeId,
+    timestampActions,
+    initialTimeSeconds,
+  ]);
+
+  useEffect(() => {
+    useMiniplayerStore.getState().setOverlayMessages(overlayMessages);
+  }, [overlayMessages]);
 
   if (!isFetched || isPending) {
     return (
@@ -93,25 +89,5 @@ export function WatchVideoPlayer({
     );
   }
 
-  return (
-    <VideoPlayer
-      key={`${episodeId}:${initialTimeSeconds}`}
-      src={src}
-      title={title}
-      autoPlay
-      initialTimeSeconds={initialTimeSeconds}
-      onNextEpisode={
-        nextEpisodeId ? () => navigateToEpisode(nextEpisodeId) : undefined
-      }
-      timestampActions={timestampActions}
-      overlayMessages={overlayMessages}
-    >
-      <WatchHistorySync episodeId={episodeId} />
-      <WatchPartyPlayerSync />
-      <WatchAutoplay
-        nextEpisodeId={nextEpisodeId}
-        onNavigate={navigateToEpisode}
-      />
-    </VideoPlayer>
-  );
+  return <PlayerSlot />;
 }
