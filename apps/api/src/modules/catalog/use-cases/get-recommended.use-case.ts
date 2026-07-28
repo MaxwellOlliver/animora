@@ -7,6 +7,6 @@ export class GetRecommendedUseCase {
   constructor(private readonly getSeriesUseCase: GetSeriesUseCase) {}
 
   async execute(input: { cursor?: string; limit?: number }) {
-    return this.getSeriesUseCase.execute(input);
+    return this.getSeriesUseCase.execute({ ...input, activeOnly: true });
   }
 }

@@ -74,12 +74,20 @@ export class EpisodesRepository {
     }));
   }
 
-  async findByPlaylistId(playlistId: string): Promise<EpisodeWithMedia[]> {
+  async findByPlaylistId(
+    playlistId: string,
+    activeOnly = false,
+  ): Promise<EpisodeWithMedia[]> {
+    const conditions = activeOnly
+      ? and(eq(episodes.playlistId, playlistId), eq(series.active, true))
+      : eq(episodes.playlistId, playlistId);
     const rows = await this.db
       .select({ episode: episodes, thumbnail: media })
       .from(episodes)
       .leftJoin(media, eq(episodes.thumbnailId, media.id))
-      .where(eq(episodes.playlistId, playlistId))
+      .innerJoin(playlists, eq(episodes.playlistId, playlists.id))
+      .innerJoin(series, eq(playlists.seriesId, series.id))
+      .where(conditions)
       .orderBy(asc(episodes.number));
     return rows.map((r) => ({ ...r.episode, thumbnail: r.thumbnail }));
   }
@@ -96,7 +104,11 @@ export class EpisodesRepository {
 
   async findByIdWithContext(
     id: string,
+    activeOnly = false,
   ): Promise<EpisodeWithMediaAndContext | undefined> {
+    const conditions = activeOnly
+      ? and(eq(episodes.id, id), eq(series.active, true))
+      : eq(episodes.id, id);
     const rows = await this.db
       .select({
         episode: episodes,
@@ -116,7 +128,7 @@ export class EpisodesRepository {
       .leftJoin(media, eq(episodes.thumbnailId, media.id))
       .innerJoin(playlists, eq(episodes.playlistId, playlists.id))
       .innerJoin(series, eq(playlists.seriesId, series.id))
-      .where(eq(episodes.id, id));
+      .where(conditions);
 
     if (!rows[0]) return undefined;
 
@@ -194,6 +206,7 @@ export class EpisodesRepository {
           isNotNull(episodes.releaseDate),
           gte(episodes.releaseDate, from),
           lte(episodes.releaseDate, to),
+          eq(series.active, true),
         ),
       )
       .orderBy(asc(episodes.releaseDate));

@@ -13,7 +13,7 @@ export class GetSeriesDetailUseCase {
   ) {}
 
   async execute(id: string) {
-    const series = await this.getSeriesByIdUseCase.execute(id);
+    const series = await this.getSeriesByIdUseCase.execute(id, true);
 
     const [classification, rating] = await Promise.all([
       this.classificationsRepository.findById(series.contentClassificationId),

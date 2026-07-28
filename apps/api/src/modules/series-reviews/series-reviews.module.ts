@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { SeriesModule } from '../admin/series/series.module';
 import { ProfilesModule } from '../profiles/profiles.module';
 import { SeriesReviewsController } from './series-reviews.controller';
 import { SeriesReviewsRepository } from './series-reviews.repository';
@@ -10,7 +11,7 @@ import { ListSeriesReviewsUseCase } from './use-cases/list-series-reviews.use-ca
 import { UpdateReviewUseCase } from './use-cases/update-review.use-case';
 
 @Module({
-  imports: [ProfilesModule],
+  imports: [ProfilesModule, SeriesModule],
   controllers: [SeriesReviewsController],
   providers: [
     SeriesReviewsRepository,

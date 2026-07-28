@@ -17,7 +17,10 @@ export class UpsertEpisodeRatingUseCase {
     episodeId: string;
     value: 'like' | 'dislike';
   }): Promise<EpisodeRating> {
-    const episode = await this.episodesRepository.findById(input.episodeId);
+    const episode = await this.episodesRepository.findByIdWithContext(
+      input.episodeId,
+      true,
+    );
     if (!episode) {
       throw new NotFoundException('Episode not found');
     }

@@ -1,4 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
+import { SeriesRepository } from '@/modules/admin/series/repositories/series.repository';
 
 import type { SeriesReview } from '../series-review.entity';
 import { SeriesReviewsRepository } from '../series-reviews.repository';
@@ -7,6 +13,7 @@ import { SeriesReviewsRepository } from '../series-reviews.repository';
 export class CreateReviewUseCase {
   constructor(
     private readonly seriesReviewsRepository: SeriesReviewsRepository,
+    private readonly seriesRepository: SeriesRepository,
   ) {}
 
   async execute(input: {
@@ -15,6 +22,11 @@ export class CreateReviewUseCase {
     rating: number;
     text: string;
   }): Promise<SeriesReview> {
+    const series = await this.seriesRepository.findById(input.seriesId, true);
+    if (!series) {
+      throw new NotFoundException('Series not found');
+    }
+
     const existing = await this.seriesReviewsRepository.findBySeriesAndProfile(
       input.seriesId,
       input.profileId,

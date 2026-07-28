@@ -7,6 +7,9 @@ export class GetSeriesFeaturedTrailerUseCase {
   constructor(private readonly trailersRepository: TrailersRepository) {}
 
   async execute(seriesId: string) {
-    return this.trailersRepository.findNewestBySeriesId(seriesId) ?? null;
+    return (
+      (await this.trailersRepository.findNewestBySeriesId(seriesId, true)) ??
+      null
+    );
   }
 }

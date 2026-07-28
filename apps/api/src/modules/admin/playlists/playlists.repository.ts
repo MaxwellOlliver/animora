@@ -69,12 +69,19 @@ export class PlaylistsRepository {
     }));
   }
 
-  async findBySeriesId(seriesId: string): Promise<PlaylistWithMedia[]> {
+  async findBySeriesId(
+    seriesId: string,
+    activeOnly = false,
+  ): Promise<PlaylistWithMedia[]> {
+    const conditions = activeOnly
+      ? and(eq(playlists.seriesId, seriesId), eq(series.active, true))
+      : eq(playlists.seriesId, seriesId);
     const rows = await this.db
       .select({ playlist: playlists, cover: media })
       .from(playlists)
       .leftJoin(media, eq(playlists.coverId, media.id))
-      .where(eq(playlists.seriesId, seriesId))
+      .innerJoin(series, eq(playlists.seriesId, series.id))
+      .where(conditions)
       .orderBy(asc(playlists.number));
     return rows.map((r) => ({ ...r.playlist, cover: r.cover }));
   }
@@ -123,6 +130,7 @@ export class PlaylistsRepository {
         and(
           eq(playlists.status, 'airing'),
           isNotNull(playlists.releaseWeekday),
+          eq(series.active, true),
         ),
       );
 
@@ -173,6 +181,7 @@ export class PlaylistsRepository {
           isNotNull(playlists.airStartDate),
           gte(playlists.airStartDate, from),
           lte(playlists.airStartDate, to),
+          eq(series.active, true),
         ),
       )
       .orderBy(asc(playlists.releaseWeekday), asc(series.name));

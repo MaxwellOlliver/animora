@@ -15,6 +15,7 @@ export class GetWatchEpisodeUseCase {
   async execute(input: { episodeId: string; profileId: string }) {
     const episode = await this.episodesRepository.findByIdWithContext(
       input.episodeId,
+      true,
     );
     if (!episode) {
       throw new NotFoundException('Episode not found');

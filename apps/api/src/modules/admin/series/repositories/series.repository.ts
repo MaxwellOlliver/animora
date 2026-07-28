@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { desc, eq, inArray, lt } from 'drizzle-orm';
+import { and, desc, eq, inArray, lt } from 'drizzle-orm';
 
 import type {
   CursorPaginatedRequest,
@@ -33,7 +33,8 @@ export class SeriesRepository {
   async findAllCursor({
     cursor,
     limit = 20,
-  }: CursorPaginatedRequest): Promise<
+    activeOnly = false,
+  }: CursorPaginatedRequest & { activeOnly?: boolean }): Promise<
     CursorPaginatedResponse<SeriesWithDetailsAndMedia>
   > {
     const query = this.db
@@ -42,9 +43,15 @@ export class SeriesRepository {
       .orderBy(desc(series.id))
       .limit(limit + 1);
 
-    const rows = cursor
-      ? await query.where(lt(series.id, cursor))
-      : await query;
+    const conditions = [
+      ...(cursor ? [lt(series.id, cursor)] : []),
+      ...(activeOnly ? [eq(series.active, true)] : []),
+    ];
+
+    const rows =
+      conditions.length > 0
+        ? await query.where(and(...conditions))
+        : await query;
 
     const hasNextPage = rows.length > limit;
     const items = hasNextPage ? rows.slice(0, limit) : rows;
@@ -87,8 +94,14 @@ export class SeriesRepository {
     };
   }
 
-  async findById(id: string): Promise<SeriesWithDetailsAndMedia | undefined> {
-    const rows = await this.db.select().from(series).where(eq(series.id, id));
+  async findById(
+    id: string,
+    activeOnly = false,
+  ): Promise<SeriesWithDetailsAndMedia | undefined> {
+    const conditions = activeOnly
+      ? and(eq(series.id, id), eq(series.active, true))
+      : eq(series.id, id);
+    const rows = await this.db.select().from(series).where(conditions);
     if (!rows[0]) return undefined;
 
     const [genreRows, assets] = await Promise.all([

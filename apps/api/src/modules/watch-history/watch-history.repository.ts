@@ -84,7 +84,10 @@ export class WatchHistoryRepository {
       .from(media)
       .as('thumbnail_media');
 
-    const baseCondition = eq(watchHistory.profileId, profileId);
+    const baseCondition = and(
+      eq(watchHistory.profileId, profileId),
+      eq(series.active, true),
+    );
     const conditions = cursor
       ? and(baseCondition, lt(watchHistory.updatedAt, new Date(cursor)))
       : baseCondition;
@@ -167,7 +170,10 @@ export class WatchHistoryRepository {
       .as('latest_per_series');
 
     // Main query: join from the filtered IDs back to watch_history to hydrate
-    const baseCondition = eq(watchHistory.id, latestPerSeries.id);
+    const baseCondition = and(
+      eq(watchHistory.id, latestPerSeries.id),
+      eq(series.active, true),
+    );
     const conditions = cursor
       ? and(baseCondition, lt(watchHistory.updatedAt, new Date(cursor)))
       : baseCondition;

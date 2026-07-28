@@ -7,6 +7,6 @@ export class GetSeriesPlaylistsUseCase {
   constructor(private readonly playlistsRepository: PlaylistsRepository) {}
 
   async execute(seriesId: string) {
-    return this.playlistsRepository.findBySeriesId(seriesId);
+    return this.playlistsRepository.findBySeriesId(seriesId, true);
   }
 }

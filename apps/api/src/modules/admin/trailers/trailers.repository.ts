@@ -43,12 +43,19 @@ export class TrailersRepository {
     }));
   }
 
-  async findBySeriesId(seriesId: string): Promise<TrailerWithMedia[]> {
+  async findBySeriesId(
+    seriesId: string,
+    activeOnly = false,
+  ): Promise<TrailerWithMedia[]> {
+    const conditions = activeOnly
+      ? and(eq(trailers.seriesId, seriesId), eq(series.active, true))
+      : eq(trailers.seriesId, seriesId);
     const rows = await this.db
       .select({ trailer: trailers, thumbnail: media })
       .from(trailers)
       .leftJoin(media, eq(trailers.thumbnailId, media.id))
-      .where(eq(trailers.seriesId, seriesId))
+      .innerJoin(series, eq(trailers.seriesId, series.id))
+      .where(conditions)
       .orderBy(asc(trailers.number));
     return rows.map((r) => ({ ...r.trailer, thumbnail: r.thumbnail }));
   }
@@ -65,7 +72,11 @@ export class TrailersRepository {
 
   async findNewestBySeriesId(
     seriesId: string,
+    activeOnly = false,
   ): Promise<TrailerWithVideo | undefined> {
+    const conditions = activeOnly
+      ? and(eq(trailers.seriesId, seriesId), eq(series.active, true))
+      : eq(trailers.seriesId, seriesId);
     const rows = await this.db
       .select({ trailer: trailers, thumbnail: media, video: videos })
       .from(trailers)
@@ -74,7 +85,8 @@ export class TrailersRepository {
         videos,
         and(eq(videos.ownerId, trailers.id), eq(videos.ownerType, 'trailer')),
       )
-      .where(eq(trailers.seriesId, seriesId))
+      .innerJoin(series, eq(trailers.seriesId, series.id))
+      .where(conditions)
       .orderBy(desc(trailers.createdAt))
       .limit(1);
     if (!rows[0]) return undefined;

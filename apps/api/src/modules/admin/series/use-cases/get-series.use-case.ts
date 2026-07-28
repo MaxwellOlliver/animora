@@ -15,13 +15,14 @@ export class GetSeriesUseCase {
   constructor(private readonly seriesRepository: SeriesRepository) {}
 
   async execute(
-    input: CursorPaginatedRequest,
+    input: CursorPaginatedRequest & { activeOnly?: boolean },
   ): Promise<CursorPaginatedResponse<SeriesWithDetailsAndMedia>> {
     const limit = Math.min(Math.max(input.limit ?? 20, 1), 100);
 
     return this.seriesRepository.findAllCursor({
       cursor: input.cursor,
       limit,
+      activeOnly: input.activeOnly,
     });
   }
 }

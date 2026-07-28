@@ -7,6 +7,6 @@ export class GetSeriesTrailersUseCase {
   constructor(private readonly trailersRepository: TrailersRepository) {}
 
   async execute(seriesId: string) {
-    return this.trailersRepository.findBySeriesId(seriesId);
+    return this.trailersRepository.findBySeriesId(seriesId, true);
   }
 }

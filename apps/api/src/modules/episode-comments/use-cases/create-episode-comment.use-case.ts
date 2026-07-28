@@ -24,7 +24,10 @@ export class CreateEpisodeCommentUseCase {
     parentId?: string;
     replyToId?: string;
   }): Promise<EpisodeComment> {
-    const episode = await this.episodesRepository.findById(input.episodeId);
+    const episode = await this.episodesRepository.findByIdWithContext(
+      input.episodeId,
+      true,
+    );
     if (!episode) {
       throw new NotFoundException('Episode not found');
     }
