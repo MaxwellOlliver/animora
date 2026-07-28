@@ -64,17 +64,19 @@ export function SeriesCard({ series }: SeriesCardProps) {
               muted={muted}
               onMutedChange={setMuted}
             />
-            <button
-              type="button"
-              onClick={() => setMuted(!muted)}
-              className="absolute right-2 bottom-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80"
-            >
-              {muted ? (
-                <VolumeOffIcon className="size-3.5" />
-              ) : (
-                <Volume2Icon className="size-3.5" />
-              )}
-            </button>
+            {featuredTrailerSrc && (
+              <button
+                type="button"
+                onClick={() => setMuted(!muted)}
+                className="absolute right-2 bottom-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80"
+              >
+                {muted ? (
+                  <VolumeOffIcon className="size-3.5" />
+                ) : (
+                  <Volume2Icon className="size-3.5" />
+                )}
+              </button>
+            )}
           </div>
           <div className="flex flex-col gap-2 p-4">
             <div className="flex flex-col gap-2">
@@ -96,9 +98,7 @@ export function SeriesCard({ series }: SeriesCardProps) {
               <Button
                 variant="pale"
                 size="icon-md"
-                render={
-                  <Link href={seriesHref} scroll={false} />
-                }
+                render={<Link href={seriesHref} scroll={false} />}
               >
                 <InfoIcon />
               </Button>
