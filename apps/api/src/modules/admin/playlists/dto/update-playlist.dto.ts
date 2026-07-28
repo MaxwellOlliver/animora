@@ -3,9 +3,11 @@ import {
   IsDateString,
   IsEnum,
   IsInt,
+  IsMilitaryTime,
   IsNotEmpty,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
   Min,
 } from 'class-validator';
@@ -50,4 +52,19 @@ export class UpdatePlaylistDto {
   @IsOptional()
   @IsDateString()
   airEndDate?: string;
+
+  @ApiPropertyOptional({
+    description: 'Day of week new episodes release on (0=Sunday..6=Saturday)',
+    example: 0,
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(6)
+  releaseWeekday?: number;
+
+  @ApiPropertyOptional({ example: '12:00' })
+  @IsOptional()
+  @IsMilitaryTime()
+  releaseTime?: string;
 }

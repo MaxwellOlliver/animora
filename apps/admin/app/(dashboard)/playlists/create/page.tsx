@@ -33,6 +33,8 @@ export default function CreatePlaylistPage() {
       studio: values.studio,
       airStartDate: values.airStartDate,
       airEndDate: values.airEndDate,
+      releaseWeekday: values.releaseWeekday,
+      releaseTime: values.releaseTime,
     });
 
     if (values.photo.kind === "new") {

@@ -15,6 +15,7 @@ export interface Episode {
   thumbnailId: string | null;
   thumbnail: Media | null;
   durationSeconds: number | null;
+  releaseDate: string | null;
   playlistName?: string | null;
   seriesName?: string;
   createdAt: string;

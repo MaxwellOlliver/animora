@@ -16,7 +16,7 @@ const navbarLinks = [
   { name: "home", href: "/home" },
   { name: "categories", href: "/categories" },
   { name: "season", href: "/season" },
-  { name: "calendar", href: "/season" },
+  { name: "calendar", href: "/schedule" },
 ];
 
 export function Navbar({ hideOnTop = false }: { hideOnTop?: boolean }) {

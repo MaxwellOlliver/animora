@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, asc, desc, eq, gt } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, gte, isNotNull, lte } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
@@ -7,7 +8,24 @@ import { media } from '@/modules/media/media.entity';
 
 import { playlists } from '../playlists/playlist.entity';
 import { series } from '../series/entities/series.entity';
+import { seriesAssets } from '../series/entities/series-asset.entity';
+import { videos } from '../videos/video.entity';
 import { type Episode, episodes, type NewEpisode } from './episode.entity';
+
+const posterMedia = alias(media, 'poster_media');
+const posterAssets = alias(seriesAssets, 'poster_assets');
+const bannerMedia = alias(media, 'banner_media');
+const bannerAssets = alias(seriesAssets, 'banner_assets');
+
+export type EpisodeSchedule = Episode & {
+  available: boolean;
+  thumbnail: typeof media.$inferSelect | null;
+  seriesId: string;
+  seriesName: string;
+  seriesBanner: typeof media.$inferSelect | null;
+  seriesPoster: typeof media.$inferSelect | null;
+  playlistNumber: number;
+};
 
 export type EpisodeWithMedia = Episode & {
   thumbnail: typeof media.$inferSelect | null;
@@ -130,6 +148,66 @@ export class EpisodesRepository {
       ...rows[0].episode,
       thumbnail: rows[0].thumbnail,
     };
+  }
+
+  async findByReleaseDateRange(
+    from: Date,
+    to: Date,
+  ): Promise<EpisodeSchedule[]> {
+    const rows = await this.db
+      .select({
+        episode: episodes,
+        thumbnail: media,
+        seriesId: series.id,
+        seriesName: series.name,
+        seriesBanner: bannerMedia,
+        seriesPoster: posterMedia,
+        playlistNumber: playlists.number,
+        videoStatus: videos.status,
+      })
+      .from(episodes)
+      .leftJoin(media, eq(episodes.thumbnailId, media.id))
+      .innerJoin(playlists, eq(episodes.playlistId, playlists.id))
+      .innerJoin(series, eq(playlists.seriesId, series.id))
+      .leftJoin(
+        posterAssets,
+        and(
+          eq(posterAssets.seriesId, series.id),
+          eq(posterAssets.purpose, 'poster'),
+        ),
+      )
+      .leftJoin(posterMedia, eq(posterAssets.mediaId, posterMedia.id))
+      .leftJoin(
+        bannerAssets,
+        and(
+          eq(bannerAssets.seriesId, series.id),
+          eq(bannerAssets.purpose, 'banner'),
+        ),
+      )
+      .leftJoin(bannerMedia, eq(bannerAssets.mediaId, bannerMedia.id))
+      .leftJoin(
+        videos,
+        and(eq(videos.ownerType, 'episode'), eq(videos.ownerId, episodes.id)),
+      )
+      .where(
+        and(
+          isNotNull(episodes.releaseDate),
+          gte(episodes.releaseDate, from),
+          lte(episodes.releaseDate, to),
+        ),
+      )
+      .orderBy(asc(episodes.releaseDate));
+
+    return rows.map((r) => ({
+      ...r.episode,
+      available: r.videoStatus === 'ready',
+      thumbnail: r.thumbnail,
+      seriesId: r.seriesId,
+      seriesName: r.seriesName,
+      seriesBanner: r.seriesBanner,
+      seriesPoster: r.seriesPoster,
+      playlistNumber: r.playlistNumber,
+    }));
   }
 
   async create(data: NewEpisode): Promise<Episode> {

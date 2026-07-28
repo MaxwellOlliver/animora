@@ -8,6 +8,7 @@ export interface CreateEpisodeInput {
   title: string;
   description?: string;
   durationSeconds?: number;
+  releaseDate?: string;
 }
 
 export interface UpdateEpisodeInput {
@@ -15,6 +16,7 @@ export interface UpdateEpisodeInput {
   title?: string;
   description?: string;
   durationSeconds?: number;
+  releaseDate?: string;
 }
 
 export async function fetchEpisodes(playlistId?: string): Promise<Episode[]> {

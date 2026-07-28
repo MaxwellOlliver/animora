@@ -30,6 +30,9 @@ export class UpdateEpisodeUseCase {
       }
     }
 
-    return this.episodesRepository.update(id, dto);
+    return this.episodesRepository.update(id, {
+      ...dto,
+      releaseDate: dto.releaseDate ? new Date(dto.releaseDate) : undefined,
+    });
   }
 }

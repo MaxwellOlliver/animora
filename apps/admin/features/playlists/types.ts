@@ -21,6 +21,8 @@ export interface Playlist {
   cover: Media | null;
   airStartDate: string | null;
   airEndDate: string | null;
+  releaseWeekday: number | null;
+  releaseTime: string | null;
   seriesName?: string;
   createdAt: string;
   updatedAt: string;

@@ -10,6 +10,7 @@ import { SeriesReviewsModule } from '@/modules/series-reviews/series-reviews.mod
 import { CatalogController } from './catalog.controller';
 import { GetPlaylistEpisodesUseCase } from './use-cases/get-playlist-episodes.use-case';
 import { GetRecommendedUseCase } from './use-cases/get-recommended.use-case';
+import { GetScheduleUseCase } from './use-cases/get-schedule.use-case';
 import { GetSeriesDetailUseCase } from './use-cases/get-series-detail.use-case';
 import { GetSeriesFeaturedTrailerUseCase } from './use-cases/get-series-featured-trailer.use-case';
 import { GetSeriesPlaylistsUseCase } from './use-cases/get-series-playlists.use-case';
@@ -32,6 +33,7 @@ import { GetSeriesTrailersUseCase } from './use-cases/get-series-trailers.use-ca
     GetPlaylistEpisodesUseCase,
     GetSeriesTrailersUseCase,
     GetSeriesFeaturedTrailerUseCase,
+    GetScheduleUseCase,
   ],
 })
 export class CatalogModule {}

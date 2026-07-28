@@ -42,6 +42,8 @@ export default function EditPlaylistPage() {
       studio: values.studio,
       airStartDate: values.airStartDate,
       airEndDate: values.airEndDate,
+      releaseWeekday: values.releaseWeekday,
+      releaseTime: values.releaseTime,
     });
 
     if (values.photo.kind === "new") {
@@ -149,6 +151,8 @@ export default function EditPlaylistPage() {
               studio: playlistQuery.data.studio,
               airStartDate: playlistQuery.data.airStartDate,
               airEndDate: playlistQuery.data.airEndDate,
+              releaseWeekday: playlistQuery.data.releaseWeekday,
+              releaseTime: playlistQuery.data.releaseTime,
               cover: playlistQuery.data.cover,
             }}
             onSubmit={handleSubmit}

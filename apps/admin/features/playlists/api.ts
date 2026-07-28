@@ -11,6 +11,8 @@ export interface CreatePlaylistInput {
   studio?: string;
   airStartDate?: string;
   airEndDate?: string;
+  releaseWeekday?: number;
+  releaseTime?: string;
 }
 
 export interface UpdatePlaylistInput {
@@ -21,6 +23,8 @@ export interface UpdatePlaylistInput {
   studio?: string;
   airStartDate?: string;
   airEndDate?: string;
+  releaseWeekday?: number;
+  releaseTime?: string;
 }
 
 export async function fetchPlaylists(seriesId?: string): Promise<Playlist[]> {

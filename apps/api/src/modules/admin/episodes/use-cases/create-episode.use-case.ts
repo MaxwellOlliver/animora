@@ -36,6 +36,7 @@ export class CreateEpisodeUseCase {
       title: dto.title,
       description: dto.description,
       durationSeconds: dto.durationSeconds,
+      releaseDate: dto.releaseDate ? new Date(dto.releaseDate) : undefined,
     });
   }
 }

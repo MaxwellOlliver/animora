@@ -47,6 +47,8 @@ const playlistSchema = z.object({
   studio: z.string().trim().max(255, "Studio must be at most 255 characters."),
   airStartDate: z.string(),
   airEndDate: z.string(),
+  releaseWeekday: z.enum(["0", "1", "2", "3", "4", "5", "6", ""]),
+  releaseTime: z.string(),
 });
 
 type PlaylistFormValues = z.infer<typeof playlistSchema>;
@@ -60,6 +62,8 @@ export interface PlaylistCreateUpdateValues {
   studio?: string;
   airStartDate?: string;
   airEndDate?: string;
+  releaseWeekday?: number;
+  releaseTime?: string;
   photo: PhotoUploadValue;
 }
 
@@ -74,6 +78,8 @@ interface PlaylistCreateUpdateFormProps {
     studio?: string | null;
     airStartDate?: string | null;
     airEndDate?: string | null;
+    releaseWeekday?: number | null;
+    releaseTime?: string | null;
     cover?: Media | null;
   };
   onSubmit: (values: PlaylistCreateUpdateValues) => Promise<void> | void;
@@ -98,6 +104,8 @@ export function PlaylistCreateUpdateForm({
   const studioId = useId();
   const airStartId = useId();
   const airEndId = useId();
+  const releaseWeekdayId = useId();
+  const releaseTimeId = useId();
   const [localError, setLocalError] = useState<string | null>(null);
 
   const seriesQuery = useSeriesList();
@@ -121,6 +129,11 @@ export function PlaylistCreateUpdateForm({
       studio: initialValues?.studio ?? "",
       airStartDate: initialValues?.airStartDate ?? "",
       airEndDate: initialValues?.airEndDate ?? "",
+      releaseWeekday:
+        initialValues?.releaseWeekday != null
+          ? (String(initialValues.releaseWeekday) as PlaylistFormValues["releaseWeekday"])
+          : "",
+      releaseTime: initialValues?.releaseTime ?? "",
     },
   });
 
@@ -134,6 +147,11 @@ export function PlaylistCreateUpdateForm({
       studio: initialValues?.studio ?? "",
       airStartDate: initialValues?.airStartDate ?? "",
       airEndDate: initialValues?.airEndDate ?? "",
+      releaseWeekday:
+        initialValues?.releaseWeekday != null
+          ? (String(initialValues.releaseWeekday) as PlaylistFormValues["releaseWeekday"])
+          : "",
+      releaseTime: initialValues?.releaseTime ?? "",
     });
   }, [
     form,
@@ -145,6 +163,8 @@ export function PlaylistCreateUpdateForm({
     initialValues?.studio,
     initialValues?.airStartDate,
     initialValues?.airEndDate,
+    initialValues?.releaseWeekday,
+    initialValues?.releaseTime,
   ]);
 
   const isBusy = isSubmitting || form.formState.isSubmitting;
@@ -166,6 +186,9 @@ export function PlaylistCreateUpdateForm({
         studio: normalizedStudio || undefined,
         airStartDate: values.airStartDate || undefined,
         airEndDate: values.airEndDate || undefined,
+        releaseWeekday:
+          values.releaseWeekday !== "" ? Number(values.releaseWeekday) : undefined,
+        releaseTime: values.releaseTime || undefined,
         photo: photoValue,
       });
     } catch (error) {
@@ -371,6 +394,58 @@ export function PlaylistCreateUpdateForm({
                   {...form.register("airEndDate")}
                 />
                 <FieldError errors={[form.formState.errors.airEndDate]} />
+              </Field>
+            </FieldGroup>
+          </Grid>
+        </FormSection>
+        <FormSection title="Release Schedule" separator={false}>
+          <Grid>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor={releaseWeekdayId}>
+                  Release Weekday
+                </FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="releaseWeekday"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={isBusy}
+                    >
+                      <SelectTrigger
+                        id={releaseWeekdayId}
+                        className="w-full"
+                        aria-invalid={!!form.formState.errors.releaseWeekday}
+                      >
+                        <SelectValue placeholder="Select a weekday (optional)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0">Sunday</SelectItem>
+                        <SelectItem value="1">Monday</SelectItem>
+                        <SelectItem value="2">Tuesday</SelectItem>
+                        <SelectItem value="3">Wednesday</SelectItem>
+                        <SelectItem value="4">Thursday</SelectItem>
+                        <SelectItem value="5">Friday</SelectItem>
+                        <SelectItem value="6">Saturday</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <FieldError errors={[form.formState.errors.releaseWeekday]} />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor={releaseTimeId}>Release Time</FieldLabel>
+                <Input
+                  id={releaseTimeId}
+                  type="time"
+                  disabled={isBusy}
+                  aria-invalid={!!form.formState.errors.releaseTime}
+                  {...form.register("releaseTime")}
+                />
+                <FieldError errors={[form.formState.errors.releaseTime]} />
               </Field>
             </FieldGroup>
           </Grid>

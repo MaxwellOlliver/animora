@@ -27,6 +27,7 @@ export const episodes = pgTable(
     description: text('description'),
     thumbnailId: uuid('thumbnail_id').references(() => media.id),
     durationSeconds: integer('duration_seconds'),
+    releaseDate: timestamp('release_date'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },

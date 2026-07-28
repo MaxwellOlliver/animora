@@ -36,6 +36,10 @@ import { getMediaImageUrl } from "@/lib/s3";
 
 import type { Media } from "../types";
 
+function toDatetimeLocalValue(iso?: string | null): string {
+  return iso ? iso.slice(0, 16) : "";
+}
+
 const episodeSchema = z.object({
   playlistId: z.string().min(1, "Playlist is required."),
   number: z
@@ -53,6 +57,7 @@ const episodeSchema = z.object({
     .int("Duration must be an integer.")
     .min(0, "Duration must be positive.")
     .nullable(),
+  releaseDate: z.string(),
 });
 
 type EpisodeFormValues = z.infer<typeof episodeSchema>;
@@ -63,6 +68,7 @@ export interface EpisodeCreateUpdateValues {
   title: string;
   description?: string;
   durationSeconds?: number;
+  releaseDate?: string;
   photo: PhotoUploadValue;
 }
 
@@ -74,6 +80,7 @@ interface EpisodeCreateUpdateFormProps {
     title?: string;
     description?: string | null;
     durationSeconds?: number | null;
+    releaseDate?: string | null;
     thumbnail?: Media | null;
   };
   onSubmit: (values: EpisodeCreateUpdateValues) => Promise<void> | void;
@@ -95,6 +102,7 @@ export function EpisodeCreateUpdateForm({
   const titleId = useId();
   const descriptionId = useId();
   const durationId = useId();
+  const releaseDateId = useId();
   const [localError, setLocalError] = useState<string | null>(null);
 
   const playlistsQuery = usePlaylistsList();
@@ -118,6 +126,7 @@ export function EpisodeCreateUpdateForm({
       title: initialValues?.title ?? "",
       description: initialValues?.description ?? "",
       durationSeconds: initialValues?.durationSeconds ?? null,
+      releaseDate: toDatetimeLocalValue(initialValues?.releaseDate),
     },
   });
 
@@ -128,6 +137,7 @@ export function EpisodeCreateUpdateForm({
       title: initialValues?.title ?? "",
       description: initialValues?.description ?? "",
       durationSeconds: initialValues?.durationSeconds ?? null,
+      releaseDate: toDatetimeLocalValue(initialValues?.releaseDate),
     });
   }, [
     form,
@@ -136,6 +146,7 @@ export function EpisodeCreateUpdateForm({
     initialValues?.title,
     initialValues?.description,
     initialValues?.durationSeconds,
+    initialValues?.releaseDate,
   ]);
 
   const isBusy = isSubmitting || form.formState.isSubmitting;
@@ -153,6 +164,9 @@ export function EpisodeCreateUpdateForm({
         title: values.title,
         description: normalizedDescription || undefined,
         durationSeconds: values.durationSeconds ?? undefined,
+        releaseDate: values.releaseDate
+          ? `${values.releaseDate}:00.000Z`
+          : undefined,
         photo: photoValue,
       });
     } catch (error) {
@@ -268,6 +282,18 @@ export function EpisodeCreateUpdateForm({
                 <FieldError
                   errors={[form.formState.errors.durationSeconds]}
                 />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor={releaseDateId}>Release Date</FieldLabel>
+                <Input
+                  id={releaseDateId}
+                  type="datetime-local"
+                  disabled={isBusy}
+                  aria-invalid={!!form.formState.errors.releaseDate}
+                  {...form.register("releaseDate")}
+                />
+                <FieldError errors={[form.formState.errors.releaseDate]} />
               </Field>
             </Grid>
 

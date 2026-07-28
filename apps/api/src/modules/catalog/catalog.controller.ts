@@ -14,8 +14,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { GetScheduleQueryDto } from './dto/get-schedule-query.dto';
 import { GetPlaylistEpisodesUseCase } from './use-cases/get-playlist-episodes.use-case';
 import { GetRecommendedUseCase } from './use-cases/get-recommended.use-case';
+import { GetScheduleUseCase } from './use-cases/get-schedule.use-case';
 import { GetSeriesDetailUseCase } from './use-cases/get-series-detail.use-case';
 import { GetSeriesFeaturedTrailerUseCase } from './use-cases/get-series-featured-trailer.use-case';
 import { GetSeriesPlaylistsUseCase } from './use-cases/get-series-playlists.use-case';
@@ -32,6 +34,7 @@ export class CatalogController {
     private readonly getPlaylistEpisodesUseCase: GetPlaylistEpisodesUseCase,
     private readonly getSeriesTrailersUseCase: GetSeriesTrailersUseCase,
     private readonly getSeriesFeaturedTrailerUseCase: GetSeriesFeaturedTrailerUseCase,
+    private readonly getScheduleUseCase: GetScheduleUseCase,
   ) {}
 
   @Get('recommended')
@@ -73,5 +76,11 @@ export class CatalogController {
   @ApiOperation({ summary: 'Get episodes for a playlist' })
   episodes(@Param('playlistId', ParseUUIDPipe) playlistId: string) {
     return this.getPlaylistEpisodesUseCase.execute(playlistId);
+  }
+
+  @Get('schedule')
+  @ApiOperation({ summary: 'Get episode release schedule for a date range' })
+  schedule(@Query() query: GetScheduleQueryDto) {
+    return this.getScheduleUseCase.execute(query);
   }
 }

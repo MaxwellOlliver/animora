@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsInt,
+  IsISO8601,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -36,4 +37,9 @@ export class CreateEpisodeDto {
   @IsInt()
   @Min(0)
   durationSeconds?: number;
+
+  @ApiPropertyOptional({ example: '2026-08-02T12:00:00.000Z' })
+  @IsOptional()
+  @IsISO8601()
+  releaseDate?: string;
 }
