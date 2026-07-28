@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import { updateProfile } from "@/features/profiles/actions/update-profile";
 import { ProfileEditorScreen } from "@/features/profiles/components/profile-editor-screen";
-import { fetchProfile } from "@/features/profiles/queries/fetch-profiles";
+import { fetchProfile } from "@/features/profiles/queries/fetch-profiles.server";
 import { ApiError, SessionExpiredError } from "@/lib/api";
 import { ensureFreshSession } from "@/lib/ensure-fresh-session";
 import { buildMediaUrl } from "@/utils/media-utils";

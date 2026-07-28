@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { MediaPurpose } from "@animora/contracts";
 
 import { api } from "@/lib/api";

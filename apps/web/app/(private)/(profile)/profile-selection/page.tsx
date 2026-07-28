@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { ProfileSelectionView } from "@/features/profiles/components/profile-selection-view";
-import { fetchProfiles } from "@/features/profiles/queries/fetch-profiles";
+import { fetchProfiles } from "@/features/profiles/queries/fetch-profiles.server";
 import { SessionExpiredError } from "@/lib/api";
 import { ensureFreshSession } from "@/lib/ensure-fresh-session";
 

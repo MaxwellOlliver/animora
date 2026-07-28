@@ -2,7 +2,7 @@ import "server-only";
 
 import { getSession } from "@/lib/session";
 
-import { fetchProfile } from "./fetch-profiles";
+import { fetchProfile } from "./fetch-profiles.server";
 
 export async function getCurrentProfile() {
   const session = await getSession();

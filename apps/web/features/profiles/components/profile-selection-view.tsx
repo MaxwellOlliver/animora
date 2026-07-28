@@ -8,7 +8,7 @@ import { useState } from "react";
 
 import { NewProfileCard } from "@/features/profiles/components/new-profile-card";
 import { ProfileCard } from "@/features/profiles/components/profile-card";
-import type { Profile } from "@/features/profiles/queries/fetch-profiles";
+import type { Profile } from "@/features/profiles/queries/fetch-profiles.server";
 import { buildMediaUrl } from "@/utils/media-utils";
 
 export function ProfileSelectionView({ profiles }: { profiles: Profile[] }) {

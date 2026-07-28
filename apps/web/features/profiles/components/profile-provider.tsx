@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 
-import type { Profile } from "@/features/profiles/queries/fetch-profiles";
+import type { Profile } from "@/features/profiles/queries/fetch-profiles.server";
 
 interface ProfileContextValue {
   profile: Profile | null;

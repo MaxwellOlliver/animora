@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { Media } from "@/features/catalog/queries/fetch-recommended";
 import { api } from "@/lib/api";
 

@@ -1,12 +1,12 @@
 import { notFound, redirect } from "next/navigation";
 
-import { fetchProfile } from "@/features/profiles/queries/fetch-profiles";
+import { fetchProfile } from "@/features/profiles/queries/fetch-profiles.server";
 import { CommentsSection } from "@/features/watch/components/comments-section";
 import { EpisodeInfo } from "@/features/watch/components/episode-info";
 import { SidebarEpisodeCard } from "@/features/watch/components/sidebar-episode-card";
 import { WatchPartyChat } from "@/features/watch/components/watch-party-chat";
 import { WatchVideoPlayer } from "@/features/watch/components/watch-video-player";
-import { fetchWatchEpisode } from "@/features/watch/queries/fetch-watch-episode";
+import { fetchWatchEpisode } from "@/features/watch/queries/fetch-watch-episode.server";
 import { WatchPartyShell } from "@/features/watch-party/watch-party-shell";
 import { ApiError, SessionExpiredError } from "@/lib/api";
 import { ensureFreshSession } from "@/lib/ensure-fresh-session";

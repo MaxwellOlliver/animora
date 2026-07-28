@@ -1,5 +1,5 @@
 import { ProfileProvider } from "@/features/profiles/components/profile-provider";
-import { getCurrentProfile } from "@/features/profiles/queries/get-current-profile";
+import { getCurrentProfile } from "@/features/profiles/queries/get-current-profile.server";
 
 export default async function PrivateLayout({
   children,
