@@ -15,9 +15,11 @@ import {
 } from '@nestjs/swagger';
 
 import { GetScheduleQueryDto } from './dto/get-schedule-query.dto';
+import { GetSeasonQueryDto } from './dto/get-season-query.dto';
 import { GetPlaylistEpisodesUseCase } from './use-cases/get-playlist-episodes.use-case';
 import { GetRecommendedUseCase } from './use-cases/get-recommended.use-case';
 import { GetScheduleUseCase } from './use-cases/get-schedule.use-case';
+import { GetSeasonUseCase } from './use-cases/get-season.use-case';
 import { GetSeriesDetailUseCase } from './use-cases/get-series-detail.use-case';
 import { GetSeriesFeaturedTrailerUseCase } from './use-cases/get-series-featured-trailer.use-case';
 import { GetSeriesPlaylistsUseCase } from './use-cases/get-series-playlists.use-case';
@@ -35,6 +37,7 @@ export class CatalogController {
     private readonly getSeriesTrailersUseCase: GetSeriesTrailersUseCase,
     private readonly getSeriesFeaturedTrailerUseCase: GetSeriesFeaturedTrailerUseCase,
     private readonly getScheduleUseCase: GetScheduleUseCase,
+    private readonly getSeasonUseCase: GetSeasonUseCase,
   ) {}
 
   @Get('recommended')
@@ -82,5 +85,11 @@ export class CatalogController {
   @ApiOperation({ summary: 'Get episode release schedule for a date range' })
   schedule(@Query() query: GetScheduleQueryDto) {
     return this.getScheduleUseCase.execute(query);
+  }
+
+  @Get('season')
+  @ApiOperation({ summary: 'Get playlists starting in a given anime season' })
+  season(@Query() query: GetSeasonQueryDto) {
+    return this.getSeasonUseCase.execute(query);
   }
 }

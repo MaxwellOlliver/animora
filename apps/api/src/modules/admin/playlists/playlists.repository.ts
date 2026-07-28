@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, asc, desc, eq, isNotNull } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, isNotNull, lte } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
@@ -29,10 +29,27 @@ export type AiringReleaseSchedule = {
   seriesPoster: typeof media.$inferSelect | null;
 };
 
+export type SeasonPlaylist = {
+  playlistId: string;
+  playlistNumber: number;
+  playlistTitle: string | null;
+  studio: string | null;
+  type: Playlist['type'];
+  status: Playlist['status'];
+  releaseWeekday: number | null;
+  releaseTime: string | null;
+  playlistCover: typeof media.$inferSelect | null;
+  seriesId: string;
+  seriesName: string;
+  seriesBanner: typeof media.$inferSelect | null;
+  seriesPoster: typeof media.$inferSelect | null;
+};
+
 const posterMedia = alias(media, 'schedule_poster_media');
 const posterAssets = alias(seriesAssets, 'schedule_poster_assets');
 const bannerMedia = alias(media, 'schedule_banner_media');
 const bannerAssets = alias(seriesAssets, 'schedule_banner_assets');
+const seasonCoverMedia = alias(media, 'season_cover_media');
 
 @Injectable()
 export class PlaylistsRepository {
@@ -110,6 +127,57 @@ export class PlaylistsRepository {
       );
 
     return rows as AiringReleaseSchedule[];
+  }
+
+  async findByAirStartDateRange(
+    from: string,
+    to: string,
+  ): Promise<SeasonPlaylist[]> {
+    const rows = await this.db
+      .select({
+        playlistId: playlists.id,
+        playlistNumber: playlists.number,
+        playlistTitle: playlists.title,
+        studio: playlists.studio,
+        type: playlists.type,
+        status: playlists.status,
+        releaseWeekday: playlists.releaseWeekday,
+        releaseTime: playlists.releaseTime,
+        playlistCover: seasonCoverMedia,
+        seriesId: series.id,
+        seriesName: series.name,
+        seriesBanner: bannerMedia,
+        seriesPoster: posterMedia,
+      })
+      .from(playlists)
+      .innerJoin(series, eq(playlists.seriesId, series.id))
+      .leftJoin(seasonCoverMedia, eq(playlists.coverId, seasonCoverMedia.id))
+      .leftJoin(
+        posterAssets,
+        and(
+          eq(posterAssets.seriesId, series.id),
+          eq(posterAssets.purpose, 'poster'),
+        ),
+      )
+      .leftJoin(posterMedia, eq(posterAssets.mediaId, posterMedia.id))
+      .leftJoin(
+        bannerAssets,
+        and(
+          eq(bannerAssets.seriesId, series.id),
+          eq(bannerAssets.purpose, 'banner'),
+        ),
+      )
+      .leftJoin(bannerMedia, eq(bannerAssets.mediaId, bannerMedia.id))
+      .where(
+        and(
+          isNotNull(playlists.airStartDate),
+          gte(playlists.airStartDate, from),
+          lte(playlists.airStartDate, to),
+        ),
+      )
+      .orderBy(asc(playlists.releaseWeekday), asc(series.name));
+
+    return rows as SeasonPlaylist[];
   }
 
   async create(data: NewPlaylist): Promise<Playlist> {
