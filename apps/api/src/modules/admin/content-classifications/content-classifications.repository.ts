@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
 import { DRIZZLE } from '@/infra/database/database.module';
@@ -37,6 +37,16 @@ export class ContentClassificationsRepository {
       .where(eq(contentClassifications.id, id));
     if (!rows[0]) return undefined;
     return { ...rows[0].classification, icon: rows[0].icon };
+  }
+
+  async findByIds(ids: string[]): Promise<ContentClassificationWithMedia[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.db
+      .select({ classification: contentClassifications, icon: media })
+      .from(contentClassifications)
+      .leftJoin(media, eq(contentClassifications.iconId, media.id))
+      .where(inArray(contentClassifications.id, ids));
+    return rows.map((r) => ({ ...r.classification, icon: r.icon }));
   }
 
   async findByName(name: string): Promise<ContentClassification | undefined> {

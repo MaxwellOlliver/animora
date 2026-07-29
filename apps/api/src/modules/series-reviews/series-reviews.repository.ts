@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, desc, eq, lt, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, lt, sql } from 'drizzle-orm';
 
 import type {
   CursorPaginatedRequest,
@@ -128,6 +128,29 @@ export class SeriesReviewsRepository {
       average: Number(result[0].average),
       count: result[0].count,
     };
+  }
+
+  async getAverageRatings(
+    seriesIds: string[],
+  ): Promise<Map<string, { average: number; count: number }>> {
+    if (seriesIds.length === 0) return new Map();
+
+    const rows = await this.db
+      .select({
+        seriesId: seriesReviews.seriesId,
+        average: sql<number>`coalesce(avg(${seriesReviews.rating}), 0)`,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(seriesReviews)
+      .where(inArray(seriesReviews.seriesId, seriesIds))
+      .groupBy(seriesReviews.seriesId);
+
+    return new Map(
+      rows.map((r) => [
+        r.seriesId,
+        { average: Number(r.average), count: r.count },
+      ]),
+    );
   }
 
   private mapRow(row: {

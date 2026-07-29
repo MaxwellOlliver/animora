@@ -50,6 +50,13 @@
       "when": 1785132993594,
       "tag": "0006_episode_release_schedule",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785302421630,
+      "tag": "0007_series_search_vector",
+      "breakpoints": true
     }
   ]
 }

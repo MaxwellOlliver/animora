@@ -14,8 +14,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { ExploreSeriesQueryDto } from './dto/explore-series-query.dto';
 import { GetScheduleQueryDto } from './dto/get-schedule-query.dto';
 import { GetSeasonQueryDto } from './dto/get-season-query.dto';
+import { ExploreSeriesUseCase } from './use-cases/explore-series.use-case';
 import { GetPlaylistEpisodesUseCase } from './use-cases/get-playlist-episodes.use-case';
 import { GetRecommendedUseCase } from './use-cases/get-recommended.use-case';
 import { GetScheduleUseCase } from './use-cases/get-schedule.use-case';
@@ -24,6 +26,8 @@ import { GetSeriesDetailUseCase } from './use-cases/get-series-detail.use-case';
 import { GetSeriesFeaturedTrailerUseCase } from './use-cases/get-series-featured-trailer.use-case';
 import { GetSeriesPlaylistsUseCase } from './use-cases/get-series-playlists.use-case';
 import { GetSeriesTrailersUseCase } from './use-cases/get-series-trailers.use-case';
+import { ListCategoriesUseCase } from './use-cases/list-categories.use-case';
+import { ListClassificationsUseCase } from './use-cases/list-classifications.use-case';
 
 @ApiTags('Catalog')
 @ApiBearerAuth()
@@ -38,6 +42,9 @@ export class CatalogController {
     private readonly getSeriesFeaturedTrailerUseCase: GetSeriesFeaturedTrailerUseCase,
     private readonly getScheduleUseCase: GetScheduleUseCase,
     private readonly getSeasonUseCase: GetSeasonUseCase,
+    private readonly exploreSeriesUseCase: ExploreSeriesUseCase,
+    private readonly listCategoriesUseCase: ListCategoriesUseCase,
+    private readonly listClassificationsUseCase: ListClassificationsUseCase,
   ) {}
 
   @Get('recommended')
@@ -91,5 +98,23 @@ export class CatalogController {
   @ApiOperation({ summary: 'Get playlists starting in a given anime season' })
   season(@Query() query: GetSeasonQueryDto) {
     return this.getSeasonUseCase.execute(query);
+  }
+
+  @Get('explore')
+  @ApiOperation({ summary: 'Search and filter series' })
+  explore(@Query() query: ExploreSeriesQueryDto) {
+    return this.exploreSeriesUseCase.execute(query);
+  }
+
+  @Get('genres')
+  @ApiOperation({ summary: 'List active genres (explore categories)' })
+  genres() {
+    return this.listCategoriesUseCase.execute();
+  }
+
+  @Get('content-classifications')
+  @ApiOperation({ summary: 'List active content classifications' })
+  contentClassifications() {
+    return this.listClassificationsUseCase.execute();
   }
 }

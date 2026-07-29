@@ -14,7 +14,7 @@ import { buildMediaUrl } from "@/utils/media-utils";
 
 const navbarLinks = [
   { name: "home", href: "/home" },
-  { name: "categories", href: "/categories" },
+  { name: "explore", href: "/explore" },
   { name: "season", href: "/season" },
   { name: "calendar", href: "/schedule" },
 ];

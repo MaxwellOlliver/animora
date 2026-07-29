@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, asc, desc, eq, gte, isNotNull, lte } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, inArray, isNotNull, lte } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 import type { DrizzleDB } from '@/infra/database/database.module';
@@ -27,6 +27,11 @@ export type AiringReleaseSchedule = {
   seriesName: string;
   seriesBanner: typeof media.$inferSelect | null;
   seriesPoster: typeof media.$inferSelect | null;
+};
+
+export type SeriesPlaylistRollup = {
+  releaseYear: number | null;
+  status: Playlist['status'];
 };
 
 export type SeasonPlaylist = {
@@ -187,6 +192,56 @@ export class PlaylistsRepository {
       .orderBy(asc(playlists.releaseWeekday), asc(series.name));
 
     return rows as SeasonPlaylist[];
+  }
+
+  async findRollupBySeriesIds(
+    seriesIds: string[],
+  ): Promise<Map<string, SeriesPlaylistRollup>> {
+    const rollups = new Map<string, SeriesPlaylistRollup>();
+    if (seriesIds.length === 0) return rollups;
+
+    const rows = await this.db
+      .select({
+        seriesId: playlists.seriesId,
+        status: playlists.status,
+        airStartDate: playlists.airStartDate,
+      })
+      .from(playlists)
+      .where(inArray(playlists.seriesId, seriesIds));
+
+    const bySeriesId = new Map<string, typeof rows>();
+    for (const row of rows) {
+      const list = bySeriesId.get(row.seriesId) ?? [];
+      list.push(row);
+      bySeriesId.set(row.seriesId, list);
+    }
+
+    for (const seriesId of seriesIds) {
+      const seriesPlaylists = bySeriesId.get(seriesId) ?? [];
+
+      const years = seriesPlaylists
+        .map((p) => p.airStartDate)
+        .filter((d): d is string => d !== null)
+        .map((d) => new Date(d).getUTCFullYear());
+      const releaseYear = years.length > 0 ? Math.min(...years) : null;
+
+      const hasAiring = seriesPlaylists.some((p) => p.status === 'airing');
+      const hasUpcoming = seriesPlaylists.some((p) => p.status === 'upcoming');
+      const hasAnySignal = seriesPlaylists.some(
+        (p) => p.status !== null || p.airStartDate !== null,
+      );
+      const status = hasAiring
+        ? 'airing'
+        : hasUpcoming
+          ? 'upcoming'
+          : hasAnySignal
+            ? 'finished'
+            : null;
+
+      rollups.set(seriesId, { releaseYear, status });
+    }
+
+    return rollups;
   }
 
   async create(data: NewPlaylist): Promise<Playlist> {
