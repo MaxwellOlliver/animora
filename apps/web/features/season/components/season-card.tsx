@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { buildMediaUrl } from "@/utils/media-utils";
+import { WEEKDAY_LABELS } from "@/utils/weekday";
 
 import type { SeasonEntry } from "../types";
 
@@ -13,8 +14,15 @@ const STATUS_LABELS: Record<NonNullable<SeasonEntry["status"]>, string> = {
   finished: "Finished",
 };
 
-function formatTime(time: string | null): string | null {
-  return time ? time.slice(0, 5) : null;
+function formatSchedule(
+  weekday: number | null,
+  time: string | null,
+): string | null {
+  const day = weekday != null ? WEEKDAY_LABELS[weekday] : null;
+  const hour = time ? time.slice(0, 5) : null;
+
+  if (day && hour) return `${day} ${hour}`;
+  return day ?? hour;
 }
 
 function playlistLabel(entry: SeasonEntry): string {
@@ -31,7 +39,7 @@ interface SeasonCardProps {
 export function SeasonCard({ entry }: SeasonCardProps) {
   const image = entry.playlistCover ?? entry.seriesPoster ?? entry.seriesBanner;
   const imageSrc = image ? buildMediaUrl(image.purpose, image.key) : null;
-  const time = formatTime(entry.releaseTime);
+  const schedule = formatSchedule(entry.releaseWeekday, entry.releaseTime);
 
   return (
     <Link
@@ -63,10 +71,10 @@ export function SeasonCard({ entry }: SeasonCardProps) {
             {STATUS_LABELS[entry.status]}
           </span>
         )}
-        {time && (
+        {schedule && (
           <span className="absolute top-1.5 right-1.5 flex items-center gap-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-medium">
             <ClockIcon className="size-2.5" />
-            {time}
+            {schedule}
           </span>
         )}
       </div>

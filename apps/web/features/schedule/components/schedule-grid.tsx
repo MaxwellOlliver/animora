@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
+import { WEEKDAY_LABELS } from "@/utils/weekday";
 
 import type { ScheduleEntry } from "../types";
 import { ScheduleCard } from "./schedule-card";
 
-const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTH_LABELS = [
   "Jan",
   "Feb",

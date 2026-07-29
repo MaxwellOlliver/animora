@@ -25,6 +25,17 @@ export function getSeasonLabel(year: number, season: SeasonName): string {
   return `${season[0].toUpperCase()}${season.slice(1)} ${year}`;
 }
 
+const SEASON_IMAGE_NAMES: Record<SeasonName, string> = {
+  winter: "winter",
+  spring: "spring",
+  summer: "summer",
+  fall: "autumn",
+};
+
+export function getSeasonImage(season: SeasonName): string {
+  return `/images/catalog/${SEASON_IMAGE_NAMES[season]}.jpg`;
+}
+
 export function buildSeasonOptions(
   pastCount = 11,
 ): { year: number; season: SeasonName }[] {

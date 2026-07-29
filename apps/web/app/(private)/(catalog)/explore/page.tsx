@@ -38,7 +38,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           alt=""
           fill
           priority
-          className="object-cover object-top opacity-50"
+          className="object-cover object-center opacity-50"
         />
         <div className="absolute inset-0 bg-linear-to-t from-background via-background/85 via-70% to-transparent" />
         <div className="absolute inset-0 bg-linear-to-b from-background/60 via-transparent to-transparent" />
