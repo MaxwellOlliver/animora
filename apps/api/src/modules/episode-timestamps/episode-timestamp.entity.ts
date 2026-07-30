@@ -3,19 +3,13 @@ import { integer, pgEnum, pgTable, unique, uuid } from 'drizzle-orm/pg-core';
 
 import { episodes } from '../admin/episodes/episode.entity';
 
-export const EPISODE_TIMESTAMP_TYPES = [
-  'recap',
-  'opening',
-  'post_credit',
-  'ending',
-] as const;
+export const EPISODE_TIMESTAMP_TYPES = ['recap', 'opening', 'ending'] as const;
 
 export type EpisodeTimestampType = (typeof EPISODE_TIMESTAMP_TYPES)[number];
 
 export const episodeTimestampTypeEnum = pgEnum('episode_timestamp_type', [
   'recap',
   'opening',
-  'post_credit',
   'ending',
 ]);
 

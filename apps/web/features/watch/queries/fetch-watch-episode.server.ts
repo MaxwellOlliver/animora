@@ -43,7 +43,7 @@ export type WatchEpisodePayload = {
     liked: boolean;
   };
   timestamps: {
-    type: "recap" | "opening" | "post_credit" | "ending";
+    type: "recap" | "opening" | "ending";
     startSeconds: number;
     endSeconds: number;
   }[];

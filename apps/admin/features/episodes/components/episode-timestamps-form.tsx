@@ -16,7 +16,6 @@ import type { EpisodeTimestamp, EpisodeTimestampType } from "../types";
 const TIMESTAMP_TYPES: { type: EpisodeTimestampType; label: string }[] = [
   { type: "recap", label: "Recap" },
   { type: "opening", label: "Opening" },
-  { type: "post_credit", label: "Post-credit" },
   { type: "ending", label: "Ending" },
 ];
 
@@ -126,7 +125,8 @@ export function EpisodeTimestampsForm({
                   placeholder="e.g. 30"
                   disabled={isBusy}
                   {...form.register(`${type}.startSeconds`, {
-                    setValueAs: (v: string) => (v === "" ? null : Number(v)),
+                    setValueAs: (v: string | number | null) =>
+                      v === "" || v === null || v === undefined ? null : Number(v),
                   })}
                 />
               </Field>
@@ -141,7 +141,8 @@ export function EpisodeTimestampsForm({
                   placeholder="e.g. 118"
                   disabled={isBusy}
                   {...form.register(`${type}.endSeconds`, {
-                    setValueAs: (v: string) => (v === "" ? null : Number(v)),
+                    setValueAs: (v: string | number | null) =>
+                      v === "" || v === null || v === undefined ? null : Number(v),
                   })}
                 />
               </Field>

@@ -22,12 +22,7 @@ export interface Episode {
   updatedAt: string;
 }
 
-export const EPISODE_TIMESTAMP_TYPES = [
-  "recap",
-  "opening",
-  "post_credit",
-  "ending",
-] as const;
+export const EPISODE_TIMESTAMP_TYPES = ["recap", "opening", "ending"] as const;
 
 export type EpisodeTimestampType = (typeof EPISODE_TIMESTAMP_TYPES)[number];
 

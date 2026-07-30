@@ -17,7 +17,8 @@ import { PlayerProvider } from "./player-context";
 import { usePlayerSettings } from "./player-store";
 import { PlayerProgressBar } from "./progress-bar";
 import { SettingsPopover } from "./settings";
-import { PlayerSkipButton, type TimestampAction } from "./skip-button";
+import { PlayerSkipButton } from "./skip-button";
+import type { TimestampAction } from "./timestamp-actions";
 import { TapPanels } from "./tap-panels";
 
 type VideoPlayerProps = {

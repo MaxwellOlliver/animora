@@ -5,43 +5,7 @@ import { useEffect, useRef } from "react";
 
 import { usePlayerContext } from "./player-context";
 import { usePlayerSettings } from "./player-store";
-
-export type TimestampAction = {
-  /** Label shown on the button, e.g. "skip opening" */
-  label: string;
-  /** Time (seconds) when the button appears */
-  startTime: number;
-  /** Time (seconds) when the button disappears */
-  endTime: number;
-  /** Time (seconds) to seek to when clicked */
-  skipTo: number;
-};
-
-export type EpisodeTimestampType = "recap" | "opening" | "post_credit" | "ending";
-
-export type EpisodeTimestamp = {
-  type: EpisodeTimestampType;
-  startSeconds: number;
-  endSeconds: number;
-};
-
-const TIMESTAMP_LABELS: Record<EpisodeTimestampType, string> = {
-  recap: "skip recap",
-  opening: "skip opening",
-  post_credit: "skip to post-credit",
-  ending: "skip ending",
-};
-
-export function toTimestampActions(
-  timestamps: EpisodeTimestamp[],
-): TimestampAction[] {
-  return timestamps.map((t) => ({
-    label: TIMESTAMP_LABELS[t.type],
-    startTime: t.startSeconds,
-    endTime: t.endSeconds,
-    skipTo: t.endSeconds,
-  }));
-}
+import type { TimestampAction } from "./timestamp-actions";
 
 type PlayerSkipButtonProps = {
   actions: TimestampAction[];

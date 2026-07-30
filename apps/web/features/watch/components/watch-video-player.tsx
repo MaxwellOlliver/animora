@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
 
 import type { OverlayMessage } from "@/features/watch/components/player/overlay-messages";
 import { usePlayerSettings } from "@/features/watch/components/player/player-store";
-import type { TimestampAction } from "@/features/watch/components/player/skip-button";
+import type { TimestampAction } from "@/features/watch/components/player/timestamp-actions";
 import { VideoPlayer } from "@/features/watch/components/player/video-player";
 import { WatchHistorySync } from "@/features/watch/components/watch-history-sync";
 import { buildFetchEpisodeWatchHistoryQueryOptions } from "@/features/watch/queries/fetch-episode-watch-history";
