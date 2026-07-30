@@ -72,7 +72,7 @@ export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
 
   return (
     <WatchPartyShell>
-      <div className="flex w-full flex-col items-center">
+      <div className="flex w-full flex-col items-center pt-(--navbar-height)">
         <WatchVideoPlayer
           episodeId={episodeId}
           src={buildHlsUrl(payload.video.masterPlaylistKey)}

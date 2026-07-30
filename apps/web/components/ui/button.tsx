@@ -38,11 +38,13 @@ type ButtonProps = React.ComponentProps<typeof BaseButton> &
   VariantProps<typeof buttonVariants>;
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  ({ className, variant, size, nativeButton, render, ...props }, ref) => {
     return (
       <BaseButton
         ref={ref}
         className={cn(buttonVariants({ variant, size }), className)}
+        render={render}
+        nativeButton={nativeButton ?? !render}
         {...props}
       />
     );

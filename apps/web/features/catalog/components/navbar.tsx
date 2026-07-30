@@ -19,7 +19,7 @@ const navbarLinks = [
   { name: "calendar", href: "/schedule" },
 ];
 
-export function Navbar({ hideOnTop = false }: { hideOnTop?: boolean }) {
+export function Navbar({ fixedLayout = false }: { fixedLayout?: boolean }) {
   const pathname = usePathname();
   const { profile } = useCurrentProfile();
   const [scrolled, setScrolled] = useState(false);
@@ -30,23 +30,23 @@ export function Navbar({ hideOnTop = false }: { hideOnTop?: boolean }) {
     : "/images/avatar-placeholder.svg";
 
   useEffect(() => {
+    if (fixedLayout) return;
+
     function onScroll() {
       setScrolled(window.scrollY > 0);
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [fixedLayout]);
 
   return (
     <nav
       className={cn(
         "navbar fixed top-0 z-20 w-full h-(--navbar-height) flex items-center justify-between px-12 transition-all duration-300",
-        hideOnTop && !scrolled
-          ? "-translate-y-full opacity-0"
-          : scrolled
-            ? "bg-background/95"
-            : "bg-linear-to-b from-background via-background/85 via-55% to-transparent",
+        fixedLayout || scrolled
+          ? "bg-background/95"
+          : "bg-linear-to-b from-background via-background/85 via-55% to-transparent",
       )}
     >
       <div className="flex items-center gap-8">
