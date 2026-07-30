@@ -83,7 +83,12 @@ export function Navbar({ hideOnTop = false }: { hideOnTop?: boolean }) {
         <Button variant="ghost" size="icon-sm">
           <Search />
         </Button>
-        <Button variant="ghost" size="icon-sm">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          render={<Link href="/watch-later" />}
+          className={cn(pathname === "/watch-later" && "text-foreground")}
+        >
           <Bookmark />
         </Button>
         <Avatar className="size-8 rounded-lg" src={avatarUrl} alt="Profile" />

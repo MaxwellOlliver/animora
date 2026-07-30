@@ -42,6 +42,11 @@ export type WatchEpisodePayload = {
     myRating: "like" | "dislike" | null;
     liked: boolean;
   };
+  timestamps: {
+    type: "recap" | "opening" | "post_credit" | "ending";
+    startSeconds: number;
+    endSeconds: number;
+  }[];
   nextEpisode: {
     id: string;
     playlistId: string;

@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api-client";
 
-import type { Episode } from "./types";
+import type { Episode, EpisodeTimestamp, EpisodeTimestampType } from "./types";
 
 export interface CreateEpisodeInput {
   playlistId: string;
@@ -62,4 +62,29 @@ export async function uploadEpisodeThumbnail(
     method: "POST",
     body: formData,
   });
+}
+
+export interface TimestampSegmentInput {
+  type: EpisodeTimestampType;
+  startSeconds: number;
+  endSeconds: number;
+}
+
+export async function fetchEpisodeTimestamps(
+  episodeId: string,
+): Promise<EpisodeTimestamp[]> {
+  return apiClient<EpisodeTimestamp[]>(`/admin/episodes/${episodeId}/timestamps`);
+}
+
+export async function setEpisodeTimestamps(
+  episodeId: string,
+  timestamps: TimestampSegmentInput[],
+): Promise<EpisodeTimestamp[]> {
+  return apiClient<EpisodeTimestamp[]>(
+    `/admin/episodes/${episodeId}/timestamps`,
+    {
+      method: "PUT",
+      body: JSON.stringify({ timestamps }),
+    },
+  );
 }

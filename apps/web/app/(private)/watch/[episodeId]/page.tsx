@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { fetchProfile } from "@/features/profiles/queries/fetch-profiles.server";
 import { CommentsSection } from "@/features/watch/components/comments-section";
 import { EpisodeInfo } from "@/features/watch/components/episode-info";
+import { toTimestampActions } from "@/features/watch/components/player/skip-button";
 import { SidebarEpisodeCard } from "@/features/watch/components/sidebar-episode-card";
 import { WatchPartyChat } from "@/features/watch/components/watch-party-chat";
 import { WatchVideoPlayer } from "@/features/watch/components/watch-video-player";
@@ -12,11 +13,6 @@ import { ApiError, SessionExpiredError } from "@/lib/api";
 import { ensureFreshSession } from "@/lib/ensure-fresh-session";
 import { getSession } from "@/lib/session";
 import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
-
-const MOCK_TIMESTAMP_ACTIONS = [
-  { label: "skip opening", startTime: 30, endTime: 118, skipTo: 118 },
-  { label: "skip ending", startTime: 1332, endTime: 1420, skipTo: 1420 },
-];
 
 type WatchRoomPageProps = {
   params: Promise<{ episodeId: string }>;
@@ -82,7 +78,7 @@ export default async function WatchRoomPage({ params }: WatchRoomPageProps) {
           src={buildHlsUrl(payload.video.masterPlaylistKey)}
           title={playerTitle}
           nextEpisodeId={payload.nextEpisode?.id}
-          timestampActions={MOCK_TIMESTAMP_ACTIONS}
+          timestampActions={toTimestampActions(payload.timestamps)}
         />
         <div className="grid w-full max-w-350 grid-cols-1 gap-x-8 gap-y-6 px-4 py-8 lg:grid-cols-12 lg:px-0">
           <div className="p-2.5 lg:col-span-8 lg:row-start-1">

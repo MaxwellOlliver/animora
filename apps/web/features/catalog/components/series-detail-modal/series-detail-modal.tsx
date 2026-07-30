@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BookmarkIcon,
   PlayIcon,
@@ -14,6 +14,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { buildFetchWatchLaterStatusQueryOptions } from "@/features/watch-later/queries/fetch-watch-later-status";
+import { cn } from "@/lib/utils";
 import { buildHlsUrl, buildMediaUrl } from "@/utils/media-utils";
 
 import { buildFetchFeaturedTrailerQueryOptions } from "../../queries/fetch-featured-trailer";
@@ -41,10 +43,33 @@ interface SeriesDetailContentProps {
 
 export function SeriesDetailContent({ seriesId }: SeriesDetailContentProps) {
   const [muted, setMuted] = useState(true);
+  const queryClient = useQueryClient();
 
   const { data: series, isLoading: isSeriesLoading } = useQuery(
     buildFetchSeriesQueryOptions(seriesId),
   );
+
+  const { data: watchLaterStatus } = useQuery(
+    buildFetchWatchLaterStatusQueryOptions(seriesId),
+  );
+  const isWatchLater = watchLaterStatus?.isMarked ?? false;
+
+  const watchLaterMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/proxy/watch-later/${seriesId}`, {
+        method: isWatchLater ? "DELETE" : "POST",
+      });
+      if (!response.ok && response.status !== 204) {
+        throw new Error("Failed to update watch later");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["watch-later", seriesId, "status"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["watch-later"] });
+    },
+  });
 
   const { data: playlists, isLoading: isPlaylistsLoading } = useQuery(
     buildFetchSeriesPlaylistsQueryOptions(seriesId),
@@ -135,8 +160,16 @@ export function SeriesDetailContent({ seriesId }: SeriesDetailContentProps) {
               <PlayIcon className="size-4" />
               Continue watching
             </Button>
-            <Button variant="pale" size="icon-md">
-              <BookmarkIcon className="size-4" />
+            <Button
+              variant="pale"
+              size="icon-md"
+              disabled={watchLaterMutation.isPending}
+              onClick={() => watchLaterMutation.mutate()}
+              className={cn(isWatchLater && "text-secondary")}
+            >
+              <BookmarkIcon
+                className={cn("size-4", isWatchLater && "fill-current")}
+              />
             </Button>
           </div>
 

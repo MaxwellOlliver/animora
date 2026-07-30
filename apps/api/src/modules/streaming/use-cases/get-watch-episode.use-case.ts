@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { EpisodesRepository } from '@/modules/admin/episodes/episodes.repository';
 import { VideosRepository } from '@/modules/admin/videos/videos.repository';
 import { EpisodeRatingsRepository } from '@/modules/episode-ratings/episode-ratings.repository';
+import { EpisodeTimestampsRepository } from '@/modules/episode-timestamps/episode-timestamps.repository';
 
 @Injectable()
 export class GetWatchEpisodeUseCase {
@@ -10,6 +11,7 @@ export class GetWatchEpisodeUseCase {
     private readonly episodesRepository: EpisodesRepository,
     private readonly videosRepository: VideosRepository,
     private readonly episodeRatingsRepository: EpisodeRatingsRepository,
+    private readonly episodeTimestampsRepository: EpisodeTimestampsRepository,
   ) {}
 
   async execute(input: { episodeId: string; profileId: string }) {
@@ -21,7 +23,7 @@ export class GetWatchEpisodeUseCase {
       throw new NotFoundException('Episode not found');
     }
 
-    const [video, nextEpisode, rating] = await Promise.all([
+    const [video, nextEpisode, rating, timestamps] = await Promise.all([
       this.videosRepository.findByOwner('episode', input.episodeId),
       this.episodesRepository.findNextByPlaylistAndNumber(
         episode.playlistId,
@@ -31,6 +33,7 @@ export class GetWatchEpisodeUseCase {
         input.episodeId,
         input.profileId,
       ),
+      this.episodeTimestampsRepository.findByEpisodeId(input.episodeId),
     ]);
 
     return {
@@ -55,6 +58,11 @@ export class GetWatchEpisodeUseCase {
         myRating: rating.myRating,
         liked: rating.myRating === 'like',
       },
+      timestamps: timestamps.map((t) => ({
+        type: t.type,
+        startSeconds: t.startSeconds,
+        endSeconds: t.endSeconds,
+      })),
       nextEpisode: nextEpisode
         ? {
             id: nextEpisode.id,

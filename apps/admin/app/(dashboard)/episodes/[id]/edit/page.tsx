@@ -17,8 +17,11 @@ import {
   EpisodeCreateUpdateForm,
   type EpisodeCreateUpdateValues,
 } from "@/features/episodes/components/episode-create-update-form";
+import { EpisodeTimestampsForm } from "@/features/episodes/components/episode-timestamps-form";
 import {
   useEpisodeById,
+  useEpisodeTimestamps,
+  useSetEpisodeTimestamps,
   useUpdateEpisode,
   useUploadEpisodeThumbnail,
 } from "@/features/episodes/hooks";
@@ -31,6 +34,8 @@ export default function EditEpisodePage() {
   const episodeQuery = useEpisodeById(episodeId);
   const updateMutation = useUpdateEpisode(episodeId);
   const uploadThumbnailMutation = useUploadEpisodeThumbnail(episodeId);
+  const timestampsQuery = useEpisodeTimestamps(episodeId);
+  const setTimestampsMutation = useSetEpisodeTimestamps(episodeId);
 
   async function handleSubmit(values: EpisodeCreateUpdateValues) {
     await updateMutation.mutateAsync({
@@ -163,6 +168,16 @@ export default function EditEpisodePage() {
           <div className="text-sm text-muted-foreground">
             Episode not found.
           </div>
+        )}
+
+        {episodeQuery.data && !timestampsQuery.isLoading && (
+          <EpisodeTimestampsForm
+            timestamps={timestampsQuery.data ?? []}
+            onSubmit={async (segments) => {
+              await setTimestampsMutation.mutateAsync(segments);
+            }}
+            isSubmitting={setTimestampsMutation.isPending}
+          />
         )}
       </div>
     </>

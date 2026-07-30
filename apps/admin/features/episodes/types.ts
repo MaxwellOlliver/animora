@@ -21,3 +21,20 @@ export interface Episode {
   createdAt: string;
   updatedAt: string;
 }
+
+export const EPISODE_TIMESTAMP_TYPES = [
+  "recap",
+  "opening",
+  "post_credit",
+  "ending",
+] as const;
+
+export type EpisodeTimestampType = (typeof EPISODE_TIMESTAMP_TYPES)[number];
+
+export interface EpisodeTimestamp {
+  id: string;
+  episodeId: string;
+  type: EpisodeTimestampType;
+  startSeconds: number;
+  endSeconds: number;
+}

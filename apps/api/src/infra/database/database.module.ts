@@ -18,9 +18,11 @@ import * as videoSchema from '@/modules/admin/videos/video.entity';
 import * as authSchema from '@/modules/auth/refresh-token.entity';
 import * as episodeCommentSchema from '@/modules/episode-comments/entities/episode-comment.entity';
 import * as episodeCommentReactionSchema from '@/modules/episode-comments/entities/episode-comment-reaction.entity';
+import * as episodeTimestampSchema from '@/modules/episode-timestamps/episode-timestamp.entity';
 import * as profileSchema from '@/modules/profiles/profile.entity';
 import * as userSchema from '@/modules/users/user.entity';
 import * as watchHistorySchema from '@/modules/watch-history/watch-history.entity';
+import * as watchLaterSchema from '@/modules/watch-later/watch-later.entity';
 
 const schema = {
   ...userSchema,
@@ -39,7 +41,9 @@ const schema = {
   ...uploadChunkSchema,
   ...episodeCommentSchema,
   ...episodeCommentReactionSchema,
+  ...episodeTimestampSchema,
   ...watchHistorySchema,
+  ...watchLaterSchema,
 };
 
 export const DRIZZLE = Symbol('DRIZZLE');

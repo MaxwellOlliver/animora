@@ -21,12 +21,14 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { EpisodeCommentsModule } from './modules/episode-comments/episode-comments.module';
 import { EpisodeRatingsModule } from './modules/episode-ratings/episode-ratings.module';
+import { EpisodeTimestampsModule } from './modules/episode-timestamps/episode-timestamps.module';
 import { MediaModule } from './modules/media/media.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
 import { SeriesReviewsModule } from './modules/series-reviews/series-reviews.module';
 import { StreamingModule } from './modules/streaming/streaming.module';
 import { UsersModule } from './modules/users/users.module';
 import { WatchHistoryModule } from './modules/watch-history/watch-history.module';
+import { WatchLaterModule } from './modules/watch-later/watch-later.module';
 
 @Module({
   imports: [
@@ -51,9 +53,11 @@ import { WatchHistoryModule } from './modules/watch-history/watch-history.module
     CatalogModule,
     EpisodeCommentsModule,
     EpisodeRatingsModule,
+    EpisodeTimestampsModule,
     SeriesReviewsModule,
     StreamingModule,
     WatchHistoryModule,
+    WatchLaterModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

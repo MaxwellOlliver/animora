@@ -8,6 +8,9 @@ import {
   deleteEpisode,
   fetchEpisodeById,
   fetchEpisodes,
+  fetchEpisodeTimestamps,
+  setEpisodeTimestamps,
+  type TimestampSegmentInput,
   updateEpisode,
   type UpdateEpisodeInput,
   uploadEpisodeThumbnail,
@@ -68,6 +71,28 @@ export function useUploadEpisodeThumbnail(id: string) {
     mutationFn: (file: File) => uploadEpisodeThumbnail(id, file),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["episodes"] });
+    },
+  });
+}
+
+export function useEpisodeTimestamps(episodeId: string) {
+  return useQuery({
+    queryKey: ["episodes", episodeId, "timestamps"],
+    queryFn: () => fetchEpisodeTimestamps(episodeId),
+    enabled: !!episodeId,
+  });
+}
+
+export function useSetEpisodeTimestamps(episodeId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (timestamps: TimestampSegmentInput[]) =>
+      setEpisodeTimestamps(episodeId, timestamps),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["episodes", episodeId, "timestamps"],
+      });
     },
   });
 }
